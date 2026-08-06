@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
-    <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#c89b3c">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -56,10 +55,12 @@
             transition: background-color 0.35s ease, color 0.35s ease;
         }
 
+        /* 鎖定背景捲動防穿透 */
         body.modal-open {
             overflow: hidden;
             position: fixed;
             width: 100%;
+            height: 100%;
         }
 
         .phone-container {
@@ -87,23 +88,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.94); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes popOut {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(0.92); opacity: 0; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(6px); }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
         @keyframes pulseGold {
@@ -111,10 +102,14 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        .animate-fade { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-pop { animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .animate-pop-out { animation: popOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards; }
-        .animate-fade-out { animation: fadeOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards; }
+        .modal-backdrop {
+            animation: fadeIn 0.25s ease forwards;
+        }
+
+        .modal-sheet {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         .pulse-gold { animation: pulseGold 2.5s infinite; }
 
         .bg-app-bg { background-color: var(--bg-app); }
@@ -129,17 +124,11 @@
         .bg-brand-blue { background-color: var(--color-blue); }
         .bg-brand-red { background-color: var(--color-red); }
         .bg-brand-green { background-color: var(--color-green); }
-        .bg-brand-dark { background-color: var(--color-dark); }
 
         .text-brand-gold { color: var(--color-gold); }
         .text-brand-blue { color: var(--color-blue); }
         .text-brand-red { color: var(--color-red); }
         .text-brand-green { color: var(--color-green); }
-
-        .border-brand-gold { border-color: var(--color-gold); }
-        .border-brand-blue { border-color: var(--color-blue); }
-        .border-brand-red { border-color: var(--color-red); }
-        .border-brand-green { border-color: var(--color-green); }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--border-line); border-radius: 4px; }
@@ -157,9 +146,9 @@
                 </h1>
                 <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 5 日</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
                 <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
-                    <i data-lucide="download" class="w-4 h-4"></i> 安裝 App
+                    <i data-lucide="download" class="w-4 h-4"></i> 安裝
                 </button>
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -215,14 +204,14 @@
             </div>
         </div>
 
-        <!-- Notification Drawer (Click backdrop to close) -->
-        <div id="notif-drawer" onclick="handleBackdropClick(event, 'notif-drawer', 'toggleNotificationDrawer')" class="absolute inset-0 bg-black/50 backdrop-blur-sm z-40 hidden transition-opacity flex justify-end">
-            <div class="w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col animate-fade h-full border-l border-app-line" onclick="event.stopPropagation()">
+        <!-- Notification Drawer Modal -->
+        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
+            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
                         <i data-lucide="bell-ring" class="w-4 h-4"></i> 自動支出及存入通知記錄
                     </h3>
-                    <button onclick="toggleNotificationDrawer()" class="text-app-muted hover:text-app-main">
+                    <button onclick="closeModal('notif-drawer')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -233,14 +222,15 @@
             </div>
         </div>
 
-        <!-- Add Transaction Modal (Click backdrop to close) -->
-        <div id="transaction-modal" onclick="handleBackdropClick(event, 'transaction-modal', 'closeTransactionModal')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-40 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-            <div class="w-full bg-app-surface rounded-t-3xl sm:rounded-3xl p-5 border-t sm:border border-app-line animate-pop max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <!-- Add Transaction Modal -->
+        <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> 新增帳務交易
                     </h2>
-                    <button onclick="closeTransactionModal()" class="text-app-muted hover:text-app-main">
+                    <button onclick="closeModal('transaction-modal')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -358,43 +348,44 @@
             </div>
         </div>
 
-        <!-- Custom Toast Modal (Click backdrop to close) -->
-        <div id="toast-modal" onclick="handleBackdropClick(event, 'toast-modal', 'closeToastModal')" class="absolute inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
-            <div class="bg-app-surface border border-app-line p-5 rounded-2xl shadow-2xl max-w-xs w-full animate-pop text-center space-y-3" onclick="event.stopPropagation()">
+        <!-- Custom Toast Modal -->
+        <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
                     <i data-lucide="info" class="w-6 h-6"></i>
                 </div>
                 <h3 id="toast-title" class="font-bold text-sm text-app-main">系統提示</h3>
                 <p id="toast-msg" class="text-xs text-app-muted leading-relaxed"></p>
                 <div class="pt-2 flex gap-2">
-                    <button onclick="closeToastModal()" class="w-full bg-brand-gold text-white py-2 rounded-xl text-xs font-bold">確定</button>
+                    <button onclick="closeModal('toast-modal')" class="w-full bg-brand-gold text-white py-2 rounded-xl text-xs font-bold">確定</button>
                 </div>
             </div>
         </div>
 
-        <!-- Confirm Reset Modal (Click backdrop to close) -->
-        <div id="confirm-modal" onclick="handleBackdropClick(event, 'confirm-modal', 'closeConfirmModal')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-6">
-            <div class="bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full animate-pop text-center space-y-3" onclick="event.stopPropagation()">
+        <!-- Confirm Reset Modal -->
+        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-6">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
                 <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red">
                     <i data-lucide="alert-triangle" class="w-6 h-6"></i>
                 </div>
                 <h3 class="font-bold text-sm text-app-main">確認初始化重置？</h3>
                 <p class="text-xs text-app-muted leading-relaxed">此動作將會清空所有資產數據、交易歷史紀錄、固定支出與分期設定，且無法復原！</p>
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeConfirmModal()" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold">取消</button>
+                    <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold">取消</button>
                     <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow">確定重置</button>
                 </div>
             </div>
         </div>
 
-        <!-- Custom Option Picker Modal (Click backdrop to close) -->
-        <div id="custom-option-modal" onclick="handleBackdropClick(event, 'custom-option-modal', 'closeCustomOptionPicker')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-            <div class="w-full max-w-xs bg-app-surface rounded-3xl p-5 border border-app-line animate-pop space-y-3 text-xs" onclick="event.stopPropagation()">
+        <!-- Custom Option Picker Modal -->
+        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="list" class="w-4 h-4"></i> 選擇選項
                     </h3>
-                    <button type="button" onclick="closeCustomOptionPicker()" class="text-app-muted hover:text-app-main">
+                    <button type="button" onclick="closeModal('custom-option-modal')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -409,14 +400,15 @@
             </div>
         </div>
 
-        <!-- Custom Recurring Rule Modal (Click backdrop to close) -->
-        <div id="recurring-modal" onclick="handleBackdropClick(event, 'recurring-modal', 'closeRecurringModal')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-            <div class="w-full max-w-xs bg-app-surface rounded-3xl p-5 border border-app-line animate-pop space-y-3 text-xs" onclick="event.stopPropagation()">
+        <!-- Custom Recurring Rule Modal -->
+        <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="repeat" class="w-4 h-4"></i> 新增固定支出/存入
                     </h3>
-                    <button onclick="closeRecurringModal()" class="text-app-muted hover:text-app-main">
+                    <button onclick="closeModal('recurring-modal')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -468,14 +460,15 @@
             </div>
         </div>
 
-        <!-- Custom Installment Modal (Click backdrop to close) -->
-        <div id="installment-modal" onclick="handleBackdropClick(event, 'installment-modal', 'closeInstallmentModal')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-            <div class="w-full max-w-xs bg-app-surface rounded-3xl p-5 border border-app-line animate-pop space-y-3 text-xs" onclick="event.stopPropagation()">
+        <!-- Custom Installment Modal -->
+        <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="credit-card" class="w-4 h-4"></i> 新增分期付款
                     </h3>
-                    <button onclick="closeInstallmentModal()" class="text-app-muted hover:text-app-main">
+                    <button onclick="closeModal('installment-modal')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -516,14 +509,15 @@
             </div>
         </div>
 
-        <!-- Custom Date Picker Modal (Click backdrop to close) -->
-        <div id="custom-date-modal" onclick="handleBackdropClick(event, 'custom-date-modal', 'closeCustomDatePicker')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-            <div class="w-full max-w-xs bg-app-surface rounded-3xl p-5 border border-app-line animate-pop space-y-3 text-xs" onclick="event.stopPropagation()">
+        <!-- Custom Date Picker Modal -->
+        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期
                     </h3>
-                    <button onclick="closeCustomDatePicker()" class="text-app-muted hover:text-app-main">
+                    <button onclick="closeModal('custom-date-modal')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -531,14 +525,15 @@
             </div>
         </div>
 
-        <!-- Stock History Modal (Click backdrop to close) -->
-        <div id="stock-history-modal" onclick="handleBackdropClick(event, 'stock-history-modal', 'closeStockHistoryModal')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-            <div class="w-full max-w-xs bg-app-surface rounded-3xl p-5 border border-app-line animate-pop space-y-3 text-xs max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
+        <!-- Stock History Modal -->
+        <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">
                         <i data-lucide="candlestick-chart" class="w-4 h-4"></i> 股票交易紀錄
                     </h3>
-                    <button onclick="closeStockHistoryModal()" class="text-app-muted hover:text-app-main">
+                    <button onclick="closeModal('stock-history-modal')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -547,14 +542,15 @@
             </div>
         </div>
 
-        <!-- Export JPG Modal (Click backdrop to close) -->
-        <div id="export-jpg-modal" onclick="handleBackdropClick(event, 'export-jpg-modal', 'closeExportJPGModal')" class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-            <div class="w-full max-w-xs bg-app-surface rounded-3xl p-5 border border-app-line animate-pop space-y-3 text-xs" onclick="event.stopPropagation()">
+        <!-- Export JPG Modal -->
+        <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="image" class="w-4 h-4"></i> 匯出資產報表 (JPG)
                     </h3>
-                    <button onclick="closeExportJPGModal()" class="text-app-muted hover:text-app-main">
+                    <button onclick="closeModal('export-jpg-modal')" class="text-app-muted hover:text-app-main p-1">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -627,7 +623,7 @@
         let currentOptionTarget = null;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v10_modal_backdrop');
+            const saved = localStorage.getItem('wealth_app_data_v11_sheet');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -641,7 +637,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v10_modal_backdrop', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v11_sheet', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -743,7 +739,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v5';
+                    const CACHE = 'wealth-ledger-v6';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -844,14 +840,30 @@
             }
         }
 
+        // --- Standardized Modal Management with Body Scroll Lock ---
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            document.body.classList.add('modal-open');
+            modal.classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+
         function toggleNotificationDrawer() {
             const drawer = document.getElementById('notif-drawer');
             if (!drawer) return;
             if (drawer.classList.contains('hidden')) {
-                prepareModalForOpen('notif-drawer', '.animate-fade');
+                openModal('notif-drawer');
                 renderNotifications();
             } else {
-                closeModalWithAnimation('notif-drawer', '.animate-fade');
+                closeModal('notif-drawer');
             }
         }
 
@@ -889,37 +901,13 @@
         function showToast(title, msg) {
             document.getElementById('toast-title').innerText = title;
             document.getElementById('toast-msg').innerText = msg;
-            prepareModalForOpen('toast-modal');
+            openModal('toast-modal');
             if (window.lucide) lucide.createIcons();
         }
 
-        function closeToastModal() { closeModalWithAnimation('toast-modal', '.animate-pop'); }
-
         function openTransactionModal() {
-            prepareModalForOpen('transaction-modal');
+            openModal('transaction-modal');
             setTxType('支出');
-        }
-
-        function closeTransactionModal() {
-            closeModalWithAnimation('transaction-modal', '.animate-pop', 200, () => {
-                const form = document.getElementById('tx-form');
-                if (form) form.reset();
-                setModalMode('cash');
-                setTxType('支出');
-                const todayStr = new Date().toISOString().split('T')[0];
-                document.getElementById('input-asset-type').value = 'TWD';
-                document.getElementById('tx-asset-btn-txt').innerText = '台幣帳戶 (TWD)';
-                document.getElementById('input-stock-market').value = 'TW_STOCK';
-                document.getElementById('tx-market-btn-txt').innerText = '台股 (TWD)';
-                document.getElementById('input-category').value = '🍱 餐飲美食';
-                document.getElementById('tx-category-btn-txt').innerText = '🍱 餐飲美食';
-                document.getElementById('input-date').value = todayStr;
-                document.getElementById('input-date-display').innerText = todayStr;
-                ['input-stock-symbol', 'input-stock-shares', 'input-stock-price', 'input-stock-fee', 'input-amount', 'input-note'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) { el.value = ''; toggleClearBtn(el); }
-                });
-            });
         }
 
         function setModalMode(mode) {
@@ -1005,7 +993,7 @@
 
             appData.transactions.unshift(newTx);
             saveData();
-            closeTransactionModal();
+            closeModal('transaction-modal');
         }
 
         function deleteTransaction(id) {
@@ -1058,11 +1046,8 @@
                     </div>
                 `).join('');
             }
-            prepareModalForOpen('stock-history-modal');
-            if (window.lucide) lucide.createIcons();
+            openModal('stock-history-modal');
         }
-
-        function closeStockHistoryModal() { closeModalWithAnimation('stock-history-modal', '.animate-pop'); }
 
         function saveTitleSetting() {
             const val = document.getElementById('setting-title')?.value;
@@ -1408,7 +1393,7 @@
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="repeat" class="w-4 h-4"></i> 每月固定支出/存入</h3>
-                            <button onclick="openRecurringModal()" class="text-xs text-brand-blue hover:underline font-bold">+ 新增規則</button>
+                            <button onclick="openModal('recurring-modal')" class="text-xs text-brand-blue hover:underline font-bold">+ 新增規則</button>
                         </div>
                         <div class="space-y-2 text-xs">
                             ${appData.recurringRules.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定自動扣款規則</div>' : appData.recurringRules.map(r => `
@@ -1426,7 +1411,7 @@
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="credit-card" class="w-4 h-4"></i> 分期付款設定</h3>
-                            <button onclick="openInstallmentModal()" class="text-xs text-brand-blue hover:underline font-bold">+ 新增分期</button>
+                            <button onclick="openModal('installment-modal')" class="text-xs text-brand-blue hover:underline font-bold">+ 新增分期</button>
                         </div>
                         <div class="space-y-2 text-xs">
                             ${appData.installments.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定分期付款</div>' : appData.installments.map(i => `
@@ -1444,8 +1429,8 @@
                             <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出備份 (JSON)</button>
                             <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
                         </div>
-                        <button onclick="openExportJPGModal()" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs font-bold"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</button>
-                        <button onclick="confirmResetData()" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
+                        <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs font-bold"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</button>
+                        <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
                     </div>
 
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
@@ -1457,51 +1442,6 @@
                     </div>
                 </div>
             `;
-        }
-
-        function handleBackdropClick(event, modalId, closeFnName) {
-            if (event.target && event.target.id === modalId) {
-                if (typeof window[closeFnName] === 'function') {
-                    window[closeFnName]();
-                }
-            }
-        }
-
-        function closeModalWithAnimation(modalId, cardSelector = '.animate-pop, .animate-fade', duration = 200, callback = null) {
-            const modal = document.getElementById(modalId);
-            if (!modal || modal.classList.contains('hidden')) return;
-            const card = modal.querySelector(cardSelector) || modal.firstElementChild;
-            modal.style.transition = `opacity ${duration}ms ease`;
-            modal.style.opacity = '0';
-            if (card) {
-                card.classList.remove('animate-pop', 'animate-fade');
-                card.classList.add(cardSelector.includes('fade') ? 'animate-fade-out' : 'animate-pop-out');
-            }
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.style.opacity = '';
-                modal.style.transition = '';
-                document.body.classList.remove('modal-open');
-                if (card) {
-                    card.classList.remove('animate-pop-out', 'animate-fade-out');
-                    card.classList.add(cardSelector.includes('fade') ? 'animate-fade' : 'animate-pop');
-                }
-                if (callback) callback();
-            }, duration);
-        }
-
-        function prepareModalForOpen(modalId, cardSelector = '.animate-pop, .animate-fade') {
-            const modal = document.getElementById(modalId);
-            if (!modal) return;
-            document.body.classList.add('modal-open');
-            modal.style.opacity = '';
-            modal.style.transition = '';
-            const card = modal.querySelector(cardSelector) || modal.firstElementChild;
-            if (card) {
-                card.classList.remove('animate-pop-out', 'animate-fade-out');
-                card.classList.add(cardSelector.includes('fade') ? 'animate-fade' : 'animate-pop');
-            }
-            modal.classList.remove('hidden');
         }
 
         function openOptionModal(target, title, options, currentVal) {
@@ -1516,8 +1456,7 @@
             const customBox = document.getElementById('custom-category-add-box');
             if (target === 'TX_CATEGORY' || target === 'REC_CATEGORY') customBox.classList.remove('hidden');
             else customBox.classList.add('hidden');
-            prepareModalForOpen('custom-option-modal');
-            if (window.lucide) lucide.createIcons();
+            openModal('custom-option-modal');
         }
 
         function addNewCustomCategory() {
@@ -1550,10 +1489,8 @@
                 document.getElementById('input-category').value = val;
                 document.getElementById('tx-category-btn-txt').innerText = label;
             }
-            closeCustomOptionPicker();
+            closeModal('custom-option-modal');
         }
-
-        function closeCustomOptionPicker() { closeModalWithAnimation('custom-option-modal', '.animate-pop'); }
 
         function triggerRecTypePicker() {
             openOptionModal('REC_TYPE', '選擇交易類型', [{ label: '支出 (Expense)', value: '支出' }, { label: '存入 (Deposit)', value: '存入' }], document.getElementById('rec-type-val').value);
@@ -1571,30 +1508,6 @@
             openOptionModal('TX_CATEGORY', '選擇消費 / 收入分類', appData.categories.map(c => ({ label: c, value: c })), document.getElementById('input-category').value);
         }
 
-        function openRecurringModal() {
-            const todayStr = new Date().toISOString().split('T')[0];
-            document.getElementById('rec-date-val').value = todayStr;
-            document.getElementById('rec-date-btn-txt').innerText = todayStr;
-            prepareModalForOpen('recurring-modal');
-        }
-
-        function closeRecurringModal() {
-            closeModalWithAnimation('recurring-modal', '.animate-pop', 200, () => {
-                document.getElementById('recurring-form').reset();
-                const todayStr = new Date().toISOString().split('T')[0];
-                document.getElementById('rec-name').value = '';
-                document.getElementById('rec-amount').value = '';
-                document.getElementById('rec-type-val').value = '支出';
-                document.getElementById('rec-type-btn-txt').innerText = '支出';
-                document.getElementById('rec-date-val').value = todayStr;
-                document.getElementById('rec-date-btn-txt').innerText = todayStr;
-                document.getElementById('rec-asset-val').value = 'TWD';
-                document.getElementById('rec-asset-btn-txt').innerText = '台幣 (TWD)';
-                toggleClearBtn(document.getElementById('rec-name'));
-                toggleClearBtn(document.getElementById('rec-amount'));
-            });
-        }
-
         function handleRecurringSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('rec-name').value;
@@ -1607,31 +1520,9 @@
 
             appData.recurringRules.push({ id: 'r_' + Date.now(), name, type, startDate: startDateStr, day, amount, asset, category: '固定支出/存入', lastExecutedMonth: '' });
             saveData();
-            closeRecurringModal();
+            closeModal('recurring-modal');
             checkRecurringTransactions();
             showToast("建立成功", `已新增「${name}」規則（日期：${startDateStr}）。`);
-        }
-
-        function openInstallmentModal() {
-            const todayStr = new Date().toISOString().split('T')[0];
-            document.getElementById('inst-date-val').value = todayStr;
-            document.getElementById('inst-date-btn-txt').innerText = todayStr;
-            prepareModalForOpen('installment-modal');
-        }
-
-        function closeInstallmentModal() {
-            closeModalWithAnimation('installment-modal', '.animate-pop', 200, () => {
-                document.getElementById('installment-form').reset();
-                const todayStr = new Date().toISOString().split('T')[0];
-                document.getElementById('inst-name').value = '';
-                document.getElementById('inst-total').value = '';
-                document.getElementById('inst-months').value = '12';
-                document.getElementById('inst-date-val').value = todayStr;
-                document.getElementById('inst-date-btn-txt').innerText = todayStr;
-                toggleClearBtn(document.getElementById('inst-name'));
-                toggleClearBtn(document.getElementById('inst-total'));
-                toggleClearBtn(document.getElementById('inst-months'));
-            });
         }
 
         function handleInstallmentSubmit(e) {
@@ -1646,7 +1537,7 @@
             const monthlyAmount = Math.round(total / months);
             appData.installments.push({ id: 'inst_' + Date.now(), name, totalAmount: total, monthlyAmount, totalMonths: months, paidMonths: 0, startDate, day: deductionDay, lastPaidMonth: '', asset: 'TWD' });
             saveData();
-            closeInstallmentModal();
+            closeModal('installment-modal');
             checkRecurringTransactions();
             showToast("建立成功", `已新增分期「${name}」（起始日：${startDate}）。`);
         }
@@ -1709,11 +1600,9 @@
                 titleElem.innerHTML = `<i data-lucide="calendar-days" class="w-4 h-4"></i> 選擇月份 (YYYY-MM)`;
                 content.innerHTML = renderMonthPickerHtml(target === 'EXPORT_JPG_MONTH' ? exportJpgMonthDate : filterMonthDate);
             }
-            prepareModalForOpen('custom-date-modal');
+            openModal('custom-date-modal');
             if (window.lucide) lucide.createIcons();
         }
-
-        function closeCustomDatePicker() { closeModalWithAnimation('custom-date-modal', '.animate-pop'); }
 
         function renderSingleDayPickerHtml(currDateStr) {
             const [y, m, d] = (currDateStr || new Date().toISOString().split('T')[0]).split('-').map(Number);
@@ -1767,7 +1656,7 @@
             else if (datePickerTarget === 'EXPORT_JPG_SINGLE') { exportJpgCustomDate = selectedDate; updateExportJpgRangeUI(); }
             else if (datePickerTarget === 'EXPORT_JPG_START') { exportJpgStartDate = selectedDate; updateExportJpgRangeUI(); }
             else if (datePickerTarget === 'EXPORT_JPG_END') { exportJpgEndDate = selectedDate; updateExportJpgRangeUI(); }
-            closeCustomDatePicker();
+            closeModal('custom-date-modal');
             renderCurrentView();
         }
 
@@ -1775,12 +1664,9 @@
             const mStr = `${document.getElementById('dp-m-year').value}-${document.getElementById('dp-m-month').value}`;
             if (datePickerTarget === 'EXPORT_JPG_MONTH') { exportJpgMonthDate = mStr; updateExportJpgRangeUI(); }
             else filterMonthDate = mStr;
-            closeCustomDatePicker();
+            closeModal('custom-date-modal');
             renderCurrentView();
         }
-
-        function openExportJPGModal() { prepareModalForOpen('export-jpg-modal'); document.getElementById('export-jpg-range-select').value = 'ALL'; updateExportJpgRangeUI(); }
-        function closeExportJPGModal() { closeModalWithAnimation('export-jpg-modal', '.animate-pop'); }
 
         function updateExportJpgRangeUI() {
             const rangeVal = document.getElementById('export-jpg-range-select').value;
@@ -1904,7 +1790,7 @@
             a.href = canvas.toDataURL('image/jpeg', 0.92);
             a.download = `資產報表_${assetKey}_${new Date().toISOString().split('T')[0]}.jpg`;
             a.click();
-            closeExportJPGModal();
+            closeModal('export-jpg-modal');
             showToast("匯出成功", `已成功匯出「${assetName}」JPG 報表！`);
         }
 
@@ -1927,10 +1813,8 @@
             reader.readAsText(file);
         }
 
-        function confirmResetData() { prepareModalForOpen('confirm-modal'); if (window.lucide) lucide.createIcons(); }
-        function closeConfirmModal() { closeModalWithAnimation('confirm-modal', '.animate-pop'); }
         function executeResetData() {
-            closeConfirmModal();
+            closeModal('confirm-modal');
             appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
             saveData();
             showToast("重置完成", "系統數據已恢復為零初始化狀態。");
