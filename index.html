@@ -102,6 +102,7 @@
             animation: fadeIn 0.25s ease forwards;
         }
 
+        /* 標準彈出視窗（由底部升起） */
         .modal-sheet {
             will-change: transform, opacity;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
@@ -113,6 +114,21 @@
 
         .modal-sheet.is-closing {
             transform: translateY(100%) !important;
+            opacity: 0 !important;
+        }
+
+        /* 通知抽屜專用（由右側滑出/收回） */
+        #notif-drawer .modal-sheet {
+            transform: translateX(100%);
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+        }
+
+        #notif-drawer:not(.hidden) .modal-sheet {
+            transform: translateX(0) !important;
+        }
+
+        #notif-drawer .modal-sheet.is-closing {
+            transform: translateX(100%) !important;
             opacity: 0 !important;
         }
 
@@ -858,10 +874,11 @@
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
                 sheet.classList.remove('is-closing');
-                // Force Reflow 確保每次打開都有完整且一致的滑入動畫
-                sheet.style.transform = modal.classList.contains('flex-end') || modal.id === 'notif-drawer' ? '' : 'translateY(100%)';
-                void sheet.offsetWidth;
-                sheet.style.transform = 'translateY(0)';
+                if (modalId === 'notif-drawer') {
+                    sheet.style.transform = 'translateX(0)';
+                } else {
+                    sheet.style.transform = 'translateY(0)';
+                }
             }
             if (window.lucide) lucide.createIcons();
         }
@@ -926,7 +943,17 @@
                 sheet.classList.remove('is-dragging');
 
                 if (currentDelta > 75) {
-                    closeModal(modalId);
+                    if (direction === 'right') {
+                        sheet.classList.add('is-closing');
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                            sheet.classList.remove('is-closing');
+                            sheet.style.transform = '';
+                            document.body.classList.remove('modal-open');
+                        }, 280);
+                    } else {
+                        closeModal(modalId);
+                    }
                 } else {
                     sheet.style.transform = '';
                 }
