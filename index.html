@@ -99,7 +99,7 @@
         }
 
         .modal-backdrop {
-            animation: fadeIn 0.25s ease forwards;
+            animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
@@ -141,6 +141,14 @@
             opacity: 0 !important;
         }
 
+        /* 明顯的點擊互動彈跳與縮放微動畫 */
+        button, a, label[class*="cursor-pointer"] {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        button:active, label[class*="cursor-pointer"]:active {
+            transform: scale(0.90) translateY(2px);
+        }
+
         .pulse-gold { animation: pulseGold 2.5s infinite; }
 
         .bg-app-bg { background-color: var(--bg-app); }
@@ -169,24 +177,26 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
-        <!-- App Main Header Bar -->
+        <!-- App Main Header Bar (設定在左，通知在右) -->
         <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
-            <div>
-                <h1 id="app-title-display" class="font-bold text-lg text-brand-gold tracking-wide flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
+                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
+                    <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
+                </button>
+            </div>
+            <div class="text-center">
+                <h1 id="app-title-display" class="font-bold text-lg text-brand-gold tracking-wide flex items-center justify-center gap-2">
                     智慧帳本
                 </h1>
-                <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 5 日</p>
+                <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 6 日</p>
             </div>
             <div class="flex items-center gap-1.5">
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-90 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> 安裝
                 </button>
-                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="通知紀錄">
+                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="通知紀錄">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
-                </button>
-                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="系統設定">
-                    <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
         </header>
@@ -196,22 +206,22 @@
 
         <!-- Floating Action Button -->
         <div class="absolute bottom-20 right-5 z-20">
-            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 transition-transform">
+            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-75 hover:scale-110 transition-transform">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
         <!-- Navigation Bar (3 Main Tabs) -->
         <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
-            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-75 hover:scale-110">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
             </button>
-            <button onclick="switchTab('details')" id="nav-details" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200">
+            <button onclick="switchTab('details')" id="nav-details" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-75 hover:scale-110">
                 <i data-lucide="receipt" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">資產明細</span>
             </button>
-            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200">
+            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-75 hover:scale-110">
                 <i data-lucide="trending-up" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">持股統計</span>
             </button>
@@ -243,12 +253,12 @@
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
                         <i data-lucide="bell-ring" class="w-4 h-4"></i> 自動支出及存入通知記錄
                     </h3>
-                    <button onclick="closeModal('notif-drawer')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('notif-drawer')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
                 <div id="notif-list" class="flex-1 overflow-y-auto my-3 space-y-2 pr-1"></div>
-                <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-2 border-t border-app-line">
+                <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-2 border-t border-app-line active:scale-95">
                     清空歷史通知
                 </button>
             </div>
@@ -262,23 +272,23 @@
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> 新增帳務交易
                     </h2>
-                    <button onclick="closeModal('transaction-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('transaction-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 bg-app-card p-1 rounded-xl mb-4 text-sm">
-                    <button onclick="setModalMode('cash')" id="btn-mode-cash" class="py-2 rounded-lg font-medium transition-all bg-brand-gold text-white shadow">現金收支</button>
-                    <button onclick="setModalMode('stock')" id="btn-mode-stock" class="py-2 rounded-lg font-medium transition-all text-app-muted">股票買賣</button>
+                    <button type="button" onclick="setModalMode('cash')" id="btn-mode-cash" class="py-2 rounded-lg font-medium transition-all bg-brand-gold text-white shadow active:scale-90">現金收支</button>
+                    <button type="button" onclick="setModalMode('stock')" id="btn-mode-stock" class="py-2 rounded-lg font-medium transition-all text-app-muted active:scale-90">股票買賣</button>
                 </div>
 
                 <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs">
                     <div class="flex gap-2">
-                        <label onclick="setTxType('支出')" class="flex-1 text-center py-2.5 rounded-xl border-2 border-brand-red bg-brand-red/10 cursor-pointer transition-all shadow-sm" id="label-type-out">
+                        <label onclick="setTxType('支出')" class="flex-1 text-center py-2.5 rounded-xl border-2 border-brand-red bg-brand-red/10 cursor-pointer transition-all shadow-sm active:scale-95" id="label-type-out">
                             <input type="radio" name="txType" value="支出" class="hidden" checked onchange="setTxType('支出')">
                             <span class="font-bold text-brand-red text-sm" id="txt-type-out">支出</span>
                         </label>
-                        <label onclick="setTxType('存入')" class="flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100" id="label-type-in">
+                        <label onclick="setTxType('存入')" class="flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100 active:scale-95" id="label-type-in">
                             <input type="radio" name="txType" value="存入" class="hidden" onchange="setTxType('存入')">
                             <span class="font-bold text-brand-green text-sm" id="txt-type-in">存入</span>
                         </label>
@@ -287,7 +297,7 @@
                     <div id="field-asset-select">
                         <label class="block text-app-muted mb-1">選擇資產帳戶</label>
                         <input type="hidden" id="input-asset-type" value="TWD">
-                        <button type="button" onclick="triggerTxAssetPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium">
+                        <button type="button" onclick="triggerTxAssetPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium active:scale-98">
                             <span id="tx-asset-btn-txt">台幣帳戶 (TWD)</span>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-app-muted"></i>
                         </button>
@@ -296,7 +306,7 @@
                     <div id="field-stock-market" class="hidden">
                         <label class="block text-app-muted mb-1">股票市場</label>
                         <input type="hidden" id="input-stock-market" value="TW_STOCK">
-                        <button type="button" onclick="triggerTxMarketPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium">
+                        <button type="button" onclick="triggerTxMarketPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium active:scale-98">
                             <span id="tx-market-btn-txt">台股 (TWD)</span>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-app-muted"></i>
                         </button>
@@ -314,14 +324,14 @@
                             <div>
                                 <label class="block text-app-muted mb-1">交易股數</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-stock-shares" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
+                                    <input type="number" id="input-stock-shares" step="any" placeholder="" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
                                     <button type="button" onclick="clearInput('input-stock-shares', 'calculateStockTotal')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-app-muted mb-1">每股成交價</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-stock-price" step="any" placeholder="0.00" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
+                                    <input type="number" id="input-stock-price" step="any" placeholder="" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
                                     <button type="button" onclick="clearInput('input-stock-price', 'calculateStockTotal')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
@@ -329,7 +339,7 @@
                         <div>
                             <label class="block text-app-muted mb-1">手續費金額</label>
                             <div class="relative flex items-center">
-                                <input type="number" id="input-stock-fee" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
+                                <input type="number" id="input-stock-fee" step="any" placeholder="" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
                                 <button type="button" onclick="clearInput('input-stock-fee', 'calculateStockTotal')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                             </div>
                         </div>
@@ -338,7 +348,7 @@
                     <div id="field-category">
                         <label class="block text-app-muted mb-1">消費 / 收入分類</label>
                         <input type="hidden" id="input-category" value="🍱 餐飲美食">
-                        <button type="button" onclick="triggerTxCategoryPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium">
+                        <button type="button" onclick="triggerTxCategoryPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium active:scale-98">
                             <span id="tx-category-btn-txt">🍱 餐飲美食</span>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-app-muted"></i>
                         </button>
@@ -347,7 +357,7 @@
                     <div>
                         <label class="block text-app-muted mb-1">金額 <span id="auto-calc-notice" class="text-brand-gold text-[10px] font-normal hidden">(自動計算總額)</span></label>
                         <div class="relative flex items-center">
-                            <input type="number" id="input-amount" step="any" required placeholder="0.00" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main text-lg font-bold outline-none focus:border-brand-gold">
+                            <input type="number" id="input-amount" step="any" required placeholder="" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main text-lg font-bold outline-none focus:border-brand-gold">
                             <button type="button" onclick="clearInput('input-amount')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                         </div>
                     </div>
@@ -355,12 +365,12 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-app-muted mb-1">日期</label>
-                            <button type="button" onclick="openCustomDatePicker('TX_INPUT')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2 text-app-main text-left flex items-center justify-between">
+                            <button type="button" onclick="openCustomDatePicker('TX_INPUT')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2 text-app-main text-left flex items-center justify-between active:scale-98">
                                 <span class="flex items-center gap-1 font-mono text-xs">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
-                                    <span id="input-date-display">2026-08-05</span>
+                                    <span id="input-date-display">2026-08-06</span>
                                 </span>
-                                <input type="hidden" id="input-date" value="2026-08-05">
+                                <input type="hidden" id="input-date" value="2026-08-06">
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted shrink-0"></i>
                             </button>
                         </div>
@@ -373,7 +383,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-4 hover:opacity-90 active:scale-98 transition-all shadow-md text-sm">
+                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-4 hover:opacity-90 active:scale-95 transition-all shadow-md text-sm">
                         確認儲存交易
                     </button>
                 </form>
@@ -390,23 +400,32 @@
                 <h3 id="toast-title" class="font-bold text-sm text-app-main">系統提示</h3>
                 <p id="toast-msg" class="text-xs text-app-muted leading-relaxed"></p>
                 <div class="pt-2 flex gap-2">
-                    <button onclick="closeModal('toast-modal')" class="w-full bg-brand-gold text-white py-2 rounded-xl text-xs font-bold">確定</button>
+                    <button onclick="closeModal('toast-modal')" class="w-full bg-brand-gold text-white py-2 rounded-xl text-xs font-bold active:scale-95">確定</button>
                 </div>
             </div>
         </div>
 
-        <!-- Confirm Reset Modal -->
-        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'confirm-modal')" onmousedown="initSwipeToClose(event, 'confirm-modal')">
+        <!-- Confirm Reset Modal (Bottom Sheet Modal) -->
+        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-end justify-center p-0">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'confirm-modal')" onmousedown="initSwipeToClose(event, 'confirm-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red">
-                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                    <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i> 確認初始化重置？
+                    </h3>
+                    <button onclick="closeModal('confirm-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
                 </div>
-                <h3 class="font-bold text-sm text-app-main">確認初始化重置？</h3>
-                <p class="text-xs text-app-muted leading-relaxed">此動作將會清空所有資產數據、交易歷史紀錄、固定支出與分期設定，且無法復原！</p>
+                <div class="py-2 text-center space-y-2">
+                    <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red mb-2">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-xs text-app-muted leading-relaxed">此動作將會徹底清空所有資產數據、交易歷史紀錄、固定支出與分期設定，並同步更新最新即時匯率，且無法復原！</p>
+                </div>
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold">取消</button>
-                    <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow">確定重置</button>
+                    <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold active:scale-95">取消</button>
+                    <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow active:scale-95">確定重置並更新匯率</button>
                 </div>
             </div>
         </div>
@@ -419,7 +438,7 @@
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="list" class="w-4 h-4"></i> 選擇選項
                     </h3>
-                    <button type="button" onclick="closeModal('custom-option-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button type="button" onclick="closeModal('custom-option-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -428,7 +447,7 @@
                     <label class="text-[10px] text-app-muted block font-medium">+ 新增自訂分類</label>
                     <div class="flex gap-1.5">
                         <input type="text" id="new-category-input" placeholder="輸入新分類名稱..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
-                        <button type="button" onclick="addNewCustomCategory()" class="bg-brand-gold text-white font-bold px-3 py-1.5 rounded-xl text-xs shrink-0">新增</button>
+                        <button type="button" onclick="addNewCustomCategory()" class="bg-brand-gold text-white font-bold px-3 py-1.5 rounded-xl text-xs shrink-0 active:scale-95">新增</button>
                     </div>
                 </div>
             </div>
@@ -442,7 +461,7 @@
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="repeat" class="w-4 h-4"></i> 新增固定支出/存入
                     </h3>
-                    <button onclick="closeModal('recurring-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('recurring-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -458,16 +477,16 @@
                         <div>
                             <label class="block text-app-muted mb-1">交易類型</label>
                             <input type="hidden" id="rec-type-val" value="支出">
-                            <button type="button" onclick="triggerRecTypePicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-app-main flex justify-between items-center font-medium">
+                            <button type="button" onclick="triggerRecTypePicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-app-main flex justify-between items-center font-medium active:scale-98">
                                 <span id="rec-type-btn-txt">支出</span>
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                             </button>
                         </div>
                         <div>
                             <label class="block text-app-muted mb-1">日期</label>
-                            <input type="hidden" id="rec-date-val" value="2026-08-05">
-                            <button type="button" onclick="openCustomDatePicker('REC_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2 text-app-main flex justify-between items-center font-mono text-xs">
-                                <span id="rec-date-btn-txt" class="truncate">2026-08-05</span>
+                            <input type="hidden" id="rec-date-val" value="2026-08-06">
+                            <button type="button" onclick="openCustomDatePicker('REC_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2 text-app-main flex justify-between items-center font-mono text-xs active:scale-98">
+                                <span id="rec-date-btn-txt" class="truncate">2026-08-06</span>
                                 <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
                             </button>
                         </div>
@@ -476,20 +495,20 @@
                         <div>
                             <label class="block text-app-muted mb-1">金額</label>
                             <div class="relative flex items-center">
-                                <input type="number" id="rec-amount" required placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono outline-none focus:border-brand-gold">
+                                <input type="number" id="rec-amount" required placeholder="" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono outline-none focus:border-brand-gold">
                                 <button type="button" onclick="clearInput('rec-amount')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                             </div>
                         </div>
                         <div>
                             <label class="block text-app-muted mb-1">帳戶</label>
                             <input type="hidden" id="rec-asset-val" value="TWD">
-                            <button type="button" onclick="triggerRecAssetPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-app-main flex justify-between items-center font-medium">
+                            <button type="button" onclick="triggerRecAssetPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-app-main flex justify-between items-center font-medium active:scale-98">
                                 <span id="rec-asset-btn-txt">台幣 (TWD)</span>
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                             </button>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl mt-2 shadow">儲存規則</button>
+                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl mt-2 shadow active:scale-95">儲存規則</button>
                 </form>
             </div>
         </div>
@@ -502,7 +521,7 @@
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="credit-card" class="w-4 h-4"></i> 新增分期付款
                     </h3>
-                    <button onclick="closeModal('installment-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('installment-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -516,9 +535,9 @@
                     </div>
                     <div>
                         <label class="block text-app-muted mb-1">首期扣款 / 起始日期</label>
-                        <input type="hidden" id="inst-date-val" value="2026-08-05">
-                        <button type="button" onclick="openCustomDatePicker('INST_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-app-main flex justify-between items-center font-mono text-xs">
-                            <span id="inst-date-btn-txt">2026-08-05</span>
+                        <input type="hidden" id="inst-date-val" value="2026-08-06">
+                        <button type="button" onclick="openCustomDatePicker('INST_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-app-main flex justify-between items-center font-mono text-xs active:scale-98">
+                            <span id="inst-date-btn-txt">2026-08-06</span>
                             <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i>
                         </button>
                     </div>
@@ -526,7 +545,7 @@
                         <div>
                             <label class="block text-app-muted mb-1">總金額</label>
                             <div class="relative flex items-center">
-                                <input type="number" id="inst-total" required placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono outline-none focus:border-brand-gold">
+                                <input type="number" id="inst-total" required placeholder="" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono outline-none focus:border-brand-gold">
                                 <button type="button" onclick="clearInput('inst-total')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                             </div>
                         </div>
@@ -538,7 +557,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl mt-2 shadow">建立分期</button>
+                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl mt-2 shadow active:scale-95">建立分期</button>
                 </form>
             </div>
         </div>
@@ -551,7 +570,7 @@
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期
                     </h3>
-                    <button onclick="closeModal('custom-date-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('custom-date-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -567,7 +586,7 @@
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">
                         <i data-lucide="candlestick-chart" class="w-4 h-4"></i> 股票交易紀錄
                     </h3>
-                    <button onclick="closeModal('stock-history-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('stock-history-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -584,7 +603,7 @@
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="image" class="w-4 h-4"></i> 匯出資產報表 (JPG)
                     </h3>
-                    <button onclick="closeModal('export-jpg-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('export-jpg-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -610,7 +629,7 @@
                         </select>
                     </div>
                     <div id="export-jpg-date-picker-box" class="hidden space-y-1.5"></div>
-                    <button onclick="generateAndDownloadJPG()" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl mt-2 shadow flex items-center justify-center gap-1.5">
+                    <button onclick="generateAndDownloadJPG()" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl mt-2 shadow flex items-center justify-center gap-1.5 active:scale-95">
                         <i data-lucide="download" class="w-4 h-4"></i> 下載 JPG 報表圖片
                     </button>
                 </div>
@@ -657,7 +676,7 @@
         let currentOptionTarget = null;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v15_swipe_fixed');
+            const saved = localStorage.getItem('wealth_app_data_v17_fix_inputs');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -671,7 +690,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v15_swipe_fixed', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v17_fix_inputs', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -773,7 +792,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v10';
+                    const CACHE = 'wealth-ledger-v15';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -883,7 +902,7 @@
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
                 sheet.classList.remove('is-closing');
-                void sheet.offsetWidth; // 強制重繪確保動畫觸發
+                void sheet.offsetWidth;
                 sheet.classList.add('is-open');
             }
             if (window.lucide) lucide.createIcons();
@@ -900,10 +919,57 @@
                     modal.classList.add('hidden');
                     sheet.classList.remove('is-closing');
                     document.body.classList.remove('modal-open');
-                }, 320); // 動畫時間 0.32s
+                    resetModalContent(modalId);
+                }, 320);
             } else {
                 modal.classList.add('hidden');
                 document.body.classList.remove('modal-open');
+                resetModalContent(modalId);
+            }
+        }
+
+        function resetModalContent(modalId) {
+            if (modalId === 'transaction-modal') {
+                const form = document.getElementById('tx-form');
+                if (form) form.reset();
+                setModalMode('cash');
+                setTxType('支出');
+                const todayStr = new Date().toISOString().split('T')[0];
+                document.getElementById('input-date').value = todayStr;
+                document.getElementById('input-date-display').innerText = todayStr;
+                document.getElementById('input-asset-type').value = 'TWD';
+                document.getElementById('tx-asset-btn-txt').innerText = '台幣帳戶 (TWD)';
+                document.getElementById('input-category').value = '🍱 餐飲美食';
+                document.getElementById('tx-category-btn-txt').innerText = '🍱 餐飲美食';
+                document.querySelectorAll('#transaction-modal .clear-btn').forEach(b => b.classList.add('hidden'));
+            } else if (modalId === 'recurring-modal') {
+                const form = document.getElementById('recurring-form');
+                if (form) form.reset();
+                document.getElementById('rec-type-val').value = '支出';
+                document.getElementById('rec-type-btn-txt').innerText = '支出';
+                const todayStr = new Date().toISOString().split('T')[0];
+                document.getElementById('rec-date-val').value = todayStr;
+                document.getElementById('rec-date-btn-txt').innerText = todayStr;
+                document.getElementById('rec-asset-val').value = 'TWD';
+                document.getElementById('rec-asset-btn-txt').innerText = '台幣 (TWD)';
+                document.querySelectorAll('#recurring-modal .clear-btn').forEach(b => b.classList.add('hidden'));
+            } else if (modalId === 'installment-modal') {
+                const form = document.getElementById('installment-form');
+                if (form) form.reset();
+                const todayStr = new Date().toISOString().split('T')[0];
+                document.getElementById('inst-date-val').value = todayStr;
+                document.getElementById('inst-date-btn-txt').innerText = todayStr;
+                document.getElementById('inst-months').value = '12';
+                document.querySelectorAll('#installment-modal .clear-btn').forEach(b => b.classList.add('hidden'));
+            } else if (modalId === 'export-jpg-modal') {
+                const assetSel = document.getElementById('export-jpg-asset-select');
+                if (assetSel) assetSel.value = 'ALL';
+                const rangeSel = document.getElementById('export-jpg-range-select');
+                if (rangeSel) rangeSel.value = 'ALL';
+                updateExportJpgRangeUI();
+            } else if (modalId === 'custom-option-modal') {
+                const newCatInput = document.getElementById('new-category-input');
+                if (newCatInput) newCatInput.value = '';
             }
         }
 
@@ -951,12 +1017,7 @@
                 sheet.style.transform = '';
 
                 if (currentDelta > 75) {
-                    sheet.classList.add('is-closing');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        sheet.classList.remove('is-closing');
-                        document.body.classList.remove('modal-open');
-                    }, 320);
+                    closeModal(modalId);
                 } else {
                     sheet.classList.add('is-open');
                 }
@@ -1103,9 +1164,8 @@
             }
 
             const newTx = { id: 'tx_' + Date.now(), type: txType, asset, category, amount, note, date, stockSymbol, shares, price, fee };
-            if (txType === '存入') appData.assets[asset] += amount;
-            else appData.assets[asset] -= amount;
-
+            
+            // 記錄交易，僅更新動態交易紀錄流水帳與對應資產，不影響初始本金設定
             appData.transactions.unshift(newTx);
             saveData();
             closeModal('transaction-modal');
@@ -1114,9 +1174,6 @@
         function deleteTransaction(id) {
             const idx = appData.transactions.findIndex(t => t.id === id);
             if (idx !== -1) {
-                const tx = appData.transactions[idx];
-                if (tx.type === '存入') appData.assets[tx.asset] -= tx.amount;
-                else appData.assets[tx.asset] += tx.amount;
                 appData.transactions.splice(idx, 1);
                 saveData();
             }
@@ -1156,7 +1213,7 @@
                         </div>
                         <div class="text-right">
                             <div class="font-bold font-mono text-xs ${tx.type === '存入' ? 'text-brand-green' : 'text-brand-red'}">${currSymbol}${Number(tx.amount).toLocaleString()}</div>
-                            <button onclick="deleteTransaction('${tx.id}'); openStockHistoryModal('${symbol.replace(/'/g, "\\'")}');" class="text-[10px] text-app-muted hover:text-brand-red">刪除</button>
+                            <button onclick="deleteTransaction('${tx.id}'); openStockHistoryModal('${symbol.replace(/'/g, "\\'")}');" class="text-[10px] text-app-muted hover:text-brand-red active:scale-75">刪除</button>
                         </div>
                     </div>
                 `).join('');
@@ -1166,7 +1223,7 @@
 
         function saveTitleSetting() {
             const val = document.getElementById('setting-title')?.value;
-            if (val) {
+            if (val !== undefined) {
                 appData.appTitle = val;
                 saveData();
                 updateHeaderDate();
@@ -1174,9 +1231,29 @@
             }
         }
 
-        function saveBudgetSetting(val) { appData.monthlyBudget = parseFloat(val) || 0; saveData(); }
-        function saveFxSetting(val) { appData.usdExchangeRate = parseFloat(val) || 32.5; saveData(); }
-        function updateAssetBalance(assetKey, val) { appData.assets[assetKey] = parseFloat(val) || 0; saveData(); }
+        function saveBudgetSettingOnBlur(val) {
+            appData.monthlyBudget = val === '' ? 0 : (parseFloat(val) || 0);
+            saveData(false);
+        }
+
+        function resetBudgetSetting() {
+            appData.monthlyBudget = 0;
+            const input = document.getElementById('setting-budget');
+            if (input) input.value = '';
+            saveData();
+            showToast("預算已重置", "本月預算已歸零。");
+        }
+
+        function saveFxSettingOnBlur(val) {
+            appData.usdExchangeRate = val === '' ? 32.5 : (parseFloat(val) || 32.5);
+            saveData(false);
+        }
+
+        function updateAssetBalanceOnBlur(assetKey, val) {
+            appData.assets[assetKey] = val === '' ? 0 : (parseFloat(val) || 0);
+            saveData(false);
+        }
+
         function deleteRecurringRule(id) { appData.recurringRules = appData.recurringRules.filter(r => r.id !== id); saveData(); }
         function deleteInstallment(id) { appData.installments = appData.installments.filter(i => i.id !== id); saveData(); }
 
@@ -1206,7 +1283,7 @@
                             <div class="font-bold font-mono text-sm ${isExpense ? 'text-brand-red' : 'text-brand-green'}">
                                 ${isExpense ? '-' : '+'} ${currency} ${Number(tx.amount).toLocaleString()}
                             </div>
-                            <button onclick="deleteTransaction('${tx.id}')" class="text-[10px] text-app-muted hover:text-brand-red">刪除</button>
+                            <button onclick="deleteTransaction('${tx.id}')" class="text-[10px] text-app-muted hover:text-brand-red active:scale-75">刪除</button>
                         </div>
                     </div>
                 `;
@@ -1229,7 +1306,7 @@
                             <span onclick="navigateToDetails('ALL')" class="flex items-center gap-1 font-medium cursor-pointer hover:text-brand-gold">
                                 淨資產總額估算 (NTD) <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i>
                             </span>
-                            <button onclick="updateExchangeRateAuto(true)" title="即時刷新匯率" class="bg-app-surface text-brand-gold px-2 py-0.5 rounded-full text-[10px] border border-brand-gold/30 font-mono flex items-center gap-1 active:scale-95">
+                            <button onclick="updateExchangeRateAuto(true)" title="即時刷新匯率" class="bg-app-surface text-brand-gold px-2 py-0.5 rounded-full text-[10px] border border-brand-gold/30 font-mono flex items-center gap-1 active:scale-90 hover:scale-105">
                                 1 USD = ${appData.usdExchangeRate} TWD <i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i>
                             </button>
                         </div>
@@ -1248,7 +1325,7 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 w-full">
-                        <div onclick="navigateToDetails('TWD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-98">
+                        <div onclick="navigateToDetails('TWD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
                             <div class="flex justify-between items-start mb-1.5">
                                 <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> 台幣現金</span>
                                 <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">TWD</span>
@@ -1256,7 +1333,7 @@
                             <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()}</div>
                             <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">活存 / 現金儲蓄</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
                         </div>
-                        <div onclick="navigateToDetails('TW_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-98">
+                        <div onclick="navigateToDetails('TW_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
                             <div class="flex justify-between items-start mb-1.5">
                                 <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> 台股市值</span>
                                 <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">TW Stock</span>
@@ -1264,7 +1341,7 @@
                             <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
                             <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">股票證券 (TWD)</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>
                         </div>
-                        <div onclick="navigateToDetails('USD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-98">
+                        <div onclick="navigateToDetails('USD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
                             <div class="flex justify-between items-start mb-1.5">
                                 <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> 美金現金</span>
                                 <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">USD</span>
@@ -1272,7 +1349,7 @@
                             <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()}</div>
                             <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ NT$ ${(appData.assets.USD * appData.usdExchangeRate).toLocaleString('zh-TW', {maximumFractionDigits:0})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
                         </div>
-                        <div onclick="navigateToDetails('US_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-98">
+                        <div onclick="navigateToDetails('US_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
                             <div class="flex justify-between items-start mb-1.5">
                                 <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> 美股市值</span>
                                 <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">US Stock</span>
@@ -1323,9 +1400,9 @@
                             <button onclick="setFilterRange('MONTHLY')" class="py-1.5 rounded-lg font-medium ${filterRange === 'MONTHLY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">月度總覽</button>
                             <button onclick="setFilterRange('CUSTOM')" class="py-1.5 rounded-lg font-medium ${filterRange === 'CUSTOM' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">自訂區間</button>
                         </div>
-                        ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> ${filterCustomDate}</button></div>` : ''}
-                        ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> ${filterMonthDate}</button></div>` : ''}
-                        ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-1 font-mono">${filterStartDate}</button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-1 font-mono">${filterEndDate}</button></div>` : ''}
+                        ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1 font-mono active:scale-95"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> ${filterCustomDate}</button></div>` : ''}
+                        ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1 font-mono active:scale-95"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> ${filterMonthDate}</button></div>` : ''}
+                        ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-1 font-mono active:scale-95">${filterStartDate}</button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-1 font-mono active:scale-95">${filterEndDate}</button></div>` : ''}
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
                             <button onclick="setFilterType('ALL')" class="flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}">全部種類</button>
                             <button onclick="setFilterType('支出')" class="flex-1 py-1 rounded-md text-center ${filterType === '支出' ? 'text-brand-red font-bold bg-app-surface' : 'text-app-muted'}">支出明細</button>
@@ -1365,7 +1442,7 @@
                 const isTW = h.asset === 'TW_STOCK';
                 const currencySymbol = isTW ? 'NT$' : '$';
                 return `
-                    <div onclick="openStockHistoryModal('${h.symbol.replace(/'/g, "\\'")}')" class="bg-app-card border border-app-line p-3 rounded-2xl flex justify-between items-center w-full hover:border-brand-blue cursor-pointer active:scale-98 shadow-xs">
+                    <div onclick="openStockHistoryModal('${h.symbol.replace(/'/g, "\\'")}')" class="bg-app-card border border-app-line p-3 rounded-2xl flex justify-between items-center w-full hover:border-brand-blue cursor-pointer active:scale-95 shadow-xs">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-brand-blue/15 text-brand-blue"><i data-lucide="candlestick-chart" class="w-5 h-5"></i></div>
                             <div class="min-w-0">
@@ -1405,7 +1482,7 @@
                         <div class="text-center py-12 text-app-muted bg-app-card rounded-2xl border border-app-line w-full">
                             <i data-lucide="line-chart" class="w-12 h-12 mx-auto mb-2 opacity-30 text-brand-gold"></i>
                             <p class="text-xs">尚無股票交易紀錄</p>
-                            <button onclick="openTransactionModal(); setModalMode('stock');" class="mt-3 text-xs bg-brand-gold text-white px-3 py-1.5 rounded-lg font-bold">新增首筆股票交易</button>
+                            <button onclick="openTransactionModal(); setModalMode('stock');" class="mt-3 text-xs bg-brand-gold text-white px-3 py-1.5 rounded-lg font-bold active:scale-95">新增首筆股票交易</button>
                         </div>
                     ` : `
                         <div class="space-y-4 w-full">
@@ -1435,7 +1512,7 @@
                 <div class="animate-fade space-y-4 w-full">
                     <div class="flex justify-between items-center bg-app-card px-4 py-3 rounded-2xl border border-app-line">
                         <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="settings" class="w-4 h-4 text-brand-gold"></i> 系統設定面板</span>
-                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold">‹ 返回首頁</button>
+                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">‹ 返回首頁</button>
                     </div>
 
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
@@ -1447,23 +1524,32 @@
                                     <input type="text" id="setting-title" value="${appData.appTitle || ''}" placeholder="智慧帳本" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-xs text-app-main outline-none focus:border-brand-gold">
                                     <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
-                                <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold">儲存</button>
+                                <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs text-app-muted mb-1">本月預算 (NTD)</label>
-                                <div class="relative flex items-center">
-                                    <input type="number" id="setting-budget" value="${appData.monthlyBudget || ''}" placeholder="0" oninput="toggleClearBtn(this); saveBudgetSetting(this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono">
-                                    <button type="button" onclick="clearInput('setting-budget')" class="clear-btn absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-app-muted">本月預算 (NTD)</label>
+                                    <button onclick="resetBudgetSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
+                                </div>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="setting-budget" value="${appData.monthlyBudget === 0 ? '' : appData.monthlyBudget}" placeholder="0" onblur="saveBudgetSettingOnBlur(this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('setting-budget', function(){ saveBudgetSettingOnBlur(0); })" class="clear-btn ${appData.monthlyBudget === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="showToast('預算提示', '本月預算上限已更新。')" title="檢查預算" class="bg-brand-gold text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs text-app-muted mb-1">美金換算匯率</label>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-app-muted">美金換算匯率</label>
+                                    <button onclick="updateExchangeRateAuto(true)" class="text-[10px] text-brand-blue font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="即時抓取最新匯率"><i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i> 即時更新</button>
+                                </div>
                                 <div class="flex gap-1">
                                     <div class="relative flex-1 flex items-center">
-                                        <input type="number" step="0.1" id="setting-fx" value="${appData.usdExchangeRate || ''}" placeholder="32.5" oninput="toggleClearBtn(this); saveFxSetting(this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-2 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono">
-                                        <button type="button" onclick="clearInput('setting-fx')" class="clear-btn absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                        <input type="number" step="0.1" id="setting-fx" value="${appData.usdExchangeRate || ''}" placeholder="32.5" onblur="saveFxSettingOnBlur(this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('setting-fx', function(){ saveFxSettingOnBlur(32.5); })" class="clear-btn ${appData.usdExchangeRate ? '' : 'hidden'} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                     </div>
                                     <button onclick="updateExchangeRateAuto(true)" title="即時刷新匯率" class="bg-brand-blue text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i></button>
                                 </div>
@@ -1477,29 +1563,29 @@
                             <div>
                                 <label class="text-app-muted block mb-1">台幣現金 (TWD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-twd" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('TWD', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
-                                    <button type="button" onclick="clearInput('input-asset-twd')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    <input type="number" id="input-asset-twd" value="${appData.assets.TWD === 0 ? '' : appData.assets.TWD}" placeholder="0" onblur="updateAssetBalanceOnBlur('TWD', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
+                                    <button type="button" onclick="clearInput('input-asset-twd', function(){ updateAssetBalanceOnBlur('TWD', 0); })" class="clear-btn ${appData.assets.TWD === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">台股市值 (TWD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-twstock" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('TW_STOCK', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
-                                    <button type="button" onclick="clearInput('input-asset-twstock')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    <input type="number" id="input-asset-twstock" value="${appData.assets.TW_STOCK === 0 ? '' : appData.assets.TW_STOCK}" placeholder="0" onblur="updateAssetBalanceOnBlur('TW_STOCK', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
+                                    <button type="button" onclick="clearInput('input-asset-twstock', function(){ updateAssetBalanceOnBlur('TW_STOCK', 0); })" class="clear-btn ${appData.assets.TW_STOCK === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">美金現金 (USD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-usd" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('USD', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
-                                    <button type="button" onclick="clearInput('input-asset-usd')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    <input type="number" id="input-asset-usd" value="${appData.assets.USD === 0 ? '' : appData.assets.USD}" placeholder="0" onblur="updateAssetBalanceOnBlur('USD', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
+                                    <button type="button" onclick="clearInput('input-asset-usd', function(){ updateAssetBalanceOnBlur('USD', 0); })" class="clear-btn ${appData.assets.USD === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">美股市值 (USD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-usstock" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('US_STOCK', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
-                                    <button type="button" onclick="clearInput('input-asset-usstock')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    <input type="number" id="input-asset-usstock" value="${appData.assets.US_STOCK === 0 ? '' : appData.assets.US_STOCK}" placeholder="0" onblur="updateAssetBalanceOnBlur('US_STOCK', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
+                                    <button type="button" onclick="clearInput('input-asset-usstock', function(){ updateAssetBalanceOnBlur('US_STOCK', 0); })" class="clear-btn ${appData.assets.US_STOCK === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                         </div>
@@ -1508,7 +1594,7 @@
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="repeat" class="w-4 h-4"></i> 每月固定支出/存入</h3>
-                            <button onclick="openModal('recurring-modal')" class="text-xs text-brand-blue hover:underline font-bold">+ 新增規則</button>
+                            <button onclick="openModal('recurring-modal')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">+ 新增規則</button>
                         </div>
                         <div class="space-y-2 text-xs">
                             ${appData.recurringRules.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定自動扣款規則</div>' : appData.recurringRules.map(r => `
@@ -1517,7 +1603,7 @@
                                         <div class="font-bold text-app-main">${r.name}</div>
                                         <div class="text-[10px] text-app-muted font-mono">日期: ${r.startDate || '每月 '+r.day+' 號'} (每月 ${r.day} 號 自動${r.type} $${r.amount} ${r.asset})</div>
                                     </div>
-                                    <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             `).join('')}
                         </div>
@@ -1526,12 +1612,12 @@
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="credit-card" class="w-4 h-4"></i> 分期付款設定</h3>
-                            <button onclick="openModal('installment-modal')" class="text-xs text-brand-blue hover:underline font-bold">+ 新增分期</button>
+                            <button onclick="openModal('installment-modal')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">+ 新增分期</button>
                         </div>
                         <div class="space-y-2 text-xs">
                             ${appData.installments.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定分期付款</div>' : appData.installments.map(i => `
                                 <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1">
-                                    <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
+                                    <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
                                     <div class="flex justify-between text-[11px] text-app-muted font-mono"><span>總額: $${i.totalAmount.toLocaleString()} (每期: $${i.monthlyAmount.toLocaleString()})</span><span>${i.paidMonths}/${i.totalMonths} 期 (起始日: ${i.startDate || '1號'})</span></div>
                                 </div>
                             `).join('')}
@@ -1541,18 +1627,18 @@
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="database" class="w-4 h-4"></i> 備份與維護</h3>
                         <div class="grid grid-cols-2 gap-2 text-xs">
-                            <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出備份 (JSON)</button>
-                            <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
+                            <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出備份 (JSON)</button>
+                            <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
                         </div>
-                        <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs font-bold"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</button>
-                        <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
+                        <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</button>
+                        <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
                     </div>
 
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-4 h-4"></i> 介面色彩主題</h3>
                         <div class="grid grid-cols-2 gap-2 text-xs">
-                            <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'}"><i data-lucide="sun" class="w-4 h-4"></i> 淺色模式 Light</button>
-                            <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'}"><i data-lucide="moon" class="w-4 h-4"></i> 深色模式 Dark</button>
+                            <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> 淺色模式 Light</button>
+                            <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> 深色模式 Dark</button>
                         </div>
                     </div>
                 </div>
@@ -1563,7 +1649,7 @@
             currentOptionTarget = target;
             document.getElementById('option-modal-title').innerHTML = `<i data-lucide="list" class="w-4 h-4"></i> ${title}`;
             document.getElementById('option-modal-list').innerHTML = options.map(opt => `
-                <button type="button" onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="w-full text-left p-3 rounded-xl border ${opt.value === currentVal ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all active:scale-98">
+                <button type="button" onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="w-full text-left p-3 rounded-xl border ${opt.value === currentVal ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all active:scale-95">
                     <span class="text-app-main">${opt.label}</span>
                     ${opt.value === currentVal ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold"></i>' : ''}
                 </button>
@@ -1722,32 +1808,34 @@
         function renderSingleDayPickerHtml(currDateStr) {
             const [y, m, d] = (currDateStr || new Date().toISOString().split('T')[0]).split('-').map(Number);
             const todayStr = new Date().toISOString().split('T')[0];
+            const currentYear = new Date().getFullYear();
             return `
                 <div class="space-y-3 text-xs">
                     <div class="grid grid-cols-3 gap-1">
-                        <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-year" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-1.5 text-app-main font-mono">${Array.from({length: 6}, (_, i) => 2024 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
+                        <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-year" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-1.5 text-app-main font-mono">${Array.from({length: currentYear - 2000 + 1}, (_, i) => 2000 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
                         <div><label class="block text-app-muted text-[10px] mb-1">月份</label><select id="dp-month" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-1.5 text-app-main font-mono">${Array.from({length: 12}, (_, i) => i + 1).map(mo => `<option value="${String(mo).padStart(2,'0')}" ${mo === m ? 'selected' : ''}>${mo}月</option>`).join('')}</select></div>
                         <div><label class="block text-app-muted text-[10px] mb-1">日期</label><select id="dp-day" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-1.5 text-app-main font-mono">${Array.from({length: 31}, (_, i) => i + 1).map(dy => `<option value="${String(dy).padStart(2,'0')}" ${dy === d ? 'selected' : ''}>${dy}日</option>`).join('')}</select></div>
                     </div>
                     <div class="flex gap-1.5 pt-1">
-                        <button type="button" onclick="setQuickDate('${todayStr}')" class="flex-1 bg-app-card border border-app-line py-1.5 rounded-lg text-[10px] text-app-main font-medium">今日</button>
-                        <button type="button" onclick="setQuickDate('${getRelativeDay(-1)}')" class="flex-1 bg-app-card border border-app-line py-1.5 rounded-lg text-[10px] text-app-main font-medium">昨天</button>
-                        <button type="button" onclick="setQuickDate('${getRelativeDay(-7)}')" class="flex-1 bg-app-card border border-app-line py-1.5 rounded-lg text-[10px] text-app-main font-medium">7天前</button>
+                        <button type="button" onclick="setQuickDate('${todayStr}')" class="flex-1 bg-app-card border border-app-line py-1.5 rounded-lg text-[10px] text-app-main font-medium active:scale-95">今日</button>
+                        <button type="button" onclick="setQuickDate('${getRelativeDay(-1)}')" class="flex-1 bg-app-card border border-app-line py-1.5 rounded-lg text-[10px] text-app-main font-medium active:scale-95">昨天</button>
+                        <button type="button" onclick="setQuickDate('${getRelativeDay(-7)}')" class="flex-1 bg-app-card border border-app-line py-1.5 rounded-lg text-[10px] text-app-main font-medium active:scale-95">7天前</button>
                     </div>
-                    <button type="button" onclick="confirmCustomDate()" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl text-xs shadow">確認套用日期</button>
+                    <button type="button" onclick="confirmCustomDate()" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl text-xs shadow active:scale-95">確認套用日期</button>
                 </div>
             `;
         }
 
         function renderMonthPickerHtml(currMonthStr) {
             const [y, m] = (currMonthStr || new Date().toISOString().slice(0, 7)).split('-').map(Number);
+            const currentYear = new Date().getFullYear();
             return `
                 <div class="space-y-3 text-xs">
                     <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-m-year" class="w-full bg-app-input border border-app-line rounded-xl px-2 py-2 text-app-main font-mono">${Array.from({length: 6}, (_, i) => 2024 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
+                        <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-m-year" class="w-full bg-app-input border border-app-line rounded-xl px-2 py-2 text-app-main font-mono">${Array.from({length: currentYear - 2000 + 1}, (_, i) => 2000 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
                         <div><label class="block text-app-muted text-[10px] mb-1">月份</label><select id="dp-m-month" class="w-full bg-app-input border border-app-line rounded-xl px-2 py-2 text-app-main font-mono">${Array.from({length: 12}, (_, i) => i + 1).map(mo => `<option value="${String(mo).padStart(2,'0')}" ${mo === m ? 'selected' : ''}>${mo}月</option>`).join('')}</select></div>
                     </div>
-                    <button type="button" onclick="confirmCustomMonth()" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl text-xs shadow">確認套用月份</button>
+                    <button type="button" onclick="confirmCustomMonth()" class="w-full bg-brand-gold text-white font-bold py-2.5 rounded-xl text-xs shadow active:scale-95">確認套用月份</button>
                 </div>
             `;
         }
@@ -1789,16 +1877,16 @@
             if (rangeVal === 'ALL' || rangeVal === 'RECENT30') { box.classList.add('hidden'); box.innerHTML = ''; }
             else if (rangeVal === 'SINGLE_DAY') {
                 box.classList.remove('hidden');
-                box.innerHTML = `<div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">選擇日期:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_SINGLE')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgCustomDate}</button></div>`;
+                box.innerHTML = `<div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">選擇日期:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_SINGLE')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1 active:scale-95"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgCustomDate}</button></div>`;
             } else if (rangeVal === 'MONTHLY') {
                 box.classList.remove('hidden');
-                box.innerHTML = `<div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">選擇月份:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_MONTH')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgMonthDate}</button></div>`;
+                box.innerHTML = `<div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">選擇月份:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_MONTH')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1 active:scale-95"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgMonthDate}</button></div>`;
             } else if (rangeVal === 'CUSTOM') {
                 box.classList.remove('hidden');
                 box.innerHTML = `
                     <div class="space-y-1.5">
-                        <div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">起始日期:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_START')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgStartDate}</button></div>
-                        <div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">結束日期:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_END')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgEndDate}</button></div>
+                        <div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">起始日期:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_START')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1 active:scale-95"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgStartDate}</button></div>
+                        <div class="flex items-center justify-between bg-app-input border border-app-line p-2 rounded-xl text-xs"><span class="text-app-muted">結束日期:</span><button type="button" onclick="openCustomDatePicker('EXPORT_JPG_END')" class="bg-app-card text-brand-gold font-mono font-bold px-2.5 py-1 rounded-lg border border-brand-gold/40 flex items-center gap-1 active:scale-95"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${exportJpgEndDate}</button></div>
                     </div>
                 `;
             }
@@ -1823,8 +1911,9 @@
             ctx.fillStyle = bgColor; ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = goldCol; ctx.lineWidth = 4; ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
 
-            ctx.fillStyle = goldCol; ctx.font = 'bold 32px sans-serif'; ctx.fillText(appData.appTitle || '智慧帳本', 50, 75);
-            ctx.fillStyle = textMuted; ctx.font = '18px sans-serif'; ctx.fillText(`產生日期：${new Date().toLocaleDateString('zh-TW')}`, 50, 110);
+            // Using refined thin typography
+            ctx.fillStyle = goldCol; ctx.font = '32px sans-serif'; ctx.fillText(appData.appTitle || '智慧帳本', 50, 75);
+            ctx.fillStyle = textMuted; ctx.font = '16px sans-serif'; ctx.fillText(`產生日期：${new Date().toLocaleDateString('zh-TW')}`, 50, 110);
 
             ctx.strokeStyle = borderCol; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(50, 130); ctx.lineTo(750, 130); ctx.stroke();
 
@@ -1844,13 +1933,13 @@
             else ctx.fillRect(50, 150, 700, 140);
             ctx.strokeStyle = goldCol; ctx.lineWidth = 2; ctx.stroke();
 
-            ctx.fillStyle = textMuted; ctx.font = 'bold 20px sans-serif'; ctx.fillText(assetName, 80, 185);
-            ctx.fillStyle = goldCol; ctx.font = 'bold 42px sans-serif'; ctx.fillText(mainValStr, 80, 240);
-            if (subValStr) { ctx.fillStyle = textMuted; ctx.font = '18px sans-serif'; ctx.fillText(subValStr, 80, 270); }
+            ctx.fillStyle = textMuted; ctx.font = '18px sans-serif'; ctx.fillText(assetName, 80, 185);
+            ctx.fillStyle = goldCol; ctx.font = '38px sans-serif'; ctx.fillText(mainValStr, 80, 240);
+            if (subValStr) { ctx.fillStyle = textMuted; ctx.font = '16px sans-serif'; ctx.fillText(subValStr, 80, 270); }
 
             let startY = 320;
             if (assetKey === 'ALL') {
-                ctx.fillStyle = textMain; ctx.font = 'bold 22px sans-serif'; ctx.fillText('資產配置分布', 50, startY + 25);
+                ctx.fillStyle = textMain; ctx.font = '20px sans-serif'; ctx.fillText('資產配置分布', 50, startY + 25);
                 startY += 40;
                 const cards = [
                     { title: '台幣現金', val: `$ ${appData.assets.TWD.toLocaleString()} TWD`, col: goldCol },
@@ -1863,13 +1952,13 @@
                     ctx.fillStyle = cardBg;
                     if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, 340, 85, 12); ctx.fill(); ctx.strokeStyle = borderCol; ctx.stroke(); }
                     else ctx.fillRect(x, y, 340, 85);
-                    ctx.fillStyle = textMuted; ctx.font = '16px sans-serif'; ctx.fillText(c.title, x + 20, y + 30);
-                    ctx.fillStyle = c.col; ctx.font = 'bold 22px sans-serif'; ctx.fillText(c.val, x + 20, y + 65);
+                    ctx.fillStyle = textMuted; ctx.font = '15px sans-serif'; ctx.fillText(c.title, x + 20, y + 30);
+                    ctx.fillStyle = c.col; ctx.font = '20px sans-serif'; ctx.fillText(c.val, x + 20, y + 65);
                 });
                 startY += 210;
             }
 
-            ctx.fillStyle = textMain; ctx.font = 'bold 22px sans-serif'; ctx.fillText('近期交易紀錄', 50, startY + 25);
+            ctx.fillStyle = textMain; ctx.font = '20px sans-serif'; ctx.fillText('近期交易紀錄', 50, startY + 25);
             startY += 40;
 
             let filteredTxs = appData.transactions;
@@ -1881,7 +1970,7 @@
             filteredTxs = filteredTxs.slice(0, 7);
 
             if (filteredTxs.length === 0) {
-                ctx.fillStyle = textMuted; ctx.font = '18px sans-serif'; ctx.fillText('尚無符合條件的交易明細紀錄', 50, startY + 30);
+                ctx.fillStyle = textMuted; ctx.font = '16px sans-serif'; ctx.fillText('尚無符合條件的交易明細紀錄', 50, startY + 30);
             } else {
                 filteredTxs.forEach((tx, idx) => {
                     const y = startY + idx * 75;
@@ -1889,15 +1978,15 @@
                     if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(50, y, 700, 65, 12); ctx.fill(); ctx.strokeStyle = borderCol; ctx.lineWidth = 1; ctx.stroke(); }
                     else ctx.fillRect(50, y, 700, 65);
                     const isExpense = tx.type === '支出', curStr = (tx.asset === 'USD' || tx.asset === 'US_STOCK') ? 'USD' : 'NT$';
-                    ctx.fillStyle = textMain; ctx.font = 'bold 18px sans-serif'; ctx.fillText(`${tx.stockSymbol ? tx.stockSymbol : tx.category || '一般交易'}`, 70, y + 32);
-                    ctx.fillStyle = textMuted; ctx.font = '14px sans-serif'; ctx.fillText(`${tx.date} ${tx.note ? ' • ' + tx.note : ''} ${tx.shares ? ' • ' + tx.shares + '股' : ''}`, 70, y + 52);
-                    ctx.fillStyle = isExpense ? redCol : greenCol; ctx.font = 'bold 20px sans-serif'; ctx.textAlign = 'right';
+                    ctx.fillStyle = textMain; ctx.font = '16px sans-serif'; ctx.fillText(`${tx.stockSymbol ? tx.stockSymbol : tx.category || '一般交易'}`, 70, y + 32);
+                    ctx.fillStyle = textMuted; ctx.font = '13px sans-serif'; ctx.fillText(`${tx.date} ${tx.note ? ' • ' + tx.note : ''} ${tx.shares ? ' • ' + tx.shares + '股' : ''}`, 70, y + 52);
+                    ctx.fillStyle = isExpense ? redCol : greenCol; ctx.font = '18px sans-serif'; ctx.textAlign = 'right';
                     ctx.fillText(`${isExpense ? '-' : '+'} ${curStr} ${Number(tx.amount).toLocaleString()}`, 730, y + 40);
                     ctx.textAlign = 'left';
                 });
             }
 
-            ctx.fillStyle = textMuted; ctx.font = '14px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillStyle = textMuted; ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
             ctx.fillText(`${appData.appTitle || '智慧帳本'} 報表`, canvas.width / 2, canvas.height - 35);
             ctx.textAlign = 'left';
 
@@ -1928,11 +2017,12 @@
             reader.readAsText(file);
         }
 
-        function executeResetData() {
+        async function executeResetData() {
             closeModal('confirm-modal');
             appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
             saveData();
-            showToast("重置完成", "系統數據已恢復為零初始化狀態。");
+            await updateExchangeRateAuto(false);
+            showToast("重置完成", "系統所有資料與設定已完全重置歸零，並已同步更新最新即時匯率！");
         }
     </script>
 </body>
