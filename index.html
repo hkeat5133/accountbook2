@@ -367,7 +367,7 @@
                     <div>
                         <label class="block text-app-muted mb-1">金額 <span id="auto-calc-notice" class="text-brand-gold text-[10px] font-normal hidden">(自動計算總額)</span></label>
                         <div class="relative flex items-center">
-                            <input type="number" id="input-amount" step="any" required placeholder="" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main text-lg font-bold outline-none focus:border-brand-gold">
+                            <input type="number" id="input-amount" step="any" required placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main text-lg font-bold outline-none focus:border-brand-gold placeholder:text-app-muted/30">
                             <button type="button" onclick="clearInput('input-amount')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                         </div>
                     </div>
