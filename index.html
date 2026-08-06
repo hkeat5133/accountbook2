@@ -93,13 +93,22 @@
             to { opacity: 1; }
         }
 
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
+        /* 背景朦朧層進出場動畫完全對稱 */
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .modal-backdrop.is-closing {
+            animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
@@ -113,10 +122,6 @@
         .modal-sheet.is-open {
             transform: translateY(0) !important;
             opacity: 1 !important;
-        }
-
-        .modal-sheet.is-dragging {
-            transition: none !important;
         }
 
         .modal-sheet.is-closing {
@@ -177,7 +182,7 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
-        <!-- App Main Header Bar (設定在左，通知在右) -->
+        <!-- App Main Header Bar -->
         <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
@@ -247,7 +252,7 @@
 
         <!-- Notification Drawer Modal -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
-            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'notif-drawer', 'right')" onmousedown="initSwipeToClose(event, 'notif-drawer', 'right')">
+            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
@@ -266,7 +271,7 @@
 
         <!-- Add Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'transaction-modal')" onmousedown="initSwipeToClose(event, 'transaction-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
@@ -392,7 +397,7 @@
 
         <!-- Custom Toast Modal -->
         <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'toast-modal')" onmousedown="initSwipeToClose(event, 'toast-modal')">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
                     <i data-lucide="info" class="w-6 h-6"></i>
@@ -405,9 +410,9 @@
             </div>
         </div>
 
-        <!-- Confirm Reset Modal (Bottom Sheet Modal) -->
+        <!-- Confirm Reset Modal -->
         <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'confirm-modal')" onmousedown="initSwipeToClose(event, 'confirm-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
@@ -432,7 +437,7 @@
 
         <!-- Custom Option Picker Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'custom-option-modal')" onmousedown="initSwipeToClose(event, 'custom-option-modal')">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -455,7 +460,7 @@
 
         <!-- Custom Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'recurring-modal')" onmousedown="initSwipeToClose(event, 'recurring-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -515,7 +520,7 @@
 
         <!-- Custom Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'installment-modal')" onmousedown="initSwipeToClose(event, 'installment-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -564,7 +569,7 @@
 
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'custom-date-modal')" onmousedown="initSwipeToClose(event, 'custom-date-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -580,7 +585,7 @@
 
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[85vh] flex flex-col" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'stock-history-modal')" onmousedown="initSwipeToClose(event, 'stock-history-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">
@@ -597,7 +602,7 @@
 
         <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'export-jpg-modal')" onmousedown="initSwipeToClose(event, 'export-jpg-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -676,7 +681,7 @@
         let currentOptionTarget = null;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v17_fix_inputs');
+            const saved = localStorage.getItem('wealth_app_data_v18_final');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -690,7 +695,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v17_fix_inputs', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v18_final', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -792,7 +797,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v15';
+                    const CACHE = 'wealth-ledger-v18';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -898,6 +903,7 @@
             if (!modal) return;
             document.body.classList.add('modal-open');
             modal.classList.remove('hidden');
+            modal.classList.remove('is-closing');
             
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
@@ -911,21 +917,19 @@
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (!modal) return;
+            modal.classList.add('is-closing');
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
                 sheet.classList.remove('is-open');
                 sheet.classList.add('is-closing');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    sheet.classList.remove('is-closing');
-                    document.body.classList.remove('modal-open');
-                    resetModalContent(modalId);
-                }, 320);
-            } else {
+            }
+            setTimeout(() => {
                 modal.classList.add('hidden');
+                modal.classList.remove('is-closing');
+                if (sheet) sheet.classList.remove('is-closing');
                 document.body.classList.remove('modal-open');
                 resetModalContent(modalId);
-            }
+            }, 320);
         }
 
         function resetModalContent(modalId) {
@@ -970,65 +974,6 @@
             } else if (modalId === 'custom-option-modal') {
                 const newCatInput = document.getElementById('new-category-input');
                 if (newCatInput) newCatInput.value = '';
-            }
-        }
-
-        function initSwipeToClose(e, modalId, direction = 'down') {
-            const modal = document.getElementById(modalId);
-            if (!modal) return;
-            const sheet = modal.querySelector('.modal-sheet');
-            if (!sheet) return;
-
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.closest('form')) {
-                return;
-            }
-
-            const startX = e.touches ? e.touches[0].clientX : e.clientX;
-            const startY = e.touches ? e.touches[0].clientY : e.clientY;
-            let currentDelta = 0;
-
-            sheet.classList.add('is-dragging');
-            sheet.classList.remove('is-open');
-
-            function onTouchMove(ev) {
-                const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
-                const clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
-
-                if (direction === 'right') {
-                    currentDelta = clientX - startX;
-                    if (currentDelta > 0) {
-                        sheet.style.transform = `translateX(${currentDelta}px)`;
-                    }
-                } else {
-                    currentDelta = clientY - startY;
-                    if (currentDelta > 0) {
-                        sheet.style.transform = `translateY(${currentDelta}px)`;
-                    }
-                }
-            }
-
-            function onTouchEnd() {
-                document.removeEventListener('mousemove', onTouchMove);
-                document.removeEventListener('mouseup', onTouchEnd);
-                document.removeEventListener('touchmove', onTouchMove);
-                document.removeEventListener('touchend', onTouchEnd);
-
-                sheet.classList.remove('is-dragging');
-                sheet.style.transform = '';
-
-                if (currentDelta > 75) {
-                    closeModal(modalId);
-                } else {
-                    sheet.classList.add('is-open');
-                }
-            }
-
-            if (e.touches) {
-                document.addEventListener('touchmove', onTouchMove, { passive: true });
-                document.addEventListener('touchend', onTouchEnd);
-            } else {
-                document.addEventListener('mousemove', onTouchMove);
-                document.addEventListener('mouseup', onTouchEnd);
             }
         }
 
@@ -1165,7 +1110,6 @@
 
             const newTx = { id: 'tx_' + Date.now(), type: txType, asset, category, amount, note, date, stockSymbol, shares, price, fee };
             
-            // 記錄交易，僅更新動態交易紀錄流水帳與對應資產，不影響初始本金設定
             appData.transactions.unshift(newTx);
             saveData();
             closeModal('transaction-modal');
@@ -1535,10 +1479,11 @@
                                 </div>
                                 <div class="flex gap-1">
                                     <div class="relative flex-1 flex items-center">
-                                        <input type="number" id="setting-budget" value="${appData.monthlyBudget === 0 ? '' : appData.monthlyBudget}" placeholder="0" onblur="saveBudgetSettingOnBlur(this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
-                                        <button type="button" onclick="clearInput('setting-budget', function(){ saveBudgetSettingOnBlur(0); })" class="clear-btn ${appData.monthlyBudget === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                        <!-- Removed onblur auto-save so it only saves upon clicking the checkmark button -->
+                                        <input type="number" id="setting-budget" value="${appData.monthlyBudget === 0 ? '' : appData.monthlyBudget}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('setting-budget', function(){ saveBudgetExplicitly(0); })" class="clear-btn ${appData.monthlyBudget === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                     </div>
-                                    <button onclick="showToast('預算提示', '本月預算上限已更新。')" title="檢查預算" class="bg-brand-gold text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                                    <button onclick="saveBudgetFromInput()" title="確認設定預算" class="bg-brand-gold text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                 </div>
                             </div>
                             <div>
@@ -1562,30 +1507,42 @@
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <div>
                                 <label class="text-app-muted block mb-1">台幣現金 (TWD)</label>
-                                <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-twd" value="${appData.assets.TWD === 0 ? '' : appData.assets.TWD}" placeholder="0" onblur="updateAssetBalanceOnBlur('TWD', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
-                                    <button type="button" onclick="clearInput('input-asset-twd', function(){ updateAssetBalanceOnBlur('TWD', 0); })" class="clear-btn ${appData.assets.TWD === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="input-asset-twd" value="${appData.assets.TWD === 0 ? '' : appData.assets.TWD}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('input-asset-twd', function(){ saveAssetExplicitly('TWD', 0); })" class="clear-btn ${appData.assets.TWD === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="saveAssetFromInput('TWD', 'input-asset-twd')" title="確認設定台幣現金" class="bg-brand-gold text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">台股市值 (TWD)</label>
-                                <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-twstock" value="${appData.assets.TW_STOCK === 0 ? '' : appData.assets.TW_STOCK}" placeholder="0" onblur="updateAssetBalanceOnBlur('TW_STOCK', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
-                                    <button type="button" onclick="clearInput('input-asset-twstock', function(){ updateAssetBalanceOnBlur('TW_STOCK', 0); })" class="clear-btn ${appData.assets.TW_STOCK === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="input-asset-twstock" value="${appData.assets.TW_STOCK === 0 ? '' : appData.assets.TW_STOCK}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('input-asset-twstock', function(){ saveAssetExplicitly('TW_STOCK', 0); })" class="clear-btn ${appData.assets.TW_STOCK === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="saveAssetFromInput('TW_STOCK', 'input-asset-twstock')" title="確認設定台股市值" class="bg-brand-gold text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">美金現金 (USD)</label>
-                                <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-usd" value="${appData.assets.USD === 0 ? '' : appData.assets.USD}" placeholder="0" onblur="updateAssetBalanceOnBlur('USD', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
-                                    <button type="button" onclick="clearInput('input-asset-usd', function(){ updateAssetBalanceOnBlur('USD', 0); })" class="clear-btn ${appData.assets.USD === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="input-asset-usd" value="${appData.assets.USD === 0 ? '' : appData.assets.USD}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('input-asset-usd', function(){ saveAssetExplicitly('USD', 0); })" class="clear-btn ${appData.assets.USD === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="saveAssetFromInput('USD', 'input-asset-usd')" title="確認設定美金現金" class="bg-brand-gold text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">美股市值 (USD)</label>
-                                <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-usstock" value="${appData.assets.US_STOCK === 0 ? '' : appData.assets.US_STOCK}" placeholder="0" onblur="updateAssetBalanceOnBlur('US_STOCK', this.value)" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono placeholder:text-app-muted/30">
-                                    <button type="button" onclick="clearInput('input-asset-usstock', function(){ updateAssetBalanceOnBlur('US_STOCK', 0); })" class="clear-btn ${appData.assets.US_STOCK === 0 ? 'hidden' : ''} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="input-asset-usstock" value="${appData.assets.US_STOCK === 0 ? '' : appData.assets.US_STOCK}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('input-asset-usstock', function(){ saveAssetExplicitly('US_STOCK', 0); })" class="clear-btn ${appData.assets.US_STOCK === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="saveAssetFromInput('US_STOCK', 'input-asset-usstock')" title="確認設定美股市值" class="bg-brand-gold text-white px-2 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -1630,7 +1587,9 @@
                             <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出備份 (JSON)</button>
                             <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
                         </div>
-                        <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</button>
+                        <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
+                            <span class="inline-flex items-center gap-1.5 text-brand-gold"><i data-lucide="image" class="w-3.5 h-3.5"></i> 匯出資產報表 (JPG 圖片)</span>
+                        </button>
                         <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
                     </div>
 
@@ -1643,6 +1602,38 @@
                     </div>
                 </div>
             `;
+        }
+
+        function saveBudgetExplicitly(val) {
+            appData.monthlyBudget = val === '' ? 0 : (parseFloat(val) || 0);
+            saveData();
+        }
+
+        function saveBudgetFromInput() {
+            const val = document.getElementById('setting-budget')?.value;
+            appData.monthlyBudget = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
+            saveData();
+            showToast("預算設定完成", `本月預算已成功更新為 NT$ ${appData.monthlyBudget.toLocaleString()}。`);
+        }
+
+        function saveAssetExplicitly(assetKey, val) {
+            appData.assets[assetKey] = val === '' ? 0 : (parseFloat(val) || 0);
+            saveData();
+        }
+
+        function saveAssetFromInput(assetKey, inputId) {
+            const val = document.getElementById(inputId)?.value;
+            appData.assets[assetKey] = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
+            saveData();
+            showToast("初始本金設定完成", `資產帳戶已成功更新。`);
+        }
+
+        function resetBudgetSetting() {
+            appData.monthlyBudget = 0;
+            const input = document.getElementById('setting-budget');
+            if (input) input.value = '';
+            saveData();
+            showToast("預算已重置", "本月預算已歸零。");
         }
 
         function openOptionModal(target, title, options, currentVal) {
@@ -1756,8 +1747,6 @@
                     if (currentDay >= rule.day || todayStr >= ruleStart) {
                         rule.lastExecutedMonth = currentMonthStr;
                         const newTx = { id: 'auto_' + Date.now() + '_' + rule.id, type: rule.type, asset: rule.asset || 'TWD', category: rule.category || '固定支出/存入', amount: rule.amount, note: `[自動週期] ${rule.name}`, date: todayStr };
-                        if (rule.type === '存入') appData.assets[rule.asset] += rule.amount;
-                        else appData.assets[rule.asset] -= rule.amount;
                         appData.transactions.unshift(newTx);
                         appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '自動交易執行通知', message: `已自動執行「${rule.name}」${rule.type} $${rule.amount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
                         triggeredCount++;
@@ -1772,7 +1761,6 @@
                         inst.paidMonths += 1;
                         inst.lastPaidMonth = currentMonthStr;
                         const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: inst.asset || 'TWD', category: '固定支出/存入', amount: inst.monthlyAmount, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
-                        appData.assets[inst.asset] -= inst.monthlyAmount;
                         appData.transactions.unshift(newTx);
                         appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '分期扣款執行通知', message: `已自動執行「${inst.name}」第 ${inst.paidMonths}/${inst.totalMonths} 期扣款 NT$ ${inst.monthlyAmount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
                         triggeredCount++;
@@ -1911,7 +1899,6 @@
             ctx.fillStyle = bgColor; ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = goldCol; ctx.lineWidth = 4; ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
 
-            // Using refined thin typography
             ctx.fillStyle = goldCol; ctx.font = '32px sans-serif'; ctx.fillText(appData.appTitle || '智慧帳本', 50, 75);
             ctx.fillStyle = textMuted; ctx.font = '16px sans-serif'; ctx.fillText(`產生日期：${new Date().toLocaleDateString('zh-TW')}`, 50, 110);
 
