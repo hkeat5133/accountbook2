@@ -103,6 +103,20 @@
             to { opacity: 0; }
         }
 
+        @keyframes slideLeft {
+            from { opacity: 0; transform: translateX(25px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideRight {
+            from { opacity: 0; transform: translateX(-25px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .animate-fade { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-left { animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-right { animation: slideRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
@@ -122,6 +136,25 @@
             transform: translateY(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+        }
+
+        .modal-sheet.is-open {
+            transform: translateY(0) !important;
+            opacity: 1 !important;
+        }
+
+        .modal-sheet.is-closing {
+            transform: translateY(100%) !important;
+            opacity: 0 !important;
+        }
+
+        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
+        #notif-drawer .modal-sheet {
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .modal-sheet.is-open {
@@ -818,6 +851,29 @@
             }
         }
 
+        function renderCurrentView() {
+            const main = document.getElementById('main-content');
+            if (!main) return;
+            main.innerHTML = '';
+            if (currentTab === 'home') renderHomeView(main);
+            else if (currentTab === 'details') renderDetailsView(main);
+            else if (currentTab === 'stock-stats') renderStockStatsView(main);
+            else if (currentTab === 'settings') renderSettingsView(main);
+            if (window.lucide) lucide.createIcons();
+            updateNotificationBadge();
+        }
+
+        function toggleClearBtn(inputElem) {
+            if (!inputElem) return;
+            const parent = inputElem.parentElement;
+            if (!parent) return;
+            const btn = parent.querySelector('.clear-btn');
+            if (btn) {
+                if (inputElem.value && inputElem.value.trim() !== '') btn.classList.remove('hidden');
+                else btn.classList.add('hidden');
+            }
+        }
+
         window.onload = function() {
             applyTheme();
             lucide.createIcons();
@@ -949,26 +1005,30 @@
             switchTabWithAnimation('details', 'left', false);
         }
 
-        function renderCurrentView() {
-            const main = document.getElementById('main-content');
-            if (!main) return;
-            main.innerHTML = '';
-            if (currentTab === 'home') renderHomeView(main);
-            else if (currentTab === 'details') renderDetailsView(main);
-            else if (currentTab === 'stock-stats') renderStockStatsView(main);
-            else if (currentTab === 'settings') renderSettingsView(main);
-            if (window.lucide) lucide.createIcons();
-            updateNotificationBadge();
-        }
+        function handleSwipeGesture() {
+            const swipeThreshold = 55;
+            const diff = touchEndX - touchStartX;
+            if (Math.abs(diff) < swipeThreshold) return;
 
-        function toggleClearBtn(inputElem) {
-            if (!inputElem) return;
-            const parent = inputElem.parentElement;
-            if (!parent) return;
-            const btn = parent.querySelector('.clear-btn');
-            if (btn) {
-                if (inputElem.value && inputElem.value.trim() !== '') btn.classList.remove('hidden');
-                else btn.classList.add('hidden');
+            // 如果目前在 settings 頁面，右滑（diff > 0）返回首頁
+            if (currentTab === 'settings') {
+                if (diff > 0) {
+                    switchTabWithAnimation('home', 'right');
+                }
+                return;
+            }
+
+            // 定義分頁順序：僅在 3 個主要分頁之間滑動
+            const tabOrder = ['home', 'details', 'stock-stats'];
+            const currentIndex = tabOrder.indexOf(currentTab);
+            if (currentIndex === -1) return;
+
+            if (diff > 0 && currentIndex > 0) {
+                // 向右滑 -> 切到前一個分頁
+                switchTabWithAnimation(tabOrder[currentIndex - 1], 'right');
+            } else if (diff < 0 && currentIndex < tabOrder.length - 1) {
+                // 向左滑 -> 切到下一個分頁
+                switchTabWithAnimation(tabOrder[currentIndex + 1], 'left');
             }
         }
 
