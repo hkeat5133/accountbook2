@@ -110,6 +110,16 @@
         .modal-sheet {
             animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: transform, opacity;
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+        }
+
+        .modal-sheet.is-dragging {
+            transition: none !important;
+        }
+
+        .modal-sheet.is-closing {
+            transform: translateY(100%) !important;
+            opacity: 0 !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -853,11 +863,8 @@
             
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
-                sheet.style.transition = '';
+                sheet.classList.remove('is-closing');
                 sheet.style.transform = '';
-                sheet.style.animation = 'none';
-                sheet.offsetHeight; // trigger reflow
-                sheet.style.animation = '';
             }
             if (window.lucide) lucide.createIcons();
         }
@@ -867,16 +874,13 @@
             if (!modal) return;
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
-                sheet.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease';
-                sheet.style.transform = 'translateY(100%)';
-                sheet.style.opacity = '0';
+                sheet.classList.add('is-closing');
                 setTimeout(() => {
                     modal.classList.add('hidden');
-                    sheet.style.transition = '';
+                    sheet.classList.remove('is-closing');
                     sheet.style.transform = '';
-                    sheet.style.opacity = '';
                     document.body.classList.remove('modal-open');
-                }, 240);
+                }, 260);
             } else {
                 modal.classList.add('hidden');
                 document.body.classList.remove('modal-open');
@@ -897,7 +901,7 @@
             const startY = e.touches ? e.touches[0].clientY : e.clientY;
             let currentDelta = 0;
 
-            sheet.style.transition = 'none';
+            sheet.classList.add('is-dragging');
 
             function onTouchMove(ev) {
                 const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
@@ -922,25 +926,18 @@
                 document.removeEventListener('touchmove', onTouchMove);
                 document.removeEventListener('touchend', onTouchEnd);
 
-                sheet.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease';
+                sheet.classList.remove('is-dragging');
 
                 if (currentDelta > 75) {
-                    if (direction === 'right') {
-                        sheet.style.transform = `translateX(100%)`;
-                    } else {
-                        sheet.style.transform = `translateY(100%)`;
-                    }
-                    sheet.style.opacity = '0';
+                    sheet.classList.add('is-closing');
                     setTimeout(() => {
                         modal.classList.add('hidden');
-                        sheet.style.transition = '';
+                        sheet.classList.remove('is-closing');
                         sheet.style.transform = '';
-                        sheet.style.opacity = '';
                         document.body.classList.remove('modal-open');
-                    }, 240);
+                    }, 260);
                 } else {
                     sheet.style.transform = '';
-                    sheet.style.opacity = '';
                 }
             }
 
