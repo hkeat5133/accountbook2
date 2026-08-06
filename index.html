@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
+    <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#c89b3c">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -108,6 +109,7 @@
 
         .modal-sheet {
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: transform 0.1s ease-out;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -207,6 +209,7 @@
         <!-- Notification Drawer Modal -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
             <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line" onclick="event.stopPropagation()">
+                <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer" ontouchstart="initSwipeToClose(event, 'notif-drawer')" onmousedown="initSwipeToClose(event, 'notif-drawer')"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
                         <i data-lucide="bell-ring" class="w-4 h-4"></i> 自動支出及存入通知記錄
@@ -225,7 +228,7 @@
         <!-- Add Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3"></div>
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer" ontouchstart="initSwipeToClose(event, 'transaction-modal')" onmousedown="initSwipeToClose(event, 'transaction-modal')"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> 新增帳務交易
@@ -380,7 +383,7 @@
         <!-- Custom Option Picker Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer" ontouchstart="initSwipeToClose(event, 'custom-option-modal')" onmousedown="initSwipeToClose(event, 'custom-option-modal')"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="list" class="w-4 h-4"></i> 選擇選項
@@ -403,7 +406,7 @@
         <!-- Custom Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer" ontouchstart="initSwipeToClose(event, 'recurring-modal')" onmousedown="initSwipeToClose(event, 'recurring-modal')"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="repeat" class="w-4 h-4"></i> 新增固定支出/存入
@@ -463,7 +466,7 @@
         <!-- Custom Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer" ontouchstart="initSwipeToClose(event, 'installment-modal')" onmousedown="initSwipeToClose(event, 'installment-modal')"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="credit-card" class="w-4 h-4"></i> 新增分期付款
@@ -512,7 +515,7 @@
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer" ontouchstart="initSwipeToClose(event, 'custom-date-modal')" onmousedown="initSwipeToClose(event, 'custom-date-modal')"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期
@@ -528,7 +531,7 @@
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[85vh] flex flex-col" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer" ontouchstart="initSwipeToClose(event, 'stock-history-modal')" onmousedown="initSwipeToClose(event, 'stock-history-modal')"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">
                         <i data-lucide="candlestick-chart" class="w-4 h-4"></i> 股票交易紀錄
@@ -545,7 +548,7 @@
         <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1"></div>
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer" ontouchstart="initSwipeToClose(event, 'export-jpg-modal')" onmousedown="initSwipeToClose(event, 'export-jpg-modal')"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="image" class="w-4 h-4"></i> 匯出資產報表 (JPG)
@@ -623,7 +626,7 @@
         let currentOptionTarget = null;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v11_sheet');
+            const saved = localStorage.getItem('wealth_app_data_v12_swipe');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -637,7 +640,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v11_sheet', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v12_swipe', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -739,7 +742,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v6';
+                    const CACHE = 'wealth-ledger-v7';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -840,20 +843,71 @@
             }
         }
 
-        // --- Standardized Modal Management with Body Scroll Lock ---
+        // --- Standardized Modal Management with Body Scroll Lock & Swipe-to-Close ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (!modal) return;
             document.body.classList.add('modal-open');
             modal.classList.remove('hidden');
+            const sheet = modal.querySelector('.modal-sheet');
+            if (sheet) sheet.style.transform = '';
             if (window.lucide) lucide.createIcons();
         }
 
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (!modal) return;
-            modal.classList.add('hidden');
-            document.body.classList.remove('modal-open');
+            const sheet = modal.querySelector('.modal-sheet');
+            if (sheet) {
+                sheet.style.transform = 'translateY(100%)';
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    sheet.style.transform = '';
+                    document.body.classList.remove('modal-open');
+                }, 200);
+            } else {
+                modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        function initSwipeToClose(e, modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            const sheet = modal.querySelector('.modal-sheet');
+            if (!sheet) return;
+
+            let startY = e.touches ? e.touches[0].clientY : e.clientY;
+            let currentY = 0;
+
+            function onMouseMove(ev) {
+                const clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
+                currentY = clientY - startY;
+                if (currentY > 0) {
+                    sheet.style.transform = `translateY(${currentY}px)`;
+                }
+            }
+
+            function onMouseUp() {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                document.removeEventListener('touchmove', onMouseMove);
+                document.removeEventListener('touchend', onMouseUp);
+
+                if (currentY > 80) {
+                    closeModal(modalId);
+                } else {
+                    sheet.style.transform = '';
+                }
+            }
+
+            if (e.touches) {
+                document.addEventListener('touchmove', onMouseMove);
+                document.addEventListener('touchend', onMouseUp);
+            } else {
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            }
         }
 
         function toggleNotificationDrawer() {
