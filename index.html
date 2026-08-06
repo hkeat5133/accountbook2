@@ -152,10 +152,13 @@
                 <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 5 日</p>
             </div>
             <div class="flex items-center gap-2">
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-90 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> 安裝 App
                 </button>
-                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line">
+                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="系統設定">
+                    <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
+                </button>
+                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="通知紀錄">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
                 </button>
@@ -172,23 +175,19 @@
             </button>
         </div>
 
-        <!-- Navigation Bar -->
+        <!-- Navigation Bar (3 Main Tabs + Header Settings Button) -->
         <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
-            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-3 text-brand-gold transition-all duration-200">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
             </button>
-            <button onclick="switchTab('details')" id="nav-details" class="flex flex-col items-center py-1 px-3 text-app-muted transition-all duration-200">
+            <button onclick="switchTab('details')" id="nav-details" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200">
                 <i data-lucide="receipt" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">資產明細</span>
             </button>
-            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex flex-col items-center py-1 px-3 text-app-muted transition-all duration-200">
+            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200">
                 <i data-lucide="trending-up" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">持股統計</span>
-            </button>
-            <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center py-1 px-3 text-app-muted transition-all duration-200">
-                <i data-lucide="settings" class="w-5 h-5"></i>
-                <span class="text-[10px] mt-1 font-medium">系統設定</span>
             </button>
         </nav>
 
@@ -201,7 +200,7 @@
                     </div>
                 </div>
                 <h1 class="text-2xl font-bold tracking-wider text-brand-gold mb-1">智慧帳本</h1>
-                <p class="text-xs text-brand-blue tracking-widest uppercase font-mono">Washi Wealth Ledger</p>
+                <p class="text-xs text-brand-blue tracking-widest uppercase font-mono">Personal Wealth Ledger</p>
                 <div class="mt-8 flex gap-2">
                     <div class="w-2.5 h-2.5 rounded-full bg-brand-gold animate-ping"></div>
                     <div class="w-2.5 h-2.5 rounded-full bg-brand-blue animate-ping" style="animation-delay: 0.2s"></div>
@@ -622,7 +621,7 @@
         let currentOptionTarget = null;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v8_final');
+            const saved = localStorage.getItem('wealth_app_data_v9_settings_header');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -636,7 +635,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v8_final', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v9_settings_header', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -745,7 +744,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v3';
+                    const CACHE = 'wealth-ledger-v4';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -788,12 +787,20 @@
                 filterMonthDate = new Date().toISOString().slice(0, 7);
             }
             currentTab = tab;
-            ['home', 'details', 'stock-stats', 'settings'].forEach(t => {
+            ['home', 'details', 'stock-stats'].forEach(t => {
                 const navBtn = document.getElementById(`nav-${t}`);
                 if (navBtn) {
-                    navBtn.className = t === tab ? "flex flex-col items-center py-1 px-3 text-brand-gold transition-all duration-200 scale-105 font-bold" : "flex flex-col items-center py-1 px-3 text-app-muted transition-all duration-200 font-medium";
+                    navBtn.className = t === tab ? "flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 scale-105 font-bold" : "flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 font-medium";
                 }
             });
+            const headerSettingsBtn = document.getElementById('nav-settings-header');
+            if (headerSettingsBtn) {
+                if (tab === 'settings') {
+                    headerSettingsBtn.classList.add('ring-2', 'ring-brand-gold');
+                } else {
+                    headerSettingsBtn.classList.remove('ring-2', 'ring-brand-gold');
+                }
+            }
             const main = document.getElementById('main-content');
             if (main) main.scrollTop = 0;
             renderCurrentView();
@@ -1327,6 +1334,11 @@
         function renderSettingsView(container) {
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
+                    <div class="flex justify-between items-center bg-app-card px-4 py-3 rounded-2xl border border-app-line">
+                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="settings" class="w-4 h-4 text-brand-gold"></i> 系統設定面板</span>
+                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold">‹ 返回首頁</button>
+                    </div>
+
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4"></i> 基本參數設定</h3>
                         <div>
@@ -1366,28 +1378,28 @@
                             <div>
                                 <label class="text-app-muted block mb-1">台幣現金 (TWD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-twd" value="" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('TWD', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
+                                    <input type="number" id="input-asset-twd" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('TWD', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
                                     <button type="button" onclick="clearInput('input-asset-twd')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">台股市值 (TWD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-twstock" value="" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('TW_STOCK', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
+                                    <input type="number" id="input-asset-twstock" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('TW_STOCK', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
                                     <button type="button" onclick="clearInput('input-asset-twstock')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">美金現金 (USD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-usd" value="" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('USD', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
+                                    <input type="number" id="input-asset-usd" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('USD', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
                                     <button type="button" onclick="clearInput('input-asset-usd')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="text-app-muted block mb-1">美股市值 (USD)</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-asset-usstock" value="" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('US_STOCK', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
+                                    <input type="number" id="input-asset-usstock" placeholder="0" oninput="toggleClearBtn(this); updateAssetBalance('US_STOCK', this.value);" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-app-main font-mono">
                                     <button type="button" onclick="clearInput('input-asset-usstock')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
