@@ -93,11 +93,6 @@
             to { opacity: 1; }
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0.8; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
@@ -108,9 +103,8 @@
         }
 
         .modal-sheet {
-            animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: transform, opacity;
-            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
         }
 
         .modal-sheet.is-dragging {
@@ -218,7 +212,7 @@
 
         <!-- Notification Drawer Modal -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
-            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'notif-drawer', 'right')" onmousedown="initSwipeToClose(event, 'notif-drawer', 'right')">
+            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'notif-drawer', 'right')" onmousedown="initSwipeToClose(event, 'notif-drawer', 'right')">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
@@ -237,7 +231,7 @@
 
         <!-- Add Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[85vh] overflow-y-auto transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'transaction-modal')" onmousedown="initSwipeToClose(event, 'transaction-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'transaction-modal')" onmousedown="initSwipeToClose(event, 'transaction-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
@@ -363,7 +357,7 @@
 
         <!-- Custom Toast Modal -->
         <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3 transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'toast-modal')" onmousedown="initSwipeToClose(event, 'toast-modal')">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'toast-modal')" onmousedown="initSwipeToClose(event, 'toast-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
                     <i data-lucide="info" class="w-6 h-6"></i>
@@ -378,7 +372,7 @@
 
         <!-- Confirm Reset Modal -->
         <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3 transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'confirm-modal')" onmousedown="initSwipeToClose(event, 'confirm-modal')">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'confirm-modal')" onmousedown="initSwipeToClose(event, 'confirm-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red">
                     <i data-lucide="alert-triangle" class="w-6 h-6"></i>
@@ -394,7 +388,7 @@
 
         <!-- Custom Option Picker Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'custom-option-modal')" onmousedown="initSwipeToClose(event, 'custom-option-modal')">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'custom-option-modal')" onmousedown="initSwipeToClose(event, 'custom-option-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -417,7 +411,7 @@
 
         <!-- Custom Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'recurring-modal')" onmousedown="initSwipeToClose(event, 'recurring-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'recurring-modal')" onmousedown="initSwipeToClose(event, 'recurring-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -477,7 +471,7 @@
 
         <!-- Custom Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'installment-modal')" onmousedown="initSwipeToClose(event, 'installment-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'installment-modal')" onmousedown="initSwipeToClose(event, 'installment-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -526,7 +520,7 @@
 
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'custom-date-modal')" onmousedown="initSwipeToClose(event, 'custom-date-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'custom-date-modal')" onmousedown="initSwipeToClose(event, 'custom-date-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -542,7 +536,7 @@
 
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[85vh] flex flex-col transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'stock-history-modal')" onmousedown="initSwipeToClose(event, 'stock-history-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[85vh] flex flex-col" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'stock-history-modal')" onmousedown="initSwipeToClose(event, 'stock-history-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">
@@ -559,7 +553,7 @@
 
         <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs transform transition-transform duration-200 ease-out" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'export-jpg-modal')" onmousedown="initSwipeToClose(event, 'export-jpg-modal')">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs" onclick="event.stopPropagation()" ontouchstart="initSwipeToClose(event, 'export-jpg-modal')" onmousedown="initSwipeToClose(event, 'export-jpg-modal')">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -864,7 +858,10 @@
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
                 sheet.classList.remove('is-closing');
-                sheet.style.transform = '';
+                // Force Reflow 確保每次打開都有完整且一致的滑入動畫
+                sheet.style.transform = modal.classList.contains('flex-end') || modal.id === 'notif-drawer' ? '' : 'translateY(100%)';
+                void sheet.offsetWidth;
+                sheet.style.transform = 'translateY(0)';
             }
             if (window.lucide) lucide.createIcons();
         }
@@ -880,7 +877,7 @@
                     sheet.classList.remove('is-closing');
                     sheet.style.transform = '';
                     document.body.classList.remove('modal-open');
-                }, 260);
+                }, 280);
             } else {
                 modal.classList.add('hidden');
                 document.body.classList.remove('modal-open');
@@ -929,13 +926,7 @@
                 sheet.classList.remove('is-dragging');
 
                 if (currentDelta > 75) {
-                    sheet.classList.add('is-closing');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        sheet.classList.remove('is-closing');
-                        sheet.style.transform = '';
-                        document.body.classList.remove('modal-open');
-                    }, 260);
+                    closeModal(modalId);
                 } else {
                     sheet.style.transform = '';
                 }
