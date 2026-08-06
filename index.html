@@ -94,8 +94,8 @@
         }
 
         @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+            from { transform: translateY(100%); opacity: 0.8; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         @keyframes pulseGold {
@@ -108,8 +108,8 @@
         }
 
         .modal-sheet {
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            will-change: transform;
+            animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: transform, opacity;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -152,12 +152,12 @@
                 <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> 安裝
                 </button>
-                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="系統設定">
-                    <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
-                </button>
                 <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="通知紀錄">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="系統設定">
+                    <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
         </header>
@@ -628,7 +628,7 @@
         let currentOptionTarget = null;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v13_smooth_swipe');
+            const saved = localStorage.getItem('wealth_app_data_v14_smooth_anim');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -642,7 +642,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v13_smooth_swipe', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v14_smooth_anim', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -744,7 +744,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v8';
+                    const CACHE = 'wealth-ledger-v9';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -845,16 +845,20 @@
             }
         }
 
-        // --- Standardized Modal Management with Body Scroll Lock & Smooth Swipe-to-Close ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (!modal) return;
             document.body.classList.add('modal-open');
             modal.classList.remove('hidden');
+            
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
+                // 強制重置動畫與樣式，確保每次開啟都有完整的彈出動畫
                 sheet.style.transition = '';
                 sheet.style.transform = '';
+                sheet.style.animation = 'none';
+                sheet.offsetHeight; // trigger reflow
+                sheet.style.animation = '';
             }
             if (window.lucide) lucide.createIcons();
         }
@@ -864,14 +868,16 @@
             if (!modal) return;
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
-                sheet.style.transition = 'transform 0.2s ease-in';
+                sheet.style.transition = 'transform 0.22s ease-in, opacity 0.22s ease-in';
                 sheet.style.transform = 'translateY(100%)';
+                sheet.style.opacity = '0';
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     sheet.style.transition = '';
                     sheet.style.transform = '';
+                    sheet.style.opacity = '';
                     document.body.classList.remove('modal-open');
-                }, 200);
+                }, 210);
             } else {
                 modal.classList.add('hidden');
                 document.body.classList.remove('modal-open');
@@ -884,7 +890,6 @@
             const sheet = modal.querySelector('.modal-sheet');
             if (!sheet) return;
 
-            // 如果點擊的是表單輸入框或按鈕、下拉選單，不觸發滑動關閉
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.closest('form')) {
                 return;
             }
@@ -918,7 +923,7 @@
                 document.removeEventListener('touchmove', onTouchMove);
                 document.removeEventListener('touchend', onTouchEnd);
 
-                sheet.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
+                sheet.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease';
 
                 if (currentDelta > 70) {
                     if (direction === 'right') {
@@ -926,14 +931,17 @@
                     } else {
                         sheet.style.transform = `translateY(100%)`;
                     }
+                    sheet.style.opacity = '0';
                     setTimeout(() => {
                         modal.classList.add('hidden');
                         sheet.style.transition = '';
                         sheet.style.transform = '';
+                        sheet.style.opacity = '';
                         document.body.classList.remove('modal-open');
-                    }, 220);
+                    }, 230);
                 } else {
                     sheet.style.transform = '';
+                    sheet.style.opacity = '';
                 }
             }
 
