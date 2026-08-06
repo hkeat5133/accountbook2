@@ -102,10 +102,17 @@
             animation: fadeIn 0.25s ease forwards;
         }
 
-        /* 標準彈出視窗（由底部升起） */
+        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
         .modal-sheet {
             will-change: transform, opacity;
+            transform: translateY(100%);
+            opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+        }
+
+        .modal-sheet.is-open {
+            transform: translateY(0) !important;
+            opacity: 1 !important;
         }
 
         .modal-sheet.is-dragging {
@@ -117,14 +124,16 @@
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由右側滑出/收回） */
+        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
         #notif-drawer .modal-sheet {
             transform: translateX(100%);
+            opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
         }
 
-        #notif-drawer:not(.hidden) .modal-sheet {
+        #notif-drawer .modal-sheet.is-open {
             transform: translateX(0) !important;
+            opacity: 1 !important;
         }
 
         #notif-drawer .modal-sheet.is-closing {
@@ -874,11 +883,8 @@
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
                 sheet.classList.remove('is-closing');
-                if (modalId === 'notif-drawer') {
-                    sheet.style.transform = 'translateX(0)';
-                } else {
-                    sheet.style.transform = 'translateY(0)';
-                }
+                void sheet.offsetWidth; // 強制重繪確保動畫觸發
+                sheet.classList.add('is-open');
             }
             if (window.lucide) lucide.createIcons();
         }
@@ -888,13 +894,13 @@
             if (!modal) return;
             const sheet = modal.querySelector('.modal-sheet');
             if (sheet) {
+                sheet.classList.remove('is-open');
                 sheet.classList.add('is-closing');
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     sheet.classList.remove('is-closing');
-                    sheet.style.transform = '';
                     document.body.classList.remove('modal-open');
-                }, 280);
+                }, 320); // 動畫時間 0.32s
             } else {
                 modal.classList.add('hidden');
                 document.body.classList.remove('modal-open');
@@ -916,6 +922,7 @@
             let currentDelta = 0;
 
             sheet.classList.add('is-dragging');
+            sheet.classList.remove('is-open');
 
             function onTouchMove(ev) {
                 const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
@@ -941,21 +948,17 @@
                 document.removeEventListener('touchend', onTouchEnd);
 
                 sheet.classList.remove('is-dragging');
+                sheet.style.transform = '';
 
                 if (currentDelta > 75) {
-                    if (direction === 'right') {
-                        sheet.classList.add('is-closing');
-                        setTimeout(() => {
-                            modal.classList.add('hidden');
-                            sheet.classList.remove('is-closing');
-                            sheet.style.transform = '';
-                            document.body.classList.remove('modal-open');
-                        }, 280);
-                    } else {
-                        closeModal(modalId);
-                    }
+                    sheet.classList.add('is-closing');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        sheet.classList.remove('is-closing');
+                        document.body.classList.remove('modal-open');
+                    }, 320);
                 } else {
-                    sheet.style.transform = '';
+                    sheet.classList.add('is-open');
                 }
             }
 
