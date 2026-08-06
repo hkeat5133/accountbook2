@@ -130,7 +130,7 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
+        /* 標準彈出視窗（由底部升起/降下） */
         .modal-sheet {
             will-change: transform, opacity;
             transform: translateY(100%);
@@ -149,7 +149,7 @@
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
+        /* 通知抽屜專用（由右側滑出/收回） */
         #notif-drawer .modal-sheet {
             transform: translateX(100%);
             opacity: 0;
@@ -167,7 +167,25 @@
             opacity: 0 !important;
         }
 
-        /* 明顯的點擊互動彈跳與縮放微動畫（調整為 active:scale-90 使回饋更明顯） */
+        /* 設定全屏抽屜專用（由左側滑出/收回） */
+        #settings-drawer .modal-sheet {
+            transform: translateX(-100%);
+            opacity: 0;
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        #settings-drawer .modal-sheet.is-open {
+            transform: translateX(0) !important;
+            opacity: 1 !important;
+        }
+
+        #settings-drawer .modal-sheet.is-closing {
+            transform: translateX(-100%) !important;
+            opacity: 0 !important;
+        }
+
+        /* 明顯的點擊互動彈跳與縮放微動畫（active:scale-90） */
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
@@ -197,6 +215,15 @@
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--border-line); border-radius: 4px; }
+
+        /* 隱藏設定抽屜捲軸線條 */
+        #settings-drawer-content::-webkit-scrollbar {
+            display: none;
+        }
+        #settings-drawer-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen theme-light">
@@ -206,7 +233,7 @@
         <!-- App Main Header Bar -->
         <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
             <div class="flex items-center gap-1.5">
-                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
+                <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
@@ -271,7 +298,7 @@
             </div>
         </div>
 
-        <!-- Notification Drawer Modal -->
+        <!-- Notification Drawer Modal (Right Slide) -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
             <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
@@ -287,6 +314,21 @@
                 <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-2 border-t border-app-line active:scale-95">
                     清空歷史通知
                 </button>
+            </div>
+        </div>
+
+        <!-- Settings Full-Screen Drawer Modal (Left Slide) -->
+        <div id="settings-drawer" onclick="closeModal('settings-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-start">
+            <div class="modal-sheet w-full h-full bg-app-surface shadow-2xl p-5 flex flex-col border-r border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center pb-3 border-b border-app-line shrink-0">
+                    <h3 class="font-bold text-brand-gold flex items-center gap-2 text-sm">
+                        <i data-lucide="settings" class="w-4 h-4"></i> 系統設定面板
+                    </h3>
+                    <button onclick="closeModal('settings-drawer')" class="text-app-muted hover:text-app-main p-1.5 active:scale-90">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div id="settings-drawer-content" class="flex-1 overflow-y-auto my-3 space-y-4 w-full"></div>
             </div>
         </div>
 
@@ -705,7 +747,7 @@
         let touchEndX = 0;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v18_final');
+            const saved = localStorage.getItem('wealth_app_data_v19_final');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -719,7 +761,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v18_final', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v19_final', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -821,7 +863,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v18';
+                    const CACHE = 'wealth-ledger-v19';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -879,19 +921,26 @@
                     }
                 }, { passive: true });
             }
+
+            const settingsDrawer = document.getElementById('settings-drawer');
+            if (settingsDrawer) {
+                let setStartX = 0;
+                settingsDrawer.addEventListener('touchstart', (e) => {
+                    setStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+                settingsDrawer.addEventListener('touchend', (e) => {
+                    let setEndX = e.changedTouches[0].screenX;
+                    if (setEndX - setStartX > 50) {
+                        closeModal('settings-drawer');
+                    }
+                }, { passive: true });
+            }
         }
 
         function handleSwipeGesture() {
             const swipeThreshold = 55;
             const diff = touchEndX - touchStartX;
             if (Math.abs(diff) < swipeThreshold) return;
-
-            if (currentTab === 'settings') {
-                if (diff > 0) {
-                    switchTabWithAnimation('home', 'right');
-                }
-                return;
-            }
 
             const tabOrder = ['home', 'details', 'stock-stats'];
             const currentIndex = tabOrder.indexOf(currentTab);
@@ -926,14 +975,6 @@
                     navBtn.className = t === tab ? "flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 scale-105 font-bold" : "flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 font-medium";
                 }
             });
-            const headerSettingsBtn = document.getElementById('nav-settings-header');
-            if (headerSettingsBtn) {
-                if (tab === 'settings') {
-                    headerSettingsBtn.classList.add('ring-2', 'ring-brand-gold');
-                } else {
-                    headerSettingsBtn.classList.remove('ring-2', 'ring-brand-gold');
-                }
-            }
 
             const main = document.getElementById('main-content');
             if (main) {
@@ -965,7 +1006,12 @@
             if (currentTab === 'home') renderHomeView(main);
             else if (currentTab === 'details') renderDetailsView(main);
             else if (currentTab === 'stock-stats') renderStockStatsView(main);
-            else if (currentTab === 'settings') renderSettingsView(main);
+            
+            const settingsDrawer = document.getElementById('settings-drawer');
+            if (settingsDrawer && !settingsDrawer.classList.contains('hidden')) {
+                renderSettingsDrawerContent();
+            }
+
             if (window.lucide) lucide.createIcons();
             updateNotificationBadge();
         }
@@ -1078,6 +1124,24 @@
             } else {
                 closeModal('notif-drawer');
             }
+        }
+
+        function toggleSettingsDrawer() {
+            const drawer = document.getElementById('settings-drawer');
+            if (!drawer) return;
+            if (drawer.classList.contains('hidden')) {
+                openModal('settings-drawer');
+                renderSettingsDrawerContent();
+            } else {
+                closeModal('settings-drawer');
+            }
+        }
+
+        function renderSettingsDrawerContent() {
+            const container = document.getElementById('settings-drawer-content');
+            if (!container) return;
+            renderSettingsContentInto(container);
+            if (window.lucide) lucide.createIcons();
         }
 
         function renderNotifications() {
@@ -1339,6 +1403,48 @@
         function deleteRecurringRule(id) { appData.recurringRules = appData.recurringRules.filter(r => r.id !== id); saveData(); }
         function deleteInstallment(id) { appData.installments = appData.installments.filter(i => i.id !== id); saveData(); }
 
+        function checkRecurringTransactions() {
+            const today = new Date();
+            const currentDay = today.getDate();
+            const todayStr = today.toISOString().split('T')[0];
+            const currentMonthStr = todayStr.slice(0, 7);
+            let triggeredCount = 0;
+
+            if (!appData.recurringRules) appData.recurringRules = [];
+            if (!appData.installments) appData.installments = [];
+            if (!appData.notifications) appData.notifications = [];
+            if (!appData.transactions) appData.transactions = [];
+
+            appData.recurringRules.forEach(rule => {
+                const ruleStart = rule.startDate || todayStr;
+                if (todayStr >= ruleStart && rule.lastExecutedMonth !== currentMonthStr) {
+                    if (currentDay >= rule.day || todayStr >= ruleStart) {
+                        rule.lastExecutedMonth = currentMonthStr;
+                        const newTx = { id: 'auto_' + Date.now() + '_' + rule.id, type: rule.type, asset: rule.asset || 'TWD', category: rule.category || '固定支出/存入', amount: rule.amount, note: `[自動週期] ${rule.name}`, date: todayStr };
+                        appData.transactions.unshift(newTx);
+                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '自動交易執行通知', message: `已自動執行「${rule.name}」${rule.type} $${rule.amount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+                        triggeredCount++;
+                    }
+                }
+            });
+
+            appData.installments.forEach(inst => {
+                const instStart = inst.startDate || todayStr;
+                if (inst.paidMonths < inst.totalMonths && todayStr >= instStart && inst.lastPaidMonth !== currentMonthStr) {
+                    if (currentDay >= inst.day || todayStr >= instStart) {
+                        inst.paidMonths += 1;
+                        inst.lastPaidMonth = currentMonthStr;
+                        const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: inst.asset || 'TWD', category: '固定支出/存入', amount: inst.monthlyAmount, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
+                        appData.transactions.unshift(newTx);
+                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '分期扣款執行通知', message: `已自動執行「${inst.name}」第 ${inst.paidMonths}/${inst.totalMonths} 期扣款 NT$ ${inst.monthlyAmount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+                        triggeredCount++;
+                    }
+                }
+            });
+
+            if (triggeredCount > 0) saveData();
+        }
+
         function renderTxList(txList) {
             if (!txList || txList.length === 0) return `<div class="text-center text-xs text-app-muted py-6 bg-app-card rounded-2xl border border-app-line">查無相關交易紀錄</div>`;
             return txList.map(tx => {
@@ -1589,14 +1695,9 @@
             `;
         }
 
-        function renderSettingsView(container) {
+        function renderSettingsContentInto(container) {
             container.innerHTML = `
-                <div class="animate-fade space-y-4 w-full">
-                    <div class="flex justify-between items-center bg-app-card px-4 py-3 rounded-2xl border border-app-line">
-                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="settings" class="w-4 h-4 text-brand-gold"></i> 系統設定面板</span>
-                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">‹ 返回首頁</button>
-                    </div>
-
+                <div class="space-y-4 w-full px-1 pb-4">
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4"></i> 基本參數設定</h3>
                         <div>
@@ -1697,7 +1798,7 @@
                                         <div class="font-bold text-app-main">${r.name}</div>
                                         <div class="text-[10px] text-app-muted font-mono">日期: ${r.startDate || '每月 '+r.day+' 號'} (每月 ${r.day} 號 自動${r.type} $${r.amount} ${r.asset})</div>
                                     </div>
-                                    <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteRecurringRule('${r.id}'); renderSettingsDrawerContent();" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             `).join('')}
                         </div>
@@ -1711,7 +1812,7 @@
                         <div class="space-y-2 text-xs">
                             ${appData.installments.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定分期付款</div>' : appData.installments.map(i => `
                                 <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1">
-                                    <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
+                                    <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}'); renderSettingsDrawerContent();" class="text-app-muted hover:text-brand-red active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
                                     <div class="flex justify-between text-[11px] text-app-muted font-mono"><span>總額: $${i.totalAmount.toLocaleString()} (每期: $${i.monthlyAmount.toLocaleString()})</span><span>${i.paidMonths}/${i.totalMonths} 期 (起始日: ${i.startDate || '1號'})</span></div>
                                 </div>
                             `).join('')}
@@ -1837,43 +1938,6 @@
             closeModal('installment-modal');
             checkRecurringTransactions();
             showToast("建立成功", `已新增分期「${name}」（起始日：${startDate}）。`);
-        }
-
-        function checkRecurringTransactions() {
-            const today = new Date();
-            const currentDay = today.getDate();
-            const todayStr = today.toISOString().split('T')[0];
-            const currentMonthStr = todayStr.slice(0, 7);
-            let triggeredCount = 0;
-
-            appData.recurringRules.forEach(rule => {
-                const ruleStart = rule.startDate || todayStr;
-                if (todayStr >= ruleStart && rule.lastExecutedMonth !== currentMonthStr) {
-                    if (currentDay >= rule.day || todayStr >= ruleStart) {
-                        rule.lastExecutedMonth = currentMonthStr;
-                        const newTx = { id: 'auto_' + Date.now() + '_' + rule.id, type: rule.type, asset: rule.asset || 'TWD', category: rule.category || '固定支出/存入', amount: rule.amount, note: `[自動週期] ${rule.name}`, date: todayStr };
-                        appData.transactions.unshift(newTx);
-                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '自動交易執行通知', message: `已自動執行「${rule.name}」${rule.type} $${rule.amount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-                        triggeredCount++;
-                    }
-                }
-            });
-
-            appData.installments.forEach(inst => {
-                const instStart = inst.startDate || todayStr;
-                if (inst.paidMonths < inst.totalMonths && todayStr >= instStart && inst.lastPaidMonth !== currentMonthStr) {
-                    if (currentDay >= inst.day || todayStr >= instStart) {
-                        inst.paidMonths += 1;
-                        inst.lastPaidMonth = currentMonthStr;
-                        const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: inst.asset || 'TWD', category: '固定支出/存入', amount: inst.monthlyAmount, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
-                        appData.transactions.unshift(newTx);
-                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '分期扣款執行通知', message: `已自動執行「${inst.name}」第 ${inst.paidMonths}/${inst.totalMonths} 期扣款 NT$ ${inst.monthlyAmount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-                        triggeredCount++;
-                    }
-                }
-            });
-
-            if (triggeredCount > 0) saveData();
         }
 
         function openCustomDatePicker(target) {
