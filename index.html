@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -68,7 +68,7 @@
             width: 100%;
             max-width: 430px;
             height: 100vh;
-            max-height: 900px;
+            max-height: 100vh;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
@@ -77,14 +77,19 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
             .phone-container {
-                height: 92vh;
-                margin-top: 4vh;
+                height: 96vh;
+                max-height: 940px;
+                margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                padding-top: 0;
+                padding-bottom: 0;
             }
         }
 
@@ -151,7 +156,7 @@
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.90) translateY(2px);
+            transform: scale(0.85) translateY(2px) !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -207,7 +212,7 @@
         </header>
 
         <!-- MAIN VIEW CONTAINER -->
-        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-24 relative w-full" id="main-content"></main>
+        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-24 relative w-full touch-pan-y" id="main-content"></main>
 
         <!-- Floating Action Button -->
         <div class="absolute bottom-20 right-5 z-20">
@@ -680,6 +685,10 @@
         let datePickerTarget = null;
         let currentOptionTarget = null;
 
+        // 手勢左右滑動支援變數
+        let touchStartX = 0;
+        let touchEndX = 0;
+
         function loadAppData() {
             const saved = localStorage.getItem('wealth_app_data_v18_final');
             if (saved) {
@@ -813,6 +822,7 @@
             applyTheme();
             lucide.createIcons();
             initPWA();
+            initSwipeGestures();
             document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
             updateHeaderDate();
             checkRecurringTransactions();
@@ -828,8 +838,69 @@
             }, 900);
         };
 
+        function initSwipeGestures() {
+            const mainContainer = document.getElementById('main-content');
+            if (!mainContainer) return;
+
+            mainContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            mainContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipeGesture();
+            }, { passive: true });
+
+            // 針對通知抽屜增加右滑關閉手勢支援
+            const notifDrawer = document.getElementById('notif-drawer');
+            if (notifDrawer) {
+                let notifStartX = 0;
+                notifDrawer.addEventListener('touchstart', (e) => {
+                    notifStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+                notifDrawer.addEventListener('touchend', (e) => {
+                    let notifEndX = e.changedTouches[0].screenX;
+                    if (notifEndX - notifStartX > 50) {
+                        // 右滑關閉通知抽屜
+                        closeModal('notif-drawer');
+                    }
+                }, { passive: true });
+            }
+        }
+
+        function handleSwipeGesture() {
+            const swipeThreshold = 55;
+            const diff = touchEndX - touchStartX;
+            if (Math.abs(diff) < swipeThreshold) return;
+
+            // 如果目前在 settings 頁面，右滑（diff > 0）返回首頁
+            if (currentTab === 'settings') {
+                if (diff > 0) {
+                    switchTabWithAnimation('home', 'right');
+                }
+                return;
+            }
+
+            // 定義分頁順序：僅在 3 個主要分頁之間滑動
+            const tabOrder = ['home', 'details', 'stock-stats'];
+            const currentIndex = tabOrder.indexOf(currentTab);
+            if (currentIndex === -1) return;
+
+            if (diff > 0 && currentIndex > 0) {
+                // 向右滑 -> 切到前一個分頁
+                switchTabWithAnimation(tabOrder[currentIndex - 1], 'right');
+            } else if (diff < 0 && currentIndex < tabOrder.length - 1) {
+                // 向左滑 -> 切到下一個分頁
+                switchTabWithAnimation(tabOrder[currentIndex + 1], 'left');
+            }
+        }
+
         function switchTab(tab, resetFilters = true) {
-            if (resetFilters) {
+            switchTabWithAnimation(tab, 'fade', resetFilters);
+        }
+
+        function switchTabWithAnimation(tab, direction = 'fade', resetFilters = true) {
+            if (resetFilters && tab !== currentTab) {
                 filterAsset = 'ALL';
                 filterRange = 'RECENT30';
                 filterType = 'ALL';
@@ -854,8 +925,20 @@
                     headerSettingsBtn.classList.remove('ring-2', 'ring-brand-gold');
                 }
             }
+
             const main = document.getElementById('main-content');
-            if (main) main.scrollTop = 0;
+            if (main) {
+                main.scrollTop = 0;
+                main.classList.remove('animate-fade', 'animate-slide-left', 'animate-slide-right');
+                void main.offsetWidth; // 觸發重繪
+                if (direction === 'left') {
+                    main.classList.add('animate-slide-left');
+                } else if (direction === 'right') {
+                    main.classList.add('animate-slide-right');
+                } else {
+                    main.classList.add('animate-fade');
+                }
+            }
             renderCurrentView();
         }
 
@@ -863,7 +946,7 @@
             filterAsset = assetKey;
             filterRange = 'RECENT30';
             filterType = 'ALL';
-            switchTab('details', false);
+            switchTabWithAnimation('details', 'left', false);
         }
 
         function renderCurrentView() {
@@ -1068,12 +1151,26 @@
             document.getElementsByName('txType').forEach(r => { if (r.value === val) r.checked = true; });
             const labelOut = document.getElementById('label-type-out');
             const labelIn = document.getElementById('label-type-in');
-            if (val === '支出') {
-                labelOut.className = "flex-1 text-center py-2.5 rounded-xl border-2 border-brand-red bg-brand-red/10 cursor-pointer transition-all shadow-sm";
-                labelIn.className = "flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100";
+            const isSellOrExpense = (val === '支出' || val === '賣出股票');
+
+            if (isSellOrExpense) {
+                if (labelOut) {
+                    labelOut.className = "flex-1 text-center py-2.5 rounded-xl border-2 border-brand-red bg-brand-red/10 cursor-pointer transition-all shadow-sm active:scale-95";
+                    labelOut.style.borderColor = "var(--color-red)";
+                }
+                if (labelIn) {
+                    labelIn.className = "flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100 active:scale-95";
+                    labelIn.style.borderColor = "";
+                }
             } else {
-                labelIn.className = "flex-1 text-center py-2.5 rounded-xl border-2 border-brand-green bg-brand-green/10 cursor-pointer transition-all shadow-sm";
-                labelOut.className = "flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100";
+                if (labelIn) {
+                    labelIn.className = "flex-1 text-center py-2.5 rounded-xl border-2 border-brand-green bg-brand-green/10 cursor-pointer transition-all shadow-sm active:scale-95";
+                    labelIn.style.borderColor = "var(--color-green)";
+                }
+                if (labelOut) {
+                    labelOut.className = "flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100 active:scale-95";
+                    labelOut.style.borderColor = "";
+                }
             }
         }
 
@@ -1099,6 +1196,11 @@
             if (currentModalMode === 'cash') {
                 asset = document.getElementById('input-asset-type').value;
                 category = document.getElementById('input-category').value;
+                if (txType === '存入') {
+                    appData.assets[asset] = (appData.assets[asset] || 0) + amount;
+                } else {
+                    appData.assets[asset] = (appData.assets[asset] || 0) - amount;
+                }
             } else {
                 asset = document.getElementById('input-stock-market').value;
                 stockSymbol = document.getElementById('input-stock-symbol').value || '股票交易';
@@ -1106,6 +1208,11 @@
                 price = parseFloat(document.getElementById('input-stock-price').value) || 0;
                 fee = parseFloat(document.getElementById('input-stock-fee').value) || 0;
                 category = txType === '存入' ? '股票買進' : '股票賣出';
+                if (txType === '存入') {
+                    appData.assets[asset] = (appData.assets[asset] || 0) + amount;
+                } else {
+                    appData.assets[asset] = Math.max(0, (appData.assets[asset] || 0) - amount);
+                }
             }
 
             const newTx = { id: 'tx_' + Date.now(), type: txType, asset, category, amount, note, date, stockSymbol, shares, price, fee };
@@ -1118,6 +1225,14 @@
         function deleteTransaction(id) {
             const idx = appData.transactions.findIndex(t => t.id === id);
             if (idx !== -1) {
+                const tx = appData.transactions[idx];
+                if (tx.asset === 'TWD' || tx.asset === 'USD' || tx.asset === 'TW_STOCK' || tx.asset === 'US_STOCK') {
+                    if (tx.type === '存入') {
+                        appData.assets[tx.asset] = Math.max(0, (appData.assets[tx.asset] || 0) - tx.amount);
+                    } else {
+                        appData.assets[tx.asset] = (appData.assets[tx.asset] || 0) + tx.amount;
+                    }
+                }
                 appData.transactions.splice(idx, 1);
                 saveData();
             }
