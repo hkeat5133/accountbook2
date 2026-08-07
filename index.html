@@ -46,7 +46,12 @@
             --phone-border: #2b2c28;
         }
 
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
             background-color: var(--bg-app);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
@@ -63,29 +68,39 @@
             height: 100%;
         }
 
+        /* Mobile First Full-Screen Phone Container */
         .phone-container {
             width: 100%;
-            max-width: 430px;
-            height: 100vh;
+            max-width: 100%;
+            height: 100%;
             height: 100dvh;
-            max-height: 100vh;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
-            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border-color: var(--phone-border);
+            border: none;
         }
 
+        /* Desktop Mockup Frame */
         @media (min-width: 640px) {
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+            }
             .phone-container {
+                max-width: 430px;
                 height: 96vh;
                 max-height: 940px;
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                border-style: solid;
+                border-color: var(--phone-border);
+                box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
             }
         }
 
@@ -217,11 +232,12 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen theme-light">
+<body class="theme-light">
 
-    <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
+    <div class="phone-container text-app-main flex flex-col relative overflow-hidden" id="app-phone-container">
 
-        <header class="px-5 pb-3.5 pt-[max(2.25rem,calc(0.75rem+env(safe-area-inset-top)))] bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
+        <!-- Top Header Bar with Safe Area Top Spacing -->
+        <header class="px-5 pb-3 pt-[max(0.75rem,calc(0.5rem+env(safe-area-inset-top)))] bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
             <div class="flex items-center gap-1.5">
                 <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card text-app-main transition-all border border-app-line" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -244,6 +260,7 @@
             </div>
         </header>
 
+        <!-- Main Content Area -->
         <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] relative w-full touch-pan-y" id="main-content"></main>
 
         <!-- Floating Action Button -->
@@ -253,7 +270,7 @@
             </button>
         </div>
 
-        <!-- Navigation Bar -->
+        <!-- Bottom Navigation Bar with Safe Area Bottom Padding -->
         <nav class="w-full bg-app-surface border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0 pb-[max(0.5rem,env(safe-area-inset-bottom))] transform-gpu">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold font-bold">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
@@ -289,7 +306,7 @@
 
         <!-- Notification Drawer -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-end">
-            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(1rem,calc(0.75rem+env(safe-area-inset-top)))] pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line shrink-0">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
@@ -306,8 +323,9 @@
             </div>
         </div>
 
+        <!-- Full-Height Settings Drawer with Precise Safe Area Insets -->
         <div id="settings-drawer" onclick="closeModal('settings-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-start">
-            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1.25rem+env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[max(1rem,calc(0.75rem+env(safe-area-inset-top)))] pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="flex items-center pb-3.5 border-b border-app-line shrink-0">
                     <div class="flex items-center gap-2">
                         <button onclick="closeModal('settings-drawer')" class="p-1.5 rounded-xl bg-app-card border border-app-line text-brand-gold hover:opacity-80" title="返回">
@@ -322,6 +340,7 @@
             </div>
         </div>
 
+        <!-- Transaction Modal with Bottom Alignment & Covered Safe Area -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[88vh] flex flex-col pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer shrink-0"></div>
