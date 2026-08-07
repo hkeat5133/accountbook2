@@ -31,7 +31,6 @@
             --text-main: #2c2e2b;
             --text-muted: #7a7f78;
             --border-line: #d8d2c4;
-            --outer-bg: #f6f4ee;
         }
 
         body.theme-dark {
@@ -42,10 +41,9 @@
             --text-main: #f0eee6;
             --text-muted: #939890;
             --border-line: #454841;
-            --outer-bg: #1c1d1b;
         }
 
-        /* 確保 html 與 body 背景色與 App 內部完全一致，徹底消除多餘色塊 */
+        /* 絕對鎖定根部，防止瀏覽器拉動產生多餘色塊 */
         html, body {
             width: 100%;
             height: 100%;
@@ -66,7 +64,7 @@
             overflow: hidden;
         }
 
-        /* Mobile Native Full Viewport Layout (100% 滿版，無多餘邊距或色塊) */
+        /* 沉浸式手機全屏容器（強制鋪滿視窗，不留任何邊界） */
         .phone-container {
             width: 100vw;
             height: 100dvh;
@@ -77,8 +75,6 @@
             bottom: 0;
             margin: 0;
             padding: 0;
-            border: none;
-            border-radius: 0;
             background-color: var(--bg-app);
             display: flex;
             flex-direction: column;
@@ -240,17 +236,17 @@
         </header>
 
         <!-- Main Content Scroll Area -->
-        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-28 relative w-full touch-pan-y" id="main-content"></main>
+        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-32 relative w-full touch-pan-y" id="main-content"></main>
 
         <!-- Floating Action Button -->
-        <div class="absolute bottom-[calc(4.8rem+env(safe-area-inset-bottom))] right-5 z-30">
+        <div class="absolute bottom-[calc(5.2rem+env(safe-area-inset-bottom))] right-5 z-30">
             <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <!-- Bottom Navigation Bar (Stretched completely to the bottom edge with no gap) -->
-        <nav class="w-full bg-app-surface border-t border-app-line px-3 pt-2.5 pb-[max(1.8rem,calc(1rem+env(safe-area-inset-bottom)))] flex justify-around items-center absolute bottom-0 left-0 right-0 z-30 shrink-0 transform-gpu">
+        <!-- Bottom Navigation Bar (Stretched completely to bottom edge with native bleed) -->
+        <nav class="w-full bg-app-surface border-t border-app-line px-3 pt-2.5 pb-[max(2.2rem,calc(1.2rem+env(safe-area-inset-bottom)))] flex justify-around items-center absolute bottom-0 left-0 right-0 z-30 shrink-0 transform-gpu">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold font-bold">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
@@ -315,7 +311,7 @@
                         </h3>
                     </div>
                 </div>
-                <div id="settings-drawer-content" class="flex-1 overflow-y-auto my-3 space-y-4 pr-0.5 pb-16"></div>
+                <div id="settings-drawer-content" class="flex-1 overflow-y-auto my-3 space-y-4 pr-0.5 pb-20"></div>
             </div>
         </div>
 
@@ -511,7 +507,7 @@
         </div>
 
         <!-- Edit Category Modal -->
-        <div id="edit-category-modal" onclick="closeModal('edit-category-modal')" class="modal-backdrop absolute inset-0 bg-black/70 z-[99] hidden flex items-center justify-center p-6">
+        <div id="edit-category-modal" onclick="closeModal('edit-category-modal')" class="modal-backdrop absolute inset-0 bg-black/70 z-[85] hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <h3 class="font-bold text-sm text-brand-gold">編輯分類名稱</h3>
@@ -520,6 +516,23 @@
                 <div class="pt-2 flex gap-2">
                     <button type="button" onclick="closeModal('edit-category-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs font-bold">取消</button>
                     <button type="button" onclick="saveEditedCategory()" class="flex-1 bg-brand-gold text-white py-2 rounded-xl text-xs font-bold">儲存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Category Confirm Modal -->
+        <div id="delete-category-modal" onclick="closeModal('delete-category-modal')" class="modal-backdrop absolute inset-0 bg-black/70 z-[95] hidden flex items-center justify-center p-6">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
+                <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-sm text-brand-red">確定要刪除此分類嗎？</h3>
+                <input type="hidden" id="delete-category-target-name" value="">
+                <p id="delete-category-msg" class="text-xs text-app-muted">刪除後將無法復原。</p>
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeModal('delete-category-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs font-bold">取消</button>
+                    <button type="button" onclick="confirmDeleteCategory()" class="flex-1 bg-brand-red text-white py-2 rounded-xl text-xs font-bold">確定刪除</button>
                 </div>
             </div>
         </div>
@@ -771,8 +784,7 @@
             if (txType === '存入') {
                 return ['💰 薪資收入', '📈 投資收益', '📝 其他雜項'];
             } else {
-                const excludeKeywords = ['薪資收入', '固定扣款', '投資收益'];
-                return appData.categories.filter(cat => !excludeKeywords.some(kw => cat.includes(kw)));
+                return appData.categories.filter(cat => !['💰 薪資收入', '📈 投資收益', '🔄 固定扣款'].some(kw => cat.includes(kw)));
             }
         }
 
@@ -955,306 +967,6 @@
                     handleSwipeGesture();
                 }, { passive: true });
             }
-
-            // Notification Drawer Gesture
-            const notifDrawer = document.getElementById('notif-drawer');
-            if (notifDrawer) {
-                const sheet = notifDrawer.querySelector('.modal-sheet');
-                let notifStartX = 0, notifStartY = 0, notifStartTime = 0;
-                let isNotifDragging = false;
-                let isNotifHorizontal = false;
-                let notifAnimFrame = null;
-
-                const onNotifStart = (e) => {
-                    if (notifDrawer.classList.contains('hidden')) return;
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    notifStartX = clientX;
-                    notifStartY = clientY;
-                    notifStartTime = Date.now();
-                    isNotifDragging = true;
-                    isNotifHorizontal = false;
-                };
-
-                const onNotifMove = (e) => {
-                    if (!isNotifDragging || !sheet) return;
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    const deltaX = clientX - notifStartX;
-                    const deltaY = clientY - notifStartY;
-
-                    if (!isNotifHorizontal) {
-                        if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
-                            if (deltaX > 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
-                                isNotifHorizontal = true;
-                            } else {
-                                isNotifDragging = false;
-                                return;
-                            }
-                        }
-                    }
-
-                    if (isNotifHorizontal && deltaX > 0) {
-                        if (e.cancelable) e.preventDefault();
-                        if (notifAnimFrame) cancelAnimationFrame(notifAnimFrame);
-                        notifAnimFrame = requestAnimationFrame(() => {
-                            sheet.style.transition = 'none';
-                            sheet.style.transform = `translate3d(${deltaX}px, 0, 0)`;
-                            const opacityRatio = Math.max(0, 1 - deltaX / (window.innerWidth * 0.7));
-                            notifDrawer.style.backgroundColor = `rgba(0, 0, 0, ${0.5 * opacityRatio})`;
-                        });
-                    }
-                };
-
-                const onNotifEnd = (e) => {
-                    if (!isNotifDragging && !isNotifHorizontal) return;
-                    isNotifDragging = false;
-                    if (notifAnimFrame) cancelAnimationFrame(notifAnimFrame);
-                    if (!sheet) return;
-
-                    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-                    const deltaX = clientX - notifStartX;
-                    const duration = Date.now() - notifStartTime;
-                    const velocity = deltaX / (duration || 1);
-
-                    sheet.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
-                    notifDrawer.style.backgroundColor = '';
-
-                    if (isNotifHorizontal && (deltaX > 80 || (deltaX > 30 && velocity > 0.3))) {
-                        sheet.style.transform = '';
-                        closeModal('notif-drawer');
-                    } else {
-                        sheet.style.transform = '';
-                    }
-                };
-
-                notifDrawer.addEventListener('touchstart', onNotifStart, { passive: true });
-                notifDrawer.addEventListener('touchmove', onNotifMove, { passive: false });
-                notifDrawer.addEventListener('touchend', onNotifEnd, { passive: true });
-
-                notifDrawer.addEventListener('mousedown', (e) => {
-                    if (e.button !== 0) return;
-                    onNotifStart(e);
-                    const moveHandler = (me) => onNotifMove(me);
-                    const upHandler = (ue) => {
-                        onNotifEnd(ue);
-                        window.removeEventListener('mousemove', moveHandler);
-                        window.removeEventListener('mouseup', upHandler);
-                    };
-                    window.addEventListener('mousemove', moveHandler, { passive: false });
-                    window.addEventListener('mouseup', upHandler);
-                });
-            }
-
-            // Settings Drawer Gesture
-            const settingsDrawer = document.getElementById('settings-drawer');
-            if (settingsDrawer) {
-                const sheet = settingsDrawer.querySelector('.modal-sheet');
-                let setStartX = 0, setStartY = 0, setStartTime = 0;
-                let isDragging = false;
-                let isHorizontal = false;
-                let setAnimFrame = null;
-
-                const onSetStart = (e) => {
-                    if (settingsDrawer.classList.contains('hidden')) return;
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    setStartX = clientX;
-                    setStartY = clientY;
-                    setStartTime = Date.now();
-                    isDragging = true;
-                    isHorizontal = false;
-                };
-
-                const onSetMove = (e) => {
-                    if (!isDragging || !sheet) return;
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    const deltaX = clientX - setStartX;
-                    const deltaY = clientY - setStartY;
-
-                    if (!isHorizontal) {
-                        if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
-                            if (deltaX < 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
-                                isHorizontal = true;
-                            } else {
-                                isDragging = false;
-                                return;
-                            }
-                        }
-                    }
-
-                    if (isHorizontal && deltaX < 0) {
-                        if (e.cancelable) e.preventDefault();
-                        if (setAnimFrame) cancelAnimationFrame(setAnimFrame);
-                        setAnimFrame = requestAnimationFrame(() => {
-                            sheet.style.transition = 'none';
-                            sheet.style.transform = `translate3d(${deltaX}px, 0, 0)`;
-                            const opacityRatio = Math.max(0, 1 - Math.abs(deltaX) / (window.innerWidth * 0.7));
-                            settingsDrawer.style.backgroundColor = `rgba(0, 0, 0, ${0.5 * opacityRatio})`;
-                        });
-                    }
-                };
-
-                const onSetEnd = (e) => {
-                    if (!isDragging && !isHorizontal) return;
-                    isDragging = false;
-                    if (setAnimFrame) cancelAnimationFrame(setAnimFrame);
-                    if (!sheet) return;
-
-                    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-                    const deltaX = clientX - setStartX;
-                    const duration = Date.now() - setStartTime;
-                    const velocity = Math.abs(deltaX) / (duration || 1);
-
-                    sheet.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
-                    settingsDrawer.style.backgroundColor = '';
-
-                    if (isHorizontal && (deltaX < -80 || (deltaX < -30 && velocity > 0.3))) {
-                        sheet.style.transform = '';
-                        closeModal('settings-drawer');
-                    } else {
-                        sheet.style.transform = '';
-                    }
-                };
-
-                settingsDrawer.addEventListener('touchstart', onSetStart, { passive: true });
-                settingsDrawer.addEventListener('touchmove', onSetMove, { passive: false });
-                settingsDrawer.addEventListener('touchend', onSetEnd, { passive: true });
-
-                settingsDrawer.addEventListener('mousedown', (e) => {
-                    if (e.button !== 0) return;
-                    onSetStart(e);
-                    const moveHandler = (me) => onSetMove(me);
-                    const upHandler = (ue) => {
-                        onSetEnd(ue);
-                        window.removeEventListener('mousemove', moveHandler);
-                        window.removeEventListener('mouseup', upHandler);
-                    };
-                    window.addEventListener('mousemove', moveHandler, { passive: false });
-                    window.addEventListener('mouseup', upHandler);
-                });
-            }
-
-            initBottomSheetSwipeGestures();
-        }
-
-        function initBottomSheetSwipeGestures() {
-            const bottomModalIds = [
-                'transaction-modal', 'confirm-modal', 'custom-option-modal',
-                'recurring-modal', 'installment-modal', 'custom-date-modal',
-                'stock-history-modal', 'export-jpg-modal', 'toast-modal', 'edit-category-modal'
-            ];
-
-            bottomModalIds.forEach(id => {
-                const modal = document.getElementById(id);
-                if (!modal) return;
-
-                const sheet = modal.querySelector('.modal-sheet');
-                if (!sheet) return;
-
-                let startY = 0, startX = 0, startTime = 0;
-                let isDragging = false;
-                let isVertical = false;
-                let animFrame = null;
-
-                const onStart = (e) => {
-                    if (modal.classList.contains('hidden')) return;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    startY = clientY;
-                    startX = clientX;
-                    startTime = Date.now();
-                    isDragging = false;
-                    isVertical = false;
-
-                    let scrollableParent = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
-                    if (scrollableParent && scrollableParent.scrollTop > 0) {
-                        return;
-                    }
-                    isDragging = true;
-                };
-
-                const onMove = (e) => {
-                    if (!isDragging || !sheet) return;
-
-                    let scrollableParent = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
-                    if (scrollableParent && scrollableParent.scrollTop > 0) {
-                        isDragging = false;
-                        if (animFrame) cancelAnimationFrame(animFrame);
-                        sheet.style.transition = '';
-                        sheet.style.transform = '';
-                        modal.style.backgroundColor = '';
-                        return;
-                    }
-
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const deltaY = clientY - startY;
-                    const deltaX = clientX - startX;
-
-                    if (!isVertical) {
-                        if (Math.abs(deltaY) > 6 || Math.abs(deltaX) > 6) {
-                            if (deltaY > 0 && Math.abs(deltaY) > Math.abs(deltaX)) {
-                                isVertical = true;
-                            } else {
-                                isDragging = false;
-                                return;
-                            }
-                        }
-                    }
-
-                    if (isVertical && deltaY > 0) {
-                        if (e.cancelable) e.preventDefault();
-                        if (animFrame) cancelAnimationFrame(animFrame);
-                        animFrame = requestAnimationFrame(() => {
-                            sheet.style.transition = 'none';
-                            sheet.style.transform = `translate3d(0, ${deltaY}px, 0)`;
-                            const opacityRatio = Math.max(0, 1 - deltaY / (window.innerHeight * 0.45));
-                            modal.style.backgroundColor = `rgba(0, 0, 0, ${0.5 * opacityRatio})`;
-                        });
-                    }
-                };
-
-                const onEnd = (e) => {
-                    if (!isDragging && !isVertical) return;
-                    isDragging = false;
-                    if (animFrame) cancelAnimationFrame(animFrame);
-                    if (!sheet) return;
-
-                    const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientX ? e.clientY : 0;
-                    const deltaY = clientY - startY;
-                    const duration = Date.now() - startTime;
-                    const velocity = deltaY / (duration || 1);
-
-                    sheet.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
-                    modal.style.backgroundColor = '';
-
-                    if (isVertical && (deltaY > 80 || (deltaY > 30 && velocity > 0.3))) {
-                        sheet.style.transform = '';
-                        closeModal(id);
-                    } else {
-                        sheet.style.transform = '';
-                    }
-                };
-
-                modal.addEventListener('touchstart', onStart, { passive: true });
-                modal.addEventListener('touchmove', onMove, { passive: false });
-                modal.addEventListener('touchend', onEnd, { passive: true });
-
-                modal.addEventListener('mousedown', (e) => {
-                    if (e.button !== 0) return;
-                    onStart(e);
-                    const mouseMoveHandler = (me) => onMove(me);
-                    const mouseUpHandler = (ue) => {
-                        onEnd(ue);
-                        window.removeEventListener('mousemove', mouseMoveHandler);
-                        window.removeEventListener('mouseup', mouseUpHandler);
-                    };
-                    window.addEventListener('mousemove', mouseMoveHandler, { passive: false });
-                    window.addEventListener('mouseup', mouseUpHandler);
-                });
-            });
         }
 
         function handleSwipeGesture() {
@@ -2169,18 +1881,22 @@
             document.getElementById('option-modal-title').innerHTML = `<i data-lucide="list" class="w-4 h-4"></i> ${title}`;
             
             const listElem = document.getElementById('option-modal-list');
-            listElem.innerHTML = appData.categories.map(cat => {
-                const isSelected = cat === currentVal;
+            const defaultCats = ['🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒', '💰 薪資收入', '📈 投資收益', '🔄 固定扣款', '📝 其他雜項'];
+
+            listElem.innerHTML = options.map(opt => {
+                const isSelected = opt.value === currentVal;
+                const isCustom = !defaultCats.includes(opt.value);
+
                 return `
                     <div class="flex items-center gap-1.5 w-full">
-                        <button type="button" onclick="selectOptionValue('${cat.replace(/'/g, "\\'")}', '${cat.replace(/'/g, "\\'")}')" class="flex-1 text-left p-3 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all">
-                            <span class="text-app-main">${cat}</span>
+                        <button type="button" onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="flex-1 text-left p-3 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all">
+                            <span class="text-app-main">${opt.label}</span>
                             ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold"></i>' : ''}
                         </button>
-                        <button type="button" onclick="event.stopPropagation(); openEditCategoryModal('${cat.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-blue hover:opacity-80 shrink-0" title="編輯名稱">
+                        <button type="button" onclick="event.stopPropagation(); openEditCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-blue hover:opacity-80 shrink-0" title="編輯名稱">
                             <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                         </button>
-                        <button type="button" onclick="event.stopPropagation(); openDeleteCategoryModal('${cat.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-red hover:opacity-80 shrink-0" title="刪除分類">
+                        <button type="button" onclick="event.stopPropagation(); openDeleteCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-red hover:opacity-80 shrink-0" title="刪除分類">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
@@ -2219,7 +1935,7 @@
                 });
                 saveData();
                 closeModal('edit-category-modal');
-                triggerTxCategoryPicker();
+                closeModal('custom-option-modal');
                 showToast("編輯成功", `分類已更名為「${newName}」。`);
             }
         }
@@ -2235,7 +1951,7 @@
             appData.categories = appData.categories.filter(c => c !== catName);
             saveData(false);
             closeModal('delete-category-modal');
-            triggerTxCategoryPicker();
+            closeModal('custom-option-modal');
             showToast("已刪除分類", `分類「${catName}」已刪除。`);
         }
 
@@ -2249,8 +1965,8 @@
                 saveData(false);
             }
             input.value = '';
-            triggerTxCategoryPicker();
-            showToast("新增成功", `已新增分類「${newCat}」。`);
+            closeModal('custom-option-modal');
+            showToast("新增成功", `已新增自訂分類「${newCat}」。`);
         }
 
         function selectOptionValue(val, label) {
@@ -2667,7 +2383,7 @@
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (imported.assets && imported.transactions) { appData = imported; saveData(); showToast("還原成功", "備份資料已成功還原！"); }
-                    else showToast("格式不符", "匯入的檔案格式不合。");
+                    else showToast("格式不符", "匯入.json 檔案格式不合。");
                 } catch(err) { showToast("讀取失敗", "無法解析 JSON 檔案。"); }
             };
             reader.readAsText(file);
