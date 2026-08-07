@@ -957,14 +957,65 @@
 
             const settingsDrawer = document.getElementById('settings-drawer');
             if (settingsDrawer) {
-                let setStartX = 0;
+                const sheet = settingsDrawer.querySelector('.modal-sheet');
+                let setStartX = 0, setStartY = 0, setStartTime = 0;
+                let isDragging = false;
+                let isHorizontal = false;
+
                 settingsDrawer.addEventListener('touchstart', (e) => {
-                    setStartX = e.changedTouches[0].screenX;
+                    if (settingsDrawer.classList.contains('hidden')) return;
+                    setStartX = e.touches[0].clientX;
+                    setStartY = e.touches[0].clientY;
+                    setStartTime = Date.now();
+                    isDragging = true;
+                    isHorizontal = false;
                 }, { passive: true });
+
+                settingsDrawer.addEventListener('touchmove', (e) => {
+                    if (!isDragging || !sheet) return;
+                    const curX = e.touches[0].clientX;
+                    const curY = e.touches[0].clientY;
+                    const deltaX = curX - setStartX;
+                    const deltaY = curY - setStartY;
+
+                    if (!isHorizontal) {
+                        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+                            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                                isHorizontal = true;
+                            } else {
+                                isDragging = false;
+                                return;
+                            }
+                        }
+                    }
+
+                    if (isHorizontal) {
+                        if (e.cancelable) e.preventDefault();
+                        sheet.style.transition = 'none';
+                        sheet.style.transform = `translateX(${deltaX}px)`;
+                        const opacityRatio = Math.max(0, 1 - Math.abs(deltaX) / (window.innerWidth * 0.7));
+                        settingsDrawer.style.backgroundColor = `rgba(0, 0, 0, ${0.6 * opacityRatio})`;
+                    }
+                }, { passive: false });
+
                 settingsDrawer.addEventListener('touchend', (e) => {
-                    let setEndX = e.changedTouches[0].screenX;
-                    if (setEndX - setStartX > 50) {
+                    if (!isDragging && !isHorizontal) return;
+                    isDragging = false;
+                    if (!sheet) return;
+
+                    const endX = e.changedTouches[0].clientX;
+                    const deltaX = endX - setStartX;
+                    const duration = Date.now() - setStartTime;
+                    const velocity = Math.abs(deltaX) / (duration || 1);
+
+                    sheet.style.transition = '';
+                    settingsDrawer.style.backgroundColor = '';
+
+                    if (Math.abs(deltaX) > 80 || (Math.abs(deltaX) > 30 && velocity > 0.35)) {
+                        sheet.style.transform = '';
                         closeModal('settings-drawer');
+                    } else {
+                        sheet.style.transform = '';
                     }
                 }, { passive: true });
             }
