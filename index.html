@@ -29,7 +29,7 @@
             --bg-surface: #ffffff;
             --bg-card: #ece8df;
             --bg-input: #ffffff;
-            --text-main: #7a7f78;
+            --text-main: #2c2e2b;
             --text-muted: #7a7f78;
             --border-line: #d8d2c4;
             --phone-border: #d2cbba;
@@ -40,7 +40,7 @@
             --bg-surface: #272825;
             --bg-card: #333530;
             --bg-input: #21221f;
-            --text-main: #939890;
+            --text-main: #f0eee6;
             --text-muted: #939890;
             --border-line: #454841;
             --phone-border: #2b2c28;
@@ -130,12 +130,12 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 標準彈出視窗統一採用由中心縮放與淡入動畫 */
+        /* 標準彈出視窗統一採用由中心縮放與淡入動畫（消除卡頓感，具備極致滑順彈性） */
         .modal-sheet {
             will-change: transform, opacity;
-            transform: scale(0.92) translateY(10px);
+            transform: scale(0.92) translateY(8px);
             opacity: 0;
-            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-in-out;
             max-height: 82vh;
             border-radius: 24px !important;
             width: 100%;
@@ -148,17 +148,17 @@
         }
 
         .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(10px) !important;
+            transform: scale(0.94) translateY(8px) !important;
             opacity: 0 !important;
         }
 
-        /* 最佳化按鈕點擊微動畫與流暢度 */
+        /* 最佳化按鈕點擊微動畫與流暢度（極速回饋、毫無延遲卡頓） */
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease;
             will-change: transform;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.93) translateY(1px) !important;
+            transform: scale(0.95) translateY(0.5px) !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -460,7 +460,7 @@
             </div>
         </div>
 
-        <!-- Custom Option Picker Modal (z-index 95 ensures it sits above transaction/recurring modals) -->
+        <!-- Custom Option Picker Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden">
             <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -664,16 +664,20 @@
         let filterRange = 'RECENT30';
         let filterType = 'ALL';
         let stockSubFilter = 'ALL';
-        let filterCustomDate = new Date().toISOString().split('T')[0];
-        let filterStartDate = new Date().toISOString().split('T')[0];
-        let filterEndDate = new Date().toISOString().split('T')[0];
-        let filterMonthDate = new Date().toISOString().slice(0, 7);
+        
+        const realTodayStr = new Date().toISOString().split('T')[0];
+        const realCurrentMonthStr = new Date().toISOString().slice(0, 7);
+
+        let filterCustomDate = realTodayStr;
+        let filterStartDate = realTodayStr;
+        let filterEndDate = realTodayStr;
+        let filterMonthDate = realCurrentMonthStr;
         let filterCategoryName = 'ALL';
 
-        let exportJpgCustomDate = new Date().toISOString().split('T')[0];
-        let exportJpgStartDate = new Date().toISOString().split('T')[0];
-        let exportJpgEndDate = new Date().toISOString().split('T')[0];
-        let exportJpgMonthDate = new Date().toISOString().slice(0, 7);
+        let exportJpgCustomDate = realTodayStr;
+        let exportJpgStartDate = realTodayStr;
+        let exportJpgEndDate = realTodayStr;
+        let exportJpgMonthDate = realCurrentMonthStr;
 
         let tabScrollPositions = { home: 0, details: 0, 'stock-stats': 0, settings: 0 };
         let datePickerTarget = null;
@@ -818,21 +822,34 @@
             lucide.createIcons();
             initPWA();
             initSwipeGestures();
-            const todayStr = new Date().toISOString().split('T')[0];
+            
+            const freshToday = new Date().toISOString().split('T')[0];
+            const freshMonth = new Date().toISOString().slice(0, 7);
+
+            filterCustomDate = freshToday;
+            filterStartDate = freshToday;
+            filterEndDate = freshToday;
+            filterMonthDate = freshMonth;
+
+            exportJpgCustomDate = freshToday;
+            exportJpgStartDate = freshToday;
+            exportJpgEndDate = freshToday;
+            exportJpgMonthDate = freshMonth;
+
             const inputDateElem = document.getElementById('input-date');
-            if (inputDateElem) inputDateElem.value = todayStr;
+            if (inputDateElem) inputDateElem.value = freshToday;
             const inputDateDisplay = document.getElementById('input-date-display');
-            if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
+            if (inputDateDisplay) inputDateDisplay.innerText = freshToday;
 
             const recDateVal = document.getElementById('rec-date-val');
-            if (recDateVal) recDateVal.value = todayStr;
+            if (recDateVal) recDateVal.value = freshToday;
             const recDateBtn = document.getElementById('rec-date-btn-txt');
-            if (recDateBtn) recDateBtn.innerText = todayStr;
+            if (recDateBtn) recDateBtn.innerText = freshToday;
 
             const instDateVal = document.getElementById('inst-date-val');
-            if (instDateVal) instDateVal.value = todayStr;
+            if (instDateVal) instDateVal.value = freshToday;
             const instDateBtn = document.getElementById('inst-date-btn-txt');
-            if (instDateBtn) instDateBtn.innerText = todayStr;
+            if (instDateBtn) instDateBtn.innerText = freshToday;
 
             updateHeaderDate();
             checkRecurringTransactions();
@@ -930,10 +947,12 @@
                 filterType = 'ALL';
                 stockSubFilter = 'ALL';
                 filterCategoryName = 'ALL';
-                filterCustomDate = new Date().toISOString().split('T')[0];
-                filterStartDate = new Date().toISOString().split('T')[0];
-                filterEndDate = new Date().toISOString().split('T')[0];
-                filterMonthDate = new Date().toISOString().slice(0, 7);
+                const freshToday = new Date().toISOString().split('T')[0];
+                const freshMonth = new Date().toISOString().slice(0, 7);
+                filterCustomDate = freshToday;
+                filterStartDate = freshToday;
+                filterEndDate = freshToday;
+                filterMonthDate = freshMonth;
             }
             currentTab = tab;
             ['home', 'details', 'stock-stats'].forEach(t => {
@@ -1407,18 +1426,6 @@
             showToast("預算已重置", `本月${shopName}預算已歸零。`);
         }
 
-        function saveAssetExplicitly(assetKey, val) {
-            appData.assets[assetKey] = val === '' ? 0 : (parseFloat(val) || 0);
-            saveData(true);
-        }
-
-        function saveAssetFromInput(assetKey, inputId) {
-            const val = document.getElementById(inputId)?.value;
-            appData.assets[assetKey] = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
-            saveData(true);
-            showToast("初始本金設定完成", `資產帳戶已成功更新。`);
-        }
-
         function deleteRecurringRule(id) { appData.recurringRules = appData.recurringRules.filter(r => r.id !== id); saveData(true); }
         function deleteInstallment(id) { appData.installments = appData.installments.filter(i => i.id !== id); saveData(true); }
 
@@ -1811,7 +1818,7 @@
                             <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
                         </div>
                         <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
-                            <span class="inline-flex items-center gap-1.5 text-app-main"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</span>
+                            <span class="inline-flex items-center gap-1.5 text-brand-gold"><i data-lucide="image" class="w-3.5 h-3.5"></i> 匯出資產報表 (JPG 圖片)</span>
                         </button>
                         <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
                     </div>
@@ -2046,9 +2053,9 @@
             if (target.includes('SINGLE') || target === 'TX_INPUT' || target === 'REC_DATE' || target === 'INST_DATE' || target.includes('START') || target.includes('END')) {
                 titleElem.innerHTML = `<i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期`;
                 let currDate = filterCustomDate;
-                if (target === 'TX_INPUT') currDate = document.getElementById('input-date').value || filterCustomDate;
-                else if (target === 'REC_DATE') currDate = document.getElementById('rec-date-val').value || filterCustomDate;
-                else if (target === 'INST_DATE') currDate = document.getElementById('inst-date-val').value || filterCustomDate;
+                if (target === 'TX_INPUT') currDate = document.getElementById('input-date').value || new Date().toISOString().split('T')[0];
+                else if (target === 'REC_DATE') currDate = document.getElementById('rec-date-val').value || new Date().toISOString().split('T')[0];
+                else if (target === 'INST_DATE') currDate = document.getElementById('inst-date-val').value || new Date().toISOString().split('T')[0];
                 else if (target === 'EXPORT_JPG_SINGLE') currDate = exportJpgCustomDate;
                 else if (target === 'EXPORT_JPG_START') currDate = exportJpgStartDate;
                 else if (target === 'EXPORT_JPG_END') currDate = exportJpgEndDate;
@@ -2299,9 +2306,8 @@
             const resetMode = document.querySelector('input[name="resetMode"]:checked')?.value || 'dataOnly';
             if (resetMode === 'all') {
                 appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                saveData(false);
-                await updateExchangeRateAuto(false);
                 saveData(true);
+                await updateExchangeRateAuto(true);
                 showToast("完全重置完成", "系統所有資料與所有設定已恢復為出廠預設狀態，並已同步更新最新匯率！");
             } else {
                 appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0 };
@@ -2311,10 +2317,9 @@
                 appData.notifications = [];
                 appData.budgetFood = 0;
                 appData.budgetShopping = 0;
-                saveData(false);
-                await updateExchangeRateAuto(false);
                 saveData(true);
-                showToast("資料重置完成", "所有資產、交易與預算資料已清空，並已同步更新最新匯率！");
+                await updateExchangeRateAuto(true);
+                showToast("資料重置完成", "所有資產、交易與預算資料已清空，設定已保留，並已同步更新最新匯率！");
             }
         }
     </script>
