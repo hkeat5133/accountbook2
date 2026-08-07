@@ -77,6 +77,8 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
@@ -86,6 +88,8 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                padding-top: 0;
+                padding-bottom: 0;
             }
         }
 
@@ -126,7 +130,7 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 標準彈出視窗（由底部升起/降下） */
+        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
         .modal-sheet {
             will-change: transform, opacity;
             transform: translateY(100%);
@@ -145,7 +149,7 @@
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由右側滑出/收回） */
+        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
         #notif-drawer .modal-sheet {
             transform: translateX(100%);
             opacity: 0;
@@ -163,25 +167,7 @@
             opacity: 0 !important;
         }
 
-        /* 設定全屏抽屜專用（由左側滑出/收回） */
-        #settings-drawer .modal-sheet {
-            transform: translateX(-100%);
-            opacity: 0;
-            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        #settings-drawer .modal-sheet.is-open {
-            transform: translateX(0) !important;
-            opacity: 1 !important;
-        }
-
-        #settings-drawer .modal-sheet.is-closing {
-            transform: translateX(-100%) !important;
-            opacity: 0 !important;
-        }
-
-        /* 明顯的點擊互動彈跳與縮放微動畫（active:scale-90） */
+        /* 明顯的點擊互動彈跳與縮放微動畫 */
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
@@ -211,25 +197,16 @@
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--border-line); border-radius: 4px; }
-
-        /* 隱藏設定抽屜捲軸線條 */
-        #settings-drawer-content::-webkit-scrollbar {
-            display: none;
-        }
-        #settings-drawer-content {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen theme-light">
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
-        <!-- App Main Header Bar (已完美修飾頂部多餘留白) -->
-        <header class="px-5 py-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
+        <!-- App Main Header Bar -->
+        <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
             <div class="flex items-center gap-1.5">
-                <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-1.5 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
+                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
@@ -240,10 +217,10 @@
                 <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 6 日</p>
             </div>
             <div class="flex items-center gap-1.5">
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-1.5 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-90 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-90 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> 安裝
                 </button>
-                <button onclick="toggleNotificationDrawer()" class="relative p-1.5 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="通知紀錄">
+                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="通知紀錄">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
                 </button>
@@ -251,17 +228,17 @@
         </header>
 
         <!-- MAIN VIEW CONTAINER -->
-        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-20 relative w-full touch-pan-y" id="main-content"></main>
+        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-28 relative w-full touch-pan-y" id="main-content"></main>
 
         <!-- Floating Action Button -->
-        <div class="absolute bottom-[calc(3.8rem+env(safe-area-inset-bottom))] right-5 z-20">
-            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-3.5 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
+        <div class="absolute bottom-20 right-5 z-20">
+            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <!-- Navigation Bar (已精準下移貼底，消除底部空白) -->
-        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 pt-2 pb-[max(0.75rem,calc(0.5rem+env(safe-area-inset-bottom)))] flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
+        <!-- Navigation Bar (3 Main Tabs) -->
+        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-90 hover:scale-110">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
@@ -294,7 +271,7 @@
             </div>
         </div>
 
-        <!-- Notification Drawer Modal (Right Slide) -->
+        <!-- Notification Drawer Modal -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
             <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
@@ -310,21 +287,6 @@
                 <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-2 border-t border-app-line active:scale-95">
                     清空歷史通知
                 </button>
-            </div>
-        </div>
-
-        <!-- Settings Full-Screen Drawer Modal (Left Slide) -->
-        <div id="settings-drawer" onclick="closeModal('settings-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-start">
-            <div class="modal-sheet w-full h-full bg-app-surface shadow-2xl p-5 flex flex-col border-r border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
-                <div class="flex justify-between items-center pb-3 border-b border-app-line shrink-0">
-                    <h3 class="font-bold text-brand-gold flex items-center gap-2 text-sm">
-                        <i data-lucide="settings" class="w-4 h-4"></i> 系統設定面板
-                    </h3>
-                    <button onclick="closeModal('settings-drawer')" class="text-app-muted hover:text-app-main p-1.5 active:scale-90">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div id="settings-drawer-content" class="flex-1 overflow-y-auto my-3 space-y-4 w-full"></div>
             </div>
         </div>
 
@@ -513,37 +475,6 @@
                         <input type="text" id="new-category-input" placeholder="輸入新分類名稱..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
                         <button type="button" onclick="addNewCustomCategory()" class="bg-brand-gold text-white font-bold px-3 py-1.5 rounded-xl text-xs shrink-0 active:scale-95">新增</button>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Edit Category Modal -->
-        <div id="edit-category-modal" onclick="closeModal('edit-category-modal')" class="modal-backdrop absolute inset-0 bg-black/70 z-[85] hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <h3 class="font-bold text-sm text-brand-gold">編輯分類名稱</h3>
-                <input type="hidden" id="edit-category-old-name" value="">
-                <input type="text" id="edit-category-input" placeholder="輸入新的分類名稱..." class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-xs text-app-main outline-none focus:border-brand-gold text-center">
-                <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeModal('edit-category-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs font-bold">取消</button>
-                    <button type="button" onclick="saveEditedCategory()" class="flex-1 bg-brand-gold text-white py-2 rounded-xl text-xs font-bold">儲存</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Delete Category Confirm Modal -->
-        <div id="delete-category-modal" onclick="closeModal('delete-category-modal')" class="modal-backdrop absolute inset-0 bg-black/70 z-[90] hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red">
-                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                </div>
-                <h3 class="font-bold text-sm text-brand-red">確定要刪除此分類嗎？</h3>
-                <input type="hidden" id="delete-category-target-name" value="">
-                <p id="delete-category-msg" class="text-xs text-app-muted">刪除後將無法復原。</p>
-                <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeModal('delete-category-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs font-bold">取消</button>
-                    <button type="button" onclick="confirmDeleteCategory()" class="flex-1 bg-brand-red text-white py-2 rounded-xl text-xs font-bold">確定刪除</button>
                 </div>
             </div>
         </div>
@@ -741,10 +672,7 @@
             monthlyBudget: 0,
             categories: [
                 '🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒',
-                '📝 其他雜項'
-            ],
-            depositCategories: [
-                '💰 薪資收入', '📈 投資收益', '📝 其他雜項'
+                '💰 薪資收入', '📈 投資收益', '🔄 固定扣款', '📝 其他雜項'
             ],
             assets: { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0 },
             recurringRules: [],
@@ -777,15 +705,12 @@
         let touchEndX = 0;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v20_final');
+            const saved = localStorage.getItem('wealth_app_data_v18_final');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
                     if (!parsed.categories || !Array.isArray(parsed.categories)) {
                         parsed.categories = [...DEFAULT_STATE.categories];
-                    }
-                    if (!parsed.depositCategories || !Array.isArray(parsed.depositCategories)) {
-                        parsed.depositCategories = [...DEFAULT_STATE.depositCategories];
                     }
                     return parsed;
                 } catch(e) { console.error(e); }
@@ -794,7 +719,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v20_final', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v18_final', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -896,7 +821,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v20';
+                    const CACHE = 'wealth-ledger-v18';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -932,14 +857,51 @@
             const mainContainer = document.getElementById('main-content');
             if (!mainContainer) return;
 
+            let edgeStartX = 0;
+            let isEdgeSwipe = false;
+
             mainContainer.addEventListener('touchstart', (e) => {
                 touchStartX = e.changedTouches[0].screenX;
+                edgeStartX = touchStartX;
+                // If touch starts near the left edge (within 35px), flag as potential back swipe
+                isEdgeSwipe = (edgeStartX <= 35 && currentTab !== 'home');
             }, { passive: true });
 
             mainContainer.addEventListener('touchend', (e) => {
                 touchEndX = e.changedTouches[0].screenX;
+                const diff = touchEndX - touchStartX;
+                const swipeThreshold = 50;
+
+                // Handle edge swipe back to home or previous tab
+                if (isEdgeSwipe && diff > swipeThreshold) {
+                    if (currentTab === 'settings' || currentTab === 'stock-stats') {
+                        switchTabWithAnimation('home', 'right');
+                        return;
+                    } else if (currentTab === 'details') {
+                        switchTabWithAnimation('home', 'right');
+                        return;
+                    }
+                }
+
                 handleSwipeGesture();
             }, { passive: true });
+
+            // Global swipe-to-close for active modals/drawers
+            const modals = document.querySelectorAll('.modal-backdrop');
+            modals.forEach(modal => {
+                let modalStartX = 0;
+                modal.addEventListener('touchstart', (e) => {
+                    modalStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+                modal.addEventListener('touchend', (e) => {
+                    let modalEndX = e.changedTouches[0].screenX;
+                    // Right swipe on modal or drawer closes it
+                    if (modalEndX - modalStartX > 60) {
+                        const modalId = modal.id;
+                        if (modalId) closeModal(modalId);
+                    }
+                }, { passive: true });
+            });
 
             const notifDrawer = document.getElementById('notif-drawer');
             if (notifDrawer) {
@@ -954,26 +916,19 @@
                     }
                 }, { passive: true });
             }
-
-            const settingsDrawer = document.getElementById('settings-drawer');
-            if (settingsDrawer) {
-                let setStartX = 0;
-                settingsDrawer.addEventListener('touchstart', (e) => {
-                    setStartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-                settingsDrawer.addEventListener('touchend', (e) => {
-                    let setEndX = e.changedTouches[0].screenX;
-                    if (setEndX - setStartX > 50) {
-                        closeModal('settings-drawer');
-                    }
-                }, { passive: true });
-            }
         }
 
         function handleSwipeGesture() {
             const swipeThreshold = 55;
             const diff = touchEndX - touchStartX;
             if (Math.abs(diff) < swipeThreshold) return;
+
+            if (currentTab === 'settings') {
+                if (diff > 0) {
+                    switchTabWithAnimation('home', 'right');
+                }
+                return;
+            }
 
             const tabOrder = ['home', 'details', 'stock-stats'];
             const currentIndex = tabOrder.indexOf(currentTab);
@@ -1008,6 +963,14 @@
                     navBtn.className = t === tab ? "flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 scale-105 font-bold" : "flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 font-medium";
                 }
             });
+            const headerSettingsBtn = document.getElementById('nav-settings-header');
+            if (headerSettingsBtn) {
+                if (tab === 'settings') {
+                    headerSettingsBtn.classList.add('ring-2', 'ring-brand-gold');
+                } else {
+                    headerSettingsBtn.classList.remove('ring-2', 'ring-brand-gold');
+                }
+            }
 
             const main = document.getElementById('main-content');
             if (main) {
@@ -1039,12 +1002,7 @@
             if (currentTab === 'home') renderHomeView(main);
             else if (currentTab === 'details') renderDetailsView(main);
             else if (currentTab === 'stock-stats') renderStockStatsView(main);
-            
-            const settingsDrawer = document.getElementById('settings-drawer');
-            if (settingsDrawer && !settingsDrawer.classList.contains('hidden')) {
-                renderSettingsDrawerContent();
-            }
-
+            else if (currentTab === 'settings') renderSettingsView(main);
             if (window.lucide) lucide.createIcons();
             updateNotificationBadge();
         }
@@ -1159,24 +1117,6 @@
             }
         }
 
-        function toggleSettingsDrawer() {
-            const drawer = document.getElementById('settings-drawer');
-            if (!drawer) return;
-            if (drawer.classList.contains('hidden')) {
-                openModal('settings-drawer');
-                renderSettingsDrawerContent();
-            } else {
-                closeModal('settings-drawer');
-            }
-        }
-
-        function renderSettingsDrawerContent() {
-            const container = document.getElementById('settings-drawer-content');
-            if (!container) return;
-            renderSettingsContentInto(container);
-            if (window.lucide) lucide.createIcons();
-        }
-
         function renderNotifications() {
             const container = document.getElementById('notif-list');
             if (!container) return;
@@ -1276,23 +1216,6 @@
                 if (labelOut) {
                     labelOut.className = "flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100 active:scale-95";
                     labelOut.style.borderColor = "";
-                }
-            }
-
-            // 更新預設顯示的分類名稱
-            const catBtnTxt = document.getElementById('tx-category-btn-txt');
-            const catInput = document.getElementById('input-category');
-            if (catBtnTxt && catInput) {
-                if (val === '存入') {
-                    if (!appData.depositCategories.includes(catInput.value)) {
-                        catInput.value = appData.depositCategories[0];
-                        catBtnTxt.innerText = appData.depositCategories[0];
-                    }
-                } else {
-                    if (!appData.categories.includes(catInput.value)) {
-                        catInput.value = appData.categories[0];
-                        catBtnTxt.innerText = appData.categories[0];
-                    }
                 }
             }
         }
@@ -1452,48 +1375,6 @@
 
         function deleteRecurringRule(id) { appData.recurringRules = appData.recurringRules.filter(r => r.id !== id); saveData(); }
         function deleteInstallment(id) { appData.installments = appData.installments.filter(i => i.id !== id); saveData(); }
-
-        function checkRecurringTransactions() {
-            const today = new Date();
-            const currentDay = today.getDate();
-            const todayStr = today.toISOString().split('T')[0];
-            const currentMonthStr = todayStr.slice(0, 7);
-            let triggeredCount = 0;
-
-            if (!appData.recurringRules) appData.recurringRules = [];
-            if (!appData.installments) appData.installments = [];
-            if (!appData.notifications) appData.notifications = [];
-            if (!appData.transactions) appData.transactions = [];
-
-            appData.recurringRules.forEach(rule => {
-                const ruleStart = rule.startDate || todayStr;
-                if (todayStr >= ruleStart && rule.lastExecutedMonth !== currentMonthStr) {
-                    if (currentDay >= rule.day || todayStr >= ruleStart) {
-                        rule.lastExecutedMonth = currentMonthStr;
-                        const newTx = { id: 'auto_' + Date.now() + '_' + rule.id, type: rule.type, asset: rule.asset || 'TWD', category: rule.category || '固定支出/存入', amount: rule.amount, note: `[自動週期] ${rule.name}`, date: todayStr };
-                        appData.transactions.unshift(newTx);
-                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '自動交易執行通知', message: `已自動執行「${rule.name}」${rule.type} $${rule.amount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-                        triggeredCount++;
-                    }
-                }
-            });
-
-            appData.installments.forEach(inst => {
-                const instStart = inst.startDate || todayStr;
-                if (inst.paidMonths < inst.totalMonths && todayStr >= instStart && inst.lastPaidMonth !== currentMonthStr) {
-                    if (currentDay >= inst.day || todayStr >= instStart) {
-                        inst.paidMonths += 1;
-                        inst.lastPaidMonth = currentMonthStr;
-                        const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: inst.asset || 'TWD', category: '固定支出/存入', amount: inst.monthlyAmount, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
-                        appData.transactions.unshift(newTx);
-                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '分期扣款執行通知', message: `已自動執行「${inst.name}」第 ${inst.paidMonths}/${inst.totalMonths} 期扣款 NT$ ${inst.monthlyAmount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-                        triggeredCount++;
-                    }
-                }
-            });
-
-            if (triggeredCount > 0) saveData();
-        }
 
         function renderTxList(txList) {
             if (!txList || txList.length === 0) return `<div class="text-center text-xs text-app-muted py-6 bg-app-card rounded-2xl border border-app-line">查無相關交易紀錄</div>`;
@@ -1745,9 +1626,14 @@
             `;
         }
 
-        function renderSettingsContentInto(container) {
+        function renderSettingsView(container) {
             container.innerHTML = `
-                <div class="space-y-4 w-full px-1 pb-4">
+                <div class="animate-fade space-y-4 w-full">
+                    <div class="flex justify-between items-center bg-app-card px-4 py-3 rounded-2xl border border-app-line">
+                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="settings" class="w-4 h-4 text-brand-gold"></i> 系統設定面板</span>
+                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">‹ 返回首頁</button>
+                    </div>
+
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4"></i> 基本參數設定</h3>
                         <div>
@@ -1848,7 +1734,7 @@
                                         <div class="font-bold text-app-main">${r.name}</div>
                                         <div class="text-[10px] text-app-muted font-mono">日期: ${r.startDate || '每月 '+r.day+' 號'} (每月 ${r.day} 號 自動${r.type} $${r.amount} ${r.asset})</div>
                                     </div>
-                                    <button onclick="deleteRecurringRule('${r.id}'); renderSettingsDrawerContent();" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
                             `).join('')}
                         </div>
@@ -1862,7 +1748,7 @@
                         <div class="space-y-2 text-xs">
                             ${appData.installments.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定分期付款</div>' : appData.installments.map(i => `
                                 <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1">
-                                    <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}'); renderSettingsDrawerContent();" class="text-app-muted hover:text-brand-red active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
+                                    <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
                                     <div class="flex justify-between text-[11px] text-app-muted font-mono"><span>總額: $${i.totalAmount.toLocaleString()} (每期: $${i.monthlyAmount.toLocaleString()})</span><span>${i.paidMonths}/${i.totalMonths} 期 (起始日: ${i.startDate || '1號'})</span></div>
                                 </div>
                             `).join('')}
@@ -1895,87 +1781,16 @@
         function openOptionModal(target, title, options, currentVal) {
             currentOptionTarget = target;
             document.getElementById('option-modal-title').innerHTML = `<i data-lucide="list" class="w-4 h-4"></i> ${title}`;
-            
-            const listElem = document.getElementById('option-modal-list');
-            listElem.innerHTML = options.map(opt => {
-                const isSelected = opt.value === currentVal;
-                return `
-                    <div class="flex items-center gap-1.5 w-full">
-                        <button type="button" onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="flex-1 text-left p-3 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all active:scale-95">
-                            <span class="text-app-main">${opt.label}</span>
-                            ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold"></i>' : ''}
-                        </button>
-                        <button type="button" onclick="event.stopPropagation(); openEditCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-blue hover:opacity-80 shrink-0 active:scale-90" title="編輯名稱">
-                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                        </button>
-                        <button type="button" onclick="event.stopPropagation(); openDeleteCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-red hover:opacity-80 shrink-0 active:scale-90" title="刪除分類">
-                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                `;
-            }).join('');
-
+            document.getElementById('option-modal-list').innerHTML = options.map(opt => `
+                <button type="button" onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="w-full text-left p-3 rounded-xl border ${opt.value === currentVal ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all active:scale-95">
+                    <span class="text-app-main">${opt.label}</span>
+                    ${opt.value === currentVal ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold"></i>' : ''}
+                </button>
+            `).join('');
             const customBox = document.getElementById('custom-category-add-box');
             if (target === 'TX_CATEGORY' || target === 'REC_CATEGORY') customBox.classList.remove('hidden');
             else customBox.classList.add('hidden');
             openModal('custom-option-modal');
-        }
-
-        function openEditCategoryModal(catName) {
-            document.getElementById('edit-category-old-name').value = catName;
-            document.getElementById('edit-category-input').value = catName;
-            openModal('edit-category-modal');
-        }
-
-        function saveEditedCategory() {
-            const oldName = document.getElementById('edit-category-old-name').value;
-            const newName = document.getElementById('edit-category-input').value.trim();
-            if (!newName || oldName === newName) {
-                closeModal('edit-category-modal');
-                return;
-            }
-
-            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
-            let targetList = (currentTxType === '存入') ? appData.depositCategories : appData.categories;
-
-            if (targetList.includes(newName)) {
-                showToast("編輯失敗", "該分類名稱已存在！");
-                return;
-            }
-
-            const idx = targetList.indexOf(oldName);
-            if (idx !== -1) {
-                targetList[idx] = newName;
-                appData.transactions.forEach(tx => {
-                    if (tx.category === oldName) tx.category = newName;
-                });
-                saveData();
-                closeModal('edit-category-modal');
-                closeModal('custom-option-modal');
-                showToast("編輯成功", `分類已更名為「${newName}」。`);
-            }
-        }
-
-        function openDeleteCategoryModal(catName) {
-            document.getElementById('delete-category-target-name').value = catName;
-            document.getElementById('delete-category-msg').innerText = `確定要刪除分類「${catName}」嗎？刪除後將無法復原。`;
-            openModal('delete-category-modal');
-        }
-
-        function confirmDeleteCategory() {
-            const catName = document.getElementById('delete-category-target-name').value;
-            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
-            
-            if (currentTxType === '存入') {
-                appData.depositCategories = appData.depositCategories.filter(c => c !== catName);
-            } else {
-                appData.categories = appData.categories.filter(c => c !== catName);
-            }
-
-            saveData(false);
-            closeModal('delete-category-modal');
-            closeModal('custom-option-modal');
-            showToast("已刪除分類", `分類「${catName}」已刪除。`);
         }
 
         function addNewCustomCategory() {
@@ -1983,17 +1798,12 @@
             if (!input) return;
             const newCat = input.value.trim();
             if (!newCat) return;
-
-            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
-            let targetList = (currentTxType === '存入') ? appData.depositCategories : appData.categories;
-
-            if (!targetList.includes(newCat)) {
-                targetList.push(newCat);
-                saveData(false);
+            if (!appData.categories.includes(newCat)) {
+                appData.categories.push(newCat);
+                saveData();
             }
             input.value = '';
-            closeModal('custom-option-modal');
-            showToast("新增成功", `已新增分類「${newCat}」。`);
+            if (currentOptionTarget === 'TX_CATEGORY') { triggerTxCategoryPicker(); selectOptionValue(newCat, newCat); }
         }
 
         function selectOptionValue(val, label) {
@@ -2029,9 +1839,7 @@
             openOptionModal('TX_STOCK_MARKET', '選擇股票市場', [{ label: '台股 (TWD)', value: 'TW_STOCK' }, { label: '美股 (USD)', value: 'US_STOCK' }], document.getElementById('input-stock-market').value);
         }
         function triggerTxCategoryPicker() {
-            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
-            const catList = (currentTxType === '存入') ? (appData.depositCategories || ['💰 薪資收入', '📈 投資收益', '📝 其他雜項']) : (appData.categories || ['🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒', '📝 其他雜項']);
-            openOptionModal('TX_CATEGORY', `選擇 ${currentTxType} 分類`, catList.map(c => ({ label: c, value: c })), document.getElementById('input-category').value);
+            openOptionModal('TX_CATEGORY', '選擇消費 / 收入分類', appData.categories.map(c => ({ label: c, value: c })), document.getElementById('input-category').value);
         }
 
         function handleRecurringSubmit(e) {
@@ -2066,6 +1874,43 @@
             closeModal('installment-modal');
             checkRecurringTransactions();
             showToast("建立成功", `已新增分期「${name}」（起始日：${startDate}）。`);
+        }
+
+        function checkRecurringTransactions() {
+            const today = new Date();
+            const currentDay = today.getDate();
+            const todayStr = today.toISOString().split('T')[0];
+            const currentMonthStr = todayStr.slice(0, 7);
+            let triggeredCount = 0;
+
+            appData.recurringRules.forEach(rule => {
+                const ruleStart = rule.startDate || todayStr;
+                if (todayStr >= ruleStart && rule.lastExecutedMonth !== currentMonthStr) {
+                    if (currentDay >= rule.day || todayStr >= ruleStart) {
+                        rule.lastExecutedMonth = currentMonthStr;
+                        const newTx = { id: 'auto_' + Date.now() + '_' + rule.id, type: rule.type, asset: rule.asset || 'TWD', category: rule.category || '固定支出/存入', amount: rule.amount, note: `[自動週期] ${rule.name}`, date: todayStr };
+                        appData.transactions.unshift(newTx);
+                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '自動交易執行通知', message: `已自動執行「${rule.name}」${rule.type} $${rule.amount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+                        triggeredCount++;
+                    }
+                }
+            });
+
+            appData.installments.forEach(inst => {
+                const instStart = inst.startDate || todayStr;
+                if (inst.paidMonths < inst.totalMonths && todayStr >= instStart && inst.lastPaidMonth !== currentMonthStr) {
+                    if (currentDay >= inst.day || todayStr >= instStart) {
+                        inst.paidMonths += 1;
+                        inst.lastPaidMonth = currentMonthStr;
+                        const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: inst.asset || 'TWD', category: '固定支出/存入', amount: inst.monthlyAmount, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
+                        appData.transactions.unshift(newTx);
+                        appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '分期扣款執行通知', message: `已自動執行「${inst.name}」第 ${inst.paidMonths}/${inst.totalMonths} 期扣款 NT$ ${inst.monthlyAmount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+                        triggeredCount++;
+                    }
+                }
+            });
+
+            if (triggeredCount > 0) saveData();
         }
 
         function openCustomDatePicker(target) {
