@@ -930,31 +930,84 @@
 
         function initSwipeGestures() {
             const mainContainer = document.getElementById('main-content');
-            if (!mainContainer) return;
+            if (mainContainer) {
+                mainContainer.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
 
-            mainContainer.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
+                mainContainer.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipeGesture();
+                }, { passive: true });
+            }
 
-            mainContainer.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipeGesture();
-            }, { passive: true });
-
+            // 1:1 即時跟手拖拽返回 - 通知抽屜 (Notif Drawer)
             const notifDrawer = document.getElementById('notif-drawer');
             if (notifDrawer) {
-                let notifStartX = 0;
+                const sheet = notifDrawer.querySelector('.modal-sheet');
+                let notifStartX = 0, notifStartY = 0, notifStartTime = 0;
+                let isNotifDragging = false;
+                let isNotifHorizontal = false;
+
                 notifDrawer.addEventListener('touchstart', (e) => {
-                    notifStartX = e.changedTouches[0].screenX;
+                    if (notifDrawer.classList.contains('hidden')) return;
+                    notifStartX = e.touches[0].clientX;
+                    notifStartY = e.touches[0].clientY;
+                    notifStartTime = Date.now();
+                    isNotifDragging = true;
+                    isNotifHorizontal = false;
                 }, { passive: true });
+
+                notifDrawer.addEventListener('touchmove', (e) => {
+                    if (!isNotifDragging || !sheet) return;
+                    const curX = e.touches[0].clientX;
+                    const curY = e.touches[0].clientY;
+                    const deltaX = curX - notifStartX;
+                    const deltaY = curY - notifStartY;
+
+                    if (!isNotifHorizontal) {
+                        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+                            if (deltaX > 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                                isNotifHorizontal = true;
+                            } else {
+                                isNotifDragging = false;
+                                return;
+                            }
+                        }
+                    }
+
+                    if (isNotifHorizontal && deltaX > 0) {
+                        if (e.cancelable) e.preventDefault();
+                        sheet.style.transition = 'none';
+                        sheet.style.transform = `translateX(${deltaX}px)`;
+                        const opacityRatio = Math.max(0, 1 - deltaX / (window.innerWidth * 0.7));
+                        notifDrawer.style.backgroundColor = `rgba(0, 0, 0, ${0.6 * opacityRatio})`;
+                    }
+                }, { passive: false });
+
                 notifDrawer.addEventListener('touchend', (e) => {
-                    let notifEndX = e.changedTouches[0].screenX;
-                    if (notifEndX - notifStartX > 50) {
+                    if (!isNotifDragging && !isNotifHorizontal) return;
+                    isNotifDragging = false;
+                    if (!sheet) return;
+
+                    const endX = e.changedTouches[0].clientX;
+                    const deltaX = endX - notifStartX;
+                    const duration = Date.now() - notifStartTime;
+                    const velocity = deltaX / (duration || 1);
+
+                    sheet.style.transition = '';
+                    notifDrawer.style.backgroundColor = '';
+
+                    if (isNotifHorizontal && (deltaX > 80 || (deltaX > 30 && velocity > 0.35))) {
+                        sheet.style.transform = '';
                         closeModal('notif-drawer');
+                    } else {
+                        sheet.style.transform = '';
                     }
                 }, { passive: true });
             }
 
+            // 1:1 即時跟手拖拽返回 - 系統設定面板 (Settings Drawer)
             const settingsDrawer = document.getElementById('settings-drawer');
             if (settingsDrawer) {
                 const sheet = settingsDrawer.querySelector('.modal-sheet');
@@ -981,7 +1034,7 @@
                     // 智慧辨識方向：判斷是橫向拖拽返回還是縱向上下捲動
                     if (!isHorizontal) {
                         if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
-                            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                            if (deltaX < 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
                                 isHorizontal = true;
                             } else {
                                 isDragging = false;
@@ -991,7 +1044,7 @@
                     }
 
                     // 1:1 手指即時跟隨拖拽位移與背景遮罩漸變
-                    if (isHorizontal) {
+                    if (isHorizontal && deltaX < 0) {
                         if (e.cancelable) e.preventDefault();
                         sheet.style.transition = 'none';
                         sheet.style.transform = `translateX(${deltaX}px)`;
@@ -1013,8 +1066,8 @@
                     sheet.style.transition = '';
                     settingsDrawer.style.backgroundColor = '';
 
-                    // 滑動距離 > 80px 或快速甩滑時自動收起關閉，否則無縫彈回
-                    if (Math.abs(deltaX) > 80 || (Math.abs(deltaX) > 30 && velocity > 0.35)) {
+                    // 向左滑動距離 > 80px 或快速甩滑時自動收起關閉，否則無縫彈回
+                    if (isHorizontal && (deltaX < -80 || (deltaX < -30 && velocity > 0.35))) {
                         sheet.style.transform = '';
                         closeModal('settings-drawer');
                     } else {
@@ -1026,6 +1079,7 @@
             initBottomSheetSwipeGestures();
         }
 
+        // 1:1 即時跟手拖拽返回 - 所有底部彈出視窗 (Bottom Sheet Popups)
         function initBottomSheetSwipeGestures() {
             const bottomModalIds = [
                 'transaction-modal', 'confirm-modal', 'custom-option-modal',
@@ -1067,6 +1121,7 @@
                     let scrollableParent = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
                     if (scrollableParent && scrollableParent.scrollTop > 0) {
                         isDragging = false;
+                        sheet.style.transition = '';
                         sheet.style.transform = '';
                         modal.style.backgroundColor = '';
                         return;
