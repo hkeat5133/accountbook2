@@ -131,7 +131,6 @@
             transform: translate3d(0, 100%, 0);
             opacity: 0;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
-            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
         }
 
         .modal-sheet.is-open {
@@ -140,15 +139,14 @@
         }
 
         .modal-sheet.is-closing {
-            transform: translate3d(0, 100%, 0) !important;
-            opacity: 0 !important;
+            transform: translate3d(0, 100%, 0);
+            opacity: 0;
         }
 
         #notif-drawer .modal-sheet {
             transform: translate3d(100%, 0, 0);
             opacity: 0;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #notif-drawer .modal-sheet.is-open {
@@ -157,15 +155,14 @@
         }
 
         #notif-drawer .modal-sheet.is-closing {
-            transform: translate3d(100%, 0, 0) !important;
-            opacity: 0 !important;
+            transform: translate3d(100%, 0, 0);
+            opacity: 0;
         }
 
         #settings-drawer .modal-sheet {
             transform: translate3d(-100%, 0, 0);
             opacity: 0;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #settings-drawer .modal-sheet.is-open {
@@ -174,16 +171,16 @@
         }
 
         #settings-drawer .modal-sheet.is-closing {
-            transform: translate3d(-100%, 0, 0) !important;
-            opacity: 0 !important;
+            transform: translate3d(-100%, 0, 0);
+            opacity: 0;
         }
 
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), opacity 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.96) !important;
-            opacity: 0.85 !important;
+            transform: scale(0.96);
+            opacity: 0.85;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -293,7 +290,7 @@
 
         <!-- Notification Drawer -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-end">
-            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
@@ -312,7 +309,7 @@
 
         <!-- Settings Drawer (Full Screen Mode) -->
         <div id="settings-drawer" onclick="closeModal('settings-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-start">
-            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1.25rem+env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="flex items-center pb-3.5 border-b border-app-line">
                     <div class="flex items-center gap-2">
                         <button onclick="closeModal('settings-drawer')" class="p-1.5 rounded-xl bg-app-card border border-app-line text-brand-gold hover:opacity-80" title="返回">
@@ -329,7 +326,7 @@
 
         <!-- Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[82vh] overflow-y-auto pb-[max(2.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[82vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
@@ -345,7 +342,7 @@
                     <button type="button" onclick="setModalMode('stock')" id="btn-mode-stock" class="py-2 rounded-lg font-medium transition-all text-app-muted">股票買賣</button>
                 </div>
 
-                <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs pb-6">
+                <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs pb-1">
                     <div class="flex gap-2">
                         <label onclick="setTxType('支出')" class="flex-1 text-center py-2.5 rounded-xl border border-app-line cursor-pointer transition-all shadow-sm" id="label-type-out">
                             <input type="radio" name="txType" value="支出" class="hidden" checked onchange="setTxType('支出')">
@@ -470,7 +467,7 @@
 
         <!-- Confirm Modal -->
         <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-[70] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(2rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
@@ -486,7 +483,7 @@
                     </div>
                     <p class="text-xs text-app-muted leading-relaxed">此動作將會徹底清空所有資產數據、交易歷史紀錄、固定支出與分期設定，並同步更新最新即時匯率，且無法復原！</p>
                 </div>
-                <div class="pt-2 pb-4 flex gap-2">
+                <div class="pt-2 pb-2 flex gap-2">
                     <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold">取消</button>
                     <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow">確定重置並更新匯率</button>
                 </div>
@@ -495,7 +492,7 @@
 
         <!-- Custom Option Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(2rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -506,7 +503,7 @@
                     </button>
                 </div>
                 <div id="option-modal-list" class="space-y-1.5 max-h-[45vh] overflow-y-auto py-1 pr-0.5"></div>
-                <div id="custom-category-add-box" class="hidden pt-2 pb-4 border-t border-app-line space-y-2">
+                <div id="custom-category-add-box" class="hidden pt-2 pb-2 border-t border-app-line space-y-2">
                     <label class="text-[10px] text-app-muted block font-medium">+ 新增自訂分類</label>
                     <div class="flex gap-1.5">
                         <input type="text" id="new-category-input" placeholder="輸入新分類名稱..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
@@ -518,7 +515,7 @@
 
         <!-- Recurring Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(2rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -528,7 +525,7 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <form id="recurring-form" onsubmit="handleRecurringSubmit(event)" class="space-y-3 pb-4">
+                <form id="recurring-form" onsubmit="handleRecurringSubmit(event)" class="space-y-3 pb-2">
                     <div>
                         <label class="block text-app-muted mb-1">規則名稱</label>
                         <div class="relative flex items-center">
@@ -578,7 +575,7 @@
 
         <!-- Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(2rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -588,7 +585,7 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <form id="installment-form" onsubmit="handleInstallmentSubmit(event)" class="space-y-3 pb-4">
+                <form id="installment-form" onsubmit="handleInstallmentSubmit(event)" class="space-y-3 pb-2">
                     <div>
                         <label class="block text-app-muted mb-1">分期項目名稱</label>
                         <div class="relative flex items-center">
@@ -627,7 +624,7 @@
 
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(2rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -637,13 +634,13 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div id="date-picker-content" class="space-y-3 pt-1 pb-4"></div>
+                <div id="date-picker-content" class="space-y-3 pt-1 pb-2"></div>
             </div>
         </div>
 
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] flex flex-col pb-[max(2rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] flex flex-col pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">
@@ -660,7 +657,7 @@
 
         <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(2rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -670,7 +667,7 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div class="space-y-3 pb-4">
+                <div class="space-y-3 pb-2">
                     <div>
                         <label class="block text-app-muted mb-1 font-medium">選擇匯出資產項目</label>
                         <select id="export-jpg-asset-select" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-xs font-medium outline-none focus:border-brand-gold">
@@ -682,7 +679,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-app-muted mb-1 font-medium">交易紀錄日期篩選</label>
+                        <label class="block text-app-muted mb-1 font-medium font-sans">交易紀錄日期篩選</label>
                         <select id="export-jpg-range-select" onchange="updateExportJpgRangeUI()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-xs font-medium outline-none focus:border-brand-gold">
                             <option value="ALL">全部歷史紀錄</option>
                             <option value="RECENT30">最近 30 筆交易</option>
@@ -2341,7 +2338,7 @@
             const currentDay = Math.min(d, maxDays);
 
             return `
-                <div class="space-y-3 text-xs pb-4">
+                <div class="space-y-3 text-xs pb-2">
                     <div class="grid grid-cols-3 gap-1">
                         <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-year" onchange="autoApplyDateFromPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-1.5 text-app-main font-mono">${Array.from({length: currentYear - 2000 + 1}, (_, i) => 2000 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
                         <div><label class="block text-app-muted text-[10px] mb-1">月份</label><select id="dp-month" onchange="autoApplyDateFromPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-1.5 text-app-main font-mono">${Array.from({length: 12}, (_, i) => i + 1).map(mo => `<option value="${String(mo).padStart(2,'0')}" ${mo === m ? 'selected' : ''}>${mo}月</option>`).join('')}</select></div>
@@ -2361,7 +2358,7 @@
             const [y, m] = (currMonthStr || getLocalMonthStr()).split('-').map(Number);
             const currentYear = new Date().getFullYear();
             return `
-                <div class="space-y-3 text-xs pb-4">
+                <div class="space-y-3 text-xs pb-2">
                     <div class="grid grid-cols-2 gap-2">
                         <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-m-year" onchange="autoApplyMonthFromPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-2 py-2 text-app-main font-mono">${Array.from({length: currentYear - 2000 + 1}, (_, i) => 2000 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
                         <div><label class="block text-app-muted text-[10px] mb-1">月份</label><select id="dp-m-month" onchange="autoApplyMonthFromPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-2 py-2 text-app-main font-mono">${Array.from({length: 12}, (_, i) => i + 1).map(mo => `<option value="${String(mo).padStart(2,'0')}" ${mo === m ? 'selected' : ''}>${mo}月</option>`).join('')}</select></div>
