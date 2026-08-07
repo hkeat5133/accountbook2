@@ -131,7 +131,7 @@
             transform: translate3d(0, 100%, 0);
             opacity: 0;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
-            padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .modal-sheet.is-open {
@@ -224,10 +224,10 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
-        <!-- App Main Header Bar -->
-        <header class="px-5 pb-3 pt-3 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
+        <!-- App Main Header Bar with Adjusted Top Padding for Notch/Status Bar -->
+        <header class="px-5 pb-3.5 pt-[max(2.5rem,calc(0.85rem+env(safe-area-inset-top)))] bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
             <div class="flex items-center gap-1.5">
-                <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card text-app-main border border-app-line" title="系統設定">
+                <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-75 border border-app-line hover:scale-110" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
@@ -336,14 +336,14 @@
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> 新增帳務交易
                     </h2>
-                    <button onclick="closeModal('transaction-modal')" class="text-app-muted hover:text-app-main p-1">
+                    <button onclick="closeModal('transaction-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-75">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 bg-app-card p-1 rounded-xl mb-4 text-sm">
-                    <button type="button" onclick="setModalMode('cash')" id="btn-mode-cash" class="py-2 rounded-lg font-medium transition-all bg-brand-gold text-white shadow">現金收支</button>
-                    <button type="button" onclick="setModalMode('stock')" id="btn-mode-stock" class="py-2 rounded-lg font-medium transition-all text-app-muted">股票買賣</button>
+                    <button type="button" onclick="setModalMode('cash')" id="btn-mode-cash" class="py-2 rounded-lg font-medium transition-all bg-brand-gold text-white shadow active:scale-75">現金收支</button>
+                    <button type="button" onclick="setModalMode('stock')" id="btn-mode-stock" class="py-2 rounded-lg font-medium transition-all text-app-muted active:scale-75">股票買賣</button>
                 </div>
 
                 <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs pb-1">
@@ -1720,6 +1720,14 @@
                 const isExpense = tx.type === '支出', isStock = tx.asset === 'TW_STOCK' || tx.asset === 'US_STOCK';
                 const assetLabel = tx.asset === 'TW_STOCK' ? '台股' : tx.asset === 'US_STOCK' ? '美股' : tx.asset;
                 const currency = (tx.asset === 'USD' || tx.asset === 'US_STOCK') ? 'USD $' : 'NT$';
+                
+                // 動態判斷並呈現「分期付款支出」或預設分類名稱
+                let displayCategory = tx.category || '一般交易';
+                if (tx.note && tx.note.includes('[分期自動扣款]')) {
+                    displayCategory = '分期付款支出';
+                }
+                const titleText = tx.stockSymbol ? tx.stockSymbol : displayCategory;
+
                 return `
                     <div class="bg-app-card border border-app-line p-3 rounded-2xl flex justify-between items-center transition-all hover:border-brand-gold/50 w-full">
                         <div class="flex items-center gap-3 min-w-0">
@@ -1728,7 +1736,7 @@
                             </div>
                             <div class="min-w-0">
                                 <div class="font-bold text-xs text-app-main flex items-center gap-1.5 truncate">
-                                    <span class="truncate">${tx.stockSymbol ? tx.stockSymbol : tx.category || '一般交易'}</span>
+                                    <span class="truncate">${titleText}</span>
                                     <span class="text-[9px] px-1.5 py-0.2 rounded font-mono shrink-0 border ${tx.asset.includes('STOCK') ? 'bg-app-surface text-brand-blue border-brand-blue/30' : 'bg-app-surface text-brand-gold border-brand-gold/30'}">${assetLabel}</span>
                                 </div>
                                 <div class="text-[10px] text-app-muted mt-0.5 font-mono truncate">
@@ -1740,7 +1748,7 @@
                             <div class="font-bold font-mono text-sm ${isExpense ? 'text-brand-red' : 'text-brand-green'}">
                                 ${isExpense ? '-' : '+'} ${currency} ${Number(tx.amount).toLocaleString()}
                             </div>
-                            <button onclick="deleteTransaction('${tx.id}')" class="text-[10px] text-app-muted hover:text-brand-red">刪除</button>
+                            <button onclick="deleteTransaction('${tx.id}')" class="text-[10px] text-app-muted hover:text-brand-red active:scale-75">刪除</button>
                         </div>
                     </div>
                 `;
@@ -2008,7 +2016,7 @@
                                     <input type="text" id="setting-title" value="${appData.appTitle || ''}" placeholder="智慧帳本" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2 text-xs text-app-main outline-none focus:border-brand-gold">
                                     <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
-                                <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold">儲存</button>
+                                <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-75">儲存</button>
                             </div>
                         </div>
                     </div>
@@ -2016,13 +2024,12 @@
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4"></i> 分類支出預算設定 (NTD)</h3>
-                            <button onclick="resetCategoryBudgets()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline" title="清空所有分類預算"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 清空</button>
+                            <button onclick="resetCategoryBudgets()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-75" title="清空所有分類預算"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 清空</button>
                         </div>
                         <div class="space-y-2 text-xs">
-                            ${budgetCategories.map(cat => {
+                            ${budgetCategories.map((cat, idx) => {
                                 const currentCatBudget = appData.categoryBudgets && appData.categoryBudgets[cat] ? appData.categoryBudgets[cat] : '';
-                                const safeCatKey = cat.replace(/[^a-zA-Z0-9]/g, '_');
-                                const inputId = `cat-budget-${safeCatKey}`;
+                                const inputId = `cat-budget-${idx}`;
                                 return `
                                     <div class="flex items-center justify-between gap-2 bg-app-surface p-2 rounded-xl border border-app-line">
                                         <span class="font-medium text-app-main text-xs shrink-0">${cat}</span>
@@ -2031,7 +2038,7 @@
                                                 <input type="number" id="${inputId}" value="${currentCatBudget === 0 ? '' : currentCatBudget}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2 pr-6 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono text-right placeholder:text-app-muted/30">
                                                 <button type="button" onclick="clearInput('${inputId}', function(){ saveCategoryBudgetExplicitly('${cat.replace(/'/g, "\\'")}', 0); })" class="clear-btn ${currentCatBudget ? '' : 'hidden'} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-0.5">✕</button>
                                             </div>
-                                            <button onclick="saveCategoryBudgetFromInput('${cat.replace(/'/g, "\\'")}', '${inputId}')" title="確認設定該分類預算" class="bg-brand-gold text-white px-2 py-1.5 rounded-xl text-xs font-bold shrink-0"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                                            <button onclick="saveCategoryBudgetFromInput('${cat.replace(/'/g, "\\'")}', '${inputId}')" title="確認設定該分類預算" class="bg-brand-gold text-white px-2 py-1.5 rounded-xl text-xs font-bold shrink-0 active:scale-75"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                         </div>
                                     </div>
                                 `;
@@ -2267,7 +2274,7 @@
                     if (currentDay >= inst.day || todayStr >= instStart) {
                         inst.paidMonths += 1;
                         inst.lastPaidMonth = currentMonthStr;
-                        const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: inst.asset || 'TWD', category: '固定支出/存入', amount: inst.monthlyAmount, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
+                        const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: inst.asset || 'TWD', category: '分期付款支出', amount: inst.monthlyAmount, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
                         appData.transactions.unshift(newTx);
                         appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '分期扣款執行通知', message: `已自動執行「${inst.name}」第 ${inst.paidMonths}/${inst.totalMonths} 期扣款 NT$ ${inst.monthlyAmount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), read: false });
                         triggeredCount++;
