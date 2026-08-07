@@ -1,9 +1,8 @@
-<!-- ...STREAMING_CHUNK:Updating the notification empty state icon... -->
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -30,7 +29,7 @@
             --bg-surface: #ffffff;
             --bg-card: #ece8df;
             --bg-input: #ffffff;
-            --text-main: #7a7f78;
+            --text-main: #2c2e2b;
             --text-muted: #7a7f78;
             --border-line: #d8d2c4;
             --phone-border: #d2cbba;
@@ -41,7 +40,7 @@
             --bg-surface: #272825;
             --bg-card: #333530;
             --bg-input: #21221f;
-            --text-main: #939890;
+            --text-main: #f0eee6;
             --text-muted: #939890;
             --border-line: #454841;
             --phone-border: #2b2c28;
@@ -78,8 +77,6 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
@@ -89,8 +86,6 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
-                padding-top: 0;
-                padding-bottom: 0;
             }
         }
 
@@ -157,7 +152,7 @@
             opacity: 0 !important;
         }
 
-        /* 通知抽屜與其他彈出視窗統一採用由中心縮放與淡入動畫 */
+        /* 通知抽屜統一採用由中心縮放與淡入動畫 */
         #notif-drawer {
             justify-content: center;
             padding: 1rem;
@@ -288,9 +283,8 @@
         </div>
 
         <!-- Notification Drawer Modal -->
-        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col border border-app-line" onclick="event.stopPropagation()">
-                <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
+        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden">
+            <div class="modal-sheet w-full bg-app-surface shadow-2xl p-5 flex flex-col border border-app-line" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <div class="flex items-center gap-2.5">
                         <div class="w-9 h-9 rounded-2xl bg-brand-gold/15 text-brand-gold flex items-center justify-center shadow-2xs">
@@ -315,7 +309,6 @@
         <!-- Add Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden">
             <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> 新增帳務交易
@@ -441,7 +434,6 @@
         <!-- Custom Toast Modal -->
         <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
                     <i data-lucide="info" class="w-6 h-6"></i>
                 </div>
@@ -456,7 +448,6 @@
         <!-- Confirm Reset Modal -->
         <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden">
             <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
                         <i data-lucide="alert-triangle" class="w-4 h-4"></i> 確認初始化重置？
@@ -495,9 +486,8 @@
         </div>
 
         <!-- Custom Option Picker Modal -->
-        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden">
+        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden">
             <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="list" class="w-4 h-4"></i> 選擇選項
@@ -520,7 +510,6 @@
         <!-- Category Edit Modal -->
         <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full space-y-3" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <h3 class="font-bold text-sm text-app-main flex items-center gap-1.5">
                     <i data-lucide="edit-3" class="w-4 h-4 text-brand-gold"></i> 編輯分類名稱
                 </h3>
@@ -534,9 +523,8 @@
         </div>
 
         <!-- Custom Date Picker Modal -->
-        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden">
+        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden">
             <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期
@@ -552,7 +540,6 @@
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden">
             <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">股票交易歷史</h3>
                     <button type="button" onclick="closeModal('stock-history-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
@@ -567,7 +554,6 @@
         <!-- Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden">
             <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="repeat" class="w-4 h-4"></i> 新增固定支出/存入規則</h3>
                     <button type="button" onclick="closeModal('recurring-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -609,7 +595,6 @@
         <!-- Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden">
             <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="credit-card" class="w-4 h-4"></i> 新增分期付款項目</h3>
                     <button type="button" onclick="closeModal('installment-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -645,7 +630,6 @@
         <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden">
             <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4"></i> 匯出資產報表 (JPG)</h3>
                     <button type="button" onclick="closeModal('export-jpg-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -1771,7 +1755,7 @@
                             </div>
                         </div>
                         <div class="space-y-3 pt-3 border-t border-app-line">
-                            <label class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-3.5 h-3.5"></i> 本月預算設定</label>
+                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4"></i> 本月預算設定</h3>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
