@@ -152,13 +152,13 @@
             opacity: 0 !important;
         }
 
-        /* 明顯的點擊互動彈跳與縮放微動畫 */
+        /* 最佳化按鈕點擊微動畫與流暢度 */
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.27), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
             will-change: transform;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.86) translateY(2px) !important;
+            transform: scale(0.93) translateY(1px) !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -1726,7 +1726,86 @@
                     </div>
 
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
-                        <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> 備份與維護</h3>
+                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4"></i> 基本參數設定</h3>
+                        <div>
+                            <label class="block text-xs text-app-muted mb-1">自訂 App 標題名稱</label>
+                            <div class="flex gap-2">
+                                <div class="relative flex-1 flex items-center">
+                                    <input type="text" id="setting-title" value="${appData.appTitle || ''}" placeholder="智慧帳本" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
+                                    <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                </div>
+                                <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
+                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4"></i> 本月預算設定</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-app-muted">${catFoodLabel}</label>
+                                    <button onclick="resetBudgetFoodSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
+                                </div>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="setting-budget-food" value="${appData.budgetFood === 0 ? '' : appData.budgetFood}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('setting-budget-food', function(){ saveBudgetFoodExplicitly(0); })" class="clear-btn ${appData.budgetFood === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="saveBudgetFoodFromInput()" title="確認設定預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-app-muted">${catShopLabel}</label>
+                                    <button onclick="resetBudgetShoppingSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
+                                </div>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="setting-budget-shopping" value="${appData.budgetShopping === 0 ? '' : appData.budgetShopping}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('setting-budget-shopping', function(){ saveBudgetShoppingExplicitly(0); })" class="clear-btn ${appData.budgetShopping === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="saveBudgetShoppingFromInput()" title="確認設定預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="repeat" class="w-4 h-4"></i> 每月固定支出/存入</h3>
+                            <button onclick="openModal('recurring-modal')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">+ 新增規則</button>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            ${appData.recurringRules.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定自動扣款規則</div>' : appData.recurringRules.map(r => `
+                                <div class="bg-app-surface p-2.5 rounded-xl border border-app-line flex justify-between items-center">
+                                    <div>
+                                        <div class="font-bold text-app-main">${r.name}</div>
+                                        <div class="text-[10px] text-app-muted font-mono">日期: ${r.startDate || '每月 '+r.day+' 號'} (每月 ${r.day} 號 自動${r.type} $${r.amount} ${r.asset})</div>
+                                    </div>
+                                    <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="credit-card" class="w-4 h-4"></i> 分期付款設定</h3>
+                            <button onclick="openModal('installment-modal')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">+ 新增分期</button>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            ${appData.installments.length === 0 ? '<div class="text-app-muted text-center py-2">尚未設定分期付款</div>' : appData.installments.map(i => `
+                                <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1">
+                                    <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
+                                    <div class="flex justify-between text-[11px] text-app-muted font-mono"><span>總額: $${i.totalAmount.toLocaleString()} (每期: $${i.monthlyAmount.toLocaleString()})</span><span>${i.paidMonths}/${i.totalMonths} 期 (起始日: ${i.startDate || '1號'})</span></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
+                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="database" class="w-4 h-4"></i> 備份與維護</h3>
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出備份 (JSON)</button>
                             <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
