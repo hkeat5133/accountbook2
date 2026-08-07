@@ -978,6 +978,7 @@
                     const deltaX = curX - setStartX;
                     const deltaY = curY - setStartY;
 
+                    // 智慧辨識方向：判斷是橫向拖拽返回還是縱向上下捲動
                     if (!isHorizontal) {
                         if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
                             if (Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -989,6 +990,7 @@
                         }
                     }
 
+                    // 1:1 手指即時跟隨拖拽位移與背景遮罩漸變
                     if (isHorizontal) {
                         if (e.cancelable) e.preventDefault();
                         sheet.style.transition = 'none';
@@ -1011,6 +1013,7 @@
                     sheet.style.transition = '';
                     settingsDrawer.style.backgroundColor = '';
 
+                    // 滑動距離 > 80px 或快速甩滑時自動收起關閉，否則無縫彈回
                     if (Math.abs(deltaX) > 80 || (Math.abs(deltaX) > 30 && velocity > 0.35)) {
                         sheet.style.transform = '';
                         closeModal('settings-drawer');
