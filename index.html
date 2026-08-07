@@ -77,8 +77,6 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
@@ -88,8 +86,6 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
-                padding-top: 0;
-                padding-bottom: 0;
             }
         }
 
@@ -230,10 +226,10 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
-        <!-- App Main Header Bar -->
-        <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
+        <!-- App Main Header Bar (已完美修飾頂部多餘留白) -->
+        <header class="px-5 py-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
             <div class="flex items-center gap-1.5">
-                <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
+                <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-1.5 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
@@ -244,10 +240,10 @@
                 <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 6 日</p>
             </div>
             <div class="flex items-center gap-1.5">
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-90 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-1.5 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-90 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> 安裝
                 </button>
-                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="通知紀錄">
+                <button onclick="toggleNotificationDrawer()" class="relative p-1.5 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="通知紀錄">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
                 </button>
@@ -255,17 +251,17 @@
         </header>
 
         <!-- MAIN VIEW CONTAINER -->
-        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-28 relative w-full touch-pan-y" id="main-content"></main>
+        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-20 relative w-full touch-pan-y" id="main-content"></main>
 
         <!-- Floating Action Button -->
-        <div class="absolute bottom-20 right-5 z-20">
-            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
+        <div class="absolute bottom-[calc(3.8rem+env(safe-area-inset-bottom))] right-5 z-20">
+            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-3.5 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <!-- Navigation Bar (3 Main Tabs) -->
-        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
+        <!-- Navigation Bar (已精準下移貼底，消除底部空白) -->
+        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 pt-2 pb-[max(0.75rem,calc(0.5rem+env(safe-area-inset-bottom)))] flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-90 hover:scale-110">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
@@ -521,6 +517,37 @@
             </div>
         </div>
 
+        <!-- Edit Category Modal -->
+        <div id="edit-category-modal" onclick="closeModal('edit-category-modal')" class="modal-backdrop absolute inset-0 bg-black/70 z-[85] hidden flex items-center justify-center p-6">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
+                <h3 class="font-bold text-sm text-brand-gold">編輯分類名稱</h3>
+                <input type="hidden" id="edit-category-old-name" value="">
+                <input type="text" id="edit-category-input" placeholder="輸入新的分類名稱..." class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-xs text-app-main outline-none focus:border-brand-gold text-center">
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeModal('edit-category-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs font-bold">取消</button>
+                    <button type="button" onclick="saveEditedCategory()" class="flex-1 bg-brand-gold text-white py-2 rounded-xl text-xs font-bold">儲存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Category Confirm Modal -->
+        <div id="delete-category-modal" onclick="closeModal('delete-category-modal')" class="modal-backdrop absolute inset-0 bg-black/70 z-[90] hidden flex items-center justify-center p-6">
+            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
+                <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-sm text-brand-red">確定要刪除此分類嗎？</h3>
+                <input type="hidden" id="delete-category-target-name" value="">
+                <p id="delete-category-msg" class="text-xs text-app-muted">刪除後將無法復原。</p>
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeModal('delete-category-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs font-bold">取消</button>
+                    <button type="button" onclick="confirmDeleteCategory()" class="flex-1 bg-brand-red text-white py-2 rounded-xl text-xs font-bold">確定刪除</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Custom Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
@@ -714,7 +741,10 @@
             monthlyBudget: 0,
             categories: [
                 '🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒',
-                '💰 薪資收入', '📈 投資收益', '🔄 固定扣款', '📝 其他雜項'
+                '📝 其他雜項'
+            ],
+            depositCategories: [
+                '💰 薪資收入', '📈 投資收益', '📝 其他雜項'
             ],
             assets: { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0 },
             recurringRules: [],
@@ -747,12 +777,15 @@
         let touchEndX = 0;
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v19_final');
+            const saved = localStorage.getItem('wealth_app_data_v20_final');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
                     if (!parsed.categories || !Array.isArray(parsed.categories)) {
                         parsed.categories = [...DEFAULT_STATE.categories];
+                    }
+                    if (!parsed.depositCategories || !Array.isArray(parsed.depositCategories)) {
+                        parsed.depositCategories = [...DEFAULT_STATE.depositCategories];
                     }
                     return parsed;
                 } catch(e) { console.error(e); }
@@ -761,7 +794,7 @@
         }
 
         function saveData() {
-            localStorage.setItem('wealth_app_data_v19_final', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v20_final', JSON.stringify(appData));
             applyTheme();
             renderCurrentView();
         }
@@ -863,7 +896,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v19';
+                    const CACHE = 'wealth-ledger-v20';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -1243,6 +1276,23 @@
                 if (labelOut) {
                     labelOut.className = "flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100 active:scale-95";
                     labelOut.style.borderColor = "";
+                }
+            }
+
+            // 更新預設顯示的分類名稱
+            const catBtnTxt = document.getElementById('tx-category-btn-txt');
+            const catInput = document.getElementById('input-category');
+            if (catBtnTxt && catInput) {
+                if (val === '存入') {
+                    if (!appData.depositCategories.includes(catInput.value)) {
+                        catInput.value = appData.depositCategories[0];
+                        catBtnTxt.innerText = appData.depositCategories[0];
+                    }
+                } else {
+                    if (!appData.categories.includes(catInput.value)) {
+                        catInput.value = appData.categories[0];
+                        catBtnTxt.innerText = appData.categories[0];
+                    }
                 }
             }
         }
@@ -1845,16 +1895,87 @@
         function openOptionModal(target, title, options, currentVal) {
             currentOptionTarget = target;
             document.getElementById('option-modal-title').innerHTML = `<i data-lucide="list" class="w-4 h-4"></i> ${title}`;
-            document.getElementById('option-modal-list').innerHTML = options.map(opt => `
-                <button type="button" onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="w-full text-left p-3 rounded-xl border ${opt.value === currentVal ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all active:scale-95">
-                    <span class="text-app-main">${opt.label}</span>
-                    ${opt.value === currentVal ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold"></i>' : ''}
-                </button>
-            `).join('');
+            
+            const listElem = document.getElementById('option-modal-list');
+            listElem.innerHTML = options.map(opt => {
+                const isSelected = opt.value === currentVal;
+                return `
+                    <div class="flex items-center gap-1.5 w-full">
+                        <button type="button" onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="flex-1 text-left p-3 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all active:scale-95">
+                            <span class="text-app-main">${opt.label}</span>
+                            ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold"></i>' : ''}
+                        </button>
+                        <button type="button" onclick="event.stopPropagation(); openEditCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-blue hover:opacity-80 shrink-0 active:scale-90" title="編輯名稱">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button type="button" onclick="event.stopPropagation(); openDeleteCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-red hover:opacity-80 shrink-0 active:scale-90" title="刪除分類">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
             const customBox = document.getElementById('custom-category-add-box');
             if (target === 'TX_CATEGORY' || target === 'REC_CATEGORY') customBox.classList.remove('hidden');
             else customBox.classList.add('hidden');
             openModal('custom-option-modal');
+        }
+
+        function openEditCategoryModal(catName) {
+            document.getElementById('edit-category-old-name').value = catName;
+            document.getElementById('edit-category-input').value = catName;
+            openModal('edit-category-modal');
+        }
+
+        function saveEditedCategory() {
+            const oldName = document.getElementById('edit-category-old-name').value;
+            const newName = document.getElementById('edit-category-input').value.trim();
+            if (!newName || oldName === newName) {
+                closeModal('edit-category-modal');
+                return;
+            }
+
+            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
+            let targetList = (currentTxType === '存入') ? appData.depositCategories : appData.categories;
+
+            if (targetList.includes(newName)) {
+                showToast("編輯失敗", "該分類名稱已存在！");
+                return;
+            }
+
+            const idx = targetList.indexOf(oldName);
+            if (idx !== -1) {
+                targetList[idx] = newName;
+                appData.transactions.forEach(tx => {
+                    if (tx.category === oldName) tx.category = newName;
+                });
+                saveData();
+                closeModal('edit-category-modal');
+                closeModal('custom-option-modal');
+                showToast("編輯成功", `分類已更名為「${newName}」。`);
+            }
+        }
+
+        function openDeleteCategoryModal(catName) {
+            document.getElementById('delete-category-target-name').value = catName;
+            document.getElementById('delete-category-msg').innerText = `確定要刪除分類「${catName}」嗎？刪除後將無法復原。`;
+            openModal('delete-category-modal');
+        }
+
+        function confirmDeleteCategory() {
+            const catName = document.getElementById('delete-category-target-name').value;
+            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
+            
+            if (currentTxType === '存入') {
+                appData.depositCategories = appData.depositCategories.filter(c => c !== catName);
+            } else {
+                appData.categories = appData.categories.filter(c => c !== catName);
+            }
+
+            saveData(false);
+            closeModal('delete-category-modal');
+            closeModal('custom-option-modal');
+            showToast("已刪除分類", `分類「${catName}」已刪除。`);
         }
 
         function addNewCustomCategory() {
@@ -1862,12 +1983,17 @@
             if (!input) return;
             const newCat = input.value.trim();
             if (!newCat) return;
-            if (!appData.categories.includes(newCat)) {
-                appData.categories.push(newCat);
-                saveData();
+
+            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
+            let targetList = (currentTxType === '存入') ? appData.depositCategories : appData.categories;
+
+            if (!targetList.includes(newCat)) {
+                targetList.push(newCat);
+                saveData(false);
             }
             input.value = '';
-            if (currentOptionTarget === 'TX_CATEGORY') { triggerTxCategoryPicker(); selectOptionValue(newCat, newCat); }
+            closeModal('custom-option-modal');
+            showToast("新增成功", `已新增分類「${newCat}」。`);
         }
 
         function selectOptionValue(val, label) {
@@ -1903,7 +2029,9 @@
             openOptionModal('TX_STOCK_MARKET', '選擇股票市場', [{ label: '台股 (TWD)', value: 'TW_STOCK' }, { label: '美股 (USD)', value: 'US_STOCK' }], document.getElementById('input-stock-market').value);
         }
         function triggerTxCategoryPicker() {
-            openOptionModal('TX_CATEGORY', '選擇消費 / 收入分類', appData.categories.map(c => ({ label: c, value: c })), document.getElementById('input-category').value);
+            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
+            const catList = (currentTxType === '存入') ? (appData.depositCategories || ['💰 薪資收入', '📈 投資收益', '📝 其他雜項']) : (appData.categories || ['🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒', '📝 其他雜項']);
+            openOptionModal('TX_CATEGORY', `選擇 ${currentTxType} 分類`, catList.map(c => ({ label: c, value: c })), document.getElementById('input-category').value);
         }
 
         function handleRecurringSubmit(e) {
