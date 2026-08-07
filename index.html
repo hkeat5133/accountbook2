@@ -54,7 +54,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: var(--outer-bg);
+            background-color: var(--bg-app);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
@@ -245,7 +245,7 @@
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden" id="app-phone-container">
 
         <!-- Top Header Bar with Safe Area Offset -->
-        <header class="px-5 pt-[max(2.5rem,calc(1.2rem+env(safe-area-inset-top)))] pb-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
+        <header class="px-5 pt-[max(3rem,calc(1.5rem+env(safe-area-inset-top)))] pb-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
             <div class="flex items-center gap-1.5">
                 <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card text-app-main transition-all border border-app-line" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -272,14 +272,14 @@
         <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-28 relative w-full touch-pan-y" id="main-content"></main>
 
         <!-- Floating Action Button -->
-        <div class="absolute bottom-[calc(5rem+env(safe-area-inset-bottom))] right-5 z-30">
+        <div class="absolute bottom-[calc(5rem+10px)] right-5 z-30">
             <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
         <!-- Bottom Navigation Bar (Fills all the way to bottom edge) -->
-        <nav class="w-full bg-app-surface border-t border-app-line px-3 pt-2.5 pb-[max(1.5rem,env(safe-area-inset-bottom))] flex justify-around items-center absolute bottom-0 left-0 right-0 z-30 shrink-0 transform-gpu">
+        <nav class="w-full bg-app-surface border-t border-app-line px-3 pt-2.5 pb-5 flex justify-around items-center absolute bottom-0 left-0 right-0 z-30 shrink-0 transform-gpu">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold font-bold">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
@@ -314,7 +314,7 @@
 
         <!-- Notification Drawer -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-end">
-            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(2.5rem,calc(1rem+env(safe-area-inset-top)))] pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(2.5rem,calc(1rem+env(safe-area-inset-top)))] pb-5" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line shrink-0">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
@@ -333,7 +333,7 @@
 
         <!-- Settings Drawer -->
         <div id="settings-drawer" onclick="closeModal('settings-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-start">
-            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[max(2.5rem,calc(1rem+env(safe-area-inset-top)))] pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[max(2.5rem,calc(1rem+env(safe-area-inset-top)))] pb-5" onclick="event.stopPropagation()">
                 <div class="flex items-center pb-3.5 border-b border-app-line shrink-0">
                     <div class="flex items-center gap-2">
                         <button onclick="closeModal('settings-drawer')" class="p-1.5 rounded-xl bg-app-card border border-app-line text-brand-gold hover:opacity-80" title="返回">
@@ -350,7 +350,7 @@
 
         <!-- Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[88vh] flex flex-col pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[88vh] flex flex-col pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer shrink-0"></div>
                 <div class="flex justify-between items-center mb-3 shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
@@ -493,7 +493,7 @@
 
         <!-- Confirm Modal -->
         <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-[70] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
@@ -518,7 +518,7 @@
 
         <!-- Custom Option Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -541,7 +541,7 @@
 
         <!-- Recurring Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -601,7 +601,7 @@
 
         <!-- Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -650,7 +650,7 @@
 
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
@@ -666,7 +666,7 @@
 
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] flex flex-col pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] flex flex-col pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">
@@ -683,7 +683,7 @@
 
         <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/50 z-50 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto pb-5" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
@@ -2361,36 +2361,41 @@
 
             const selectedDate = `${yr}-${String(mo).padStart(2,'0')}-${String(selectedDay).padStart(2,'0')}`;
 
-            if (datePickerTarget === 'SINGLE_DAY') filterCustomDate = selectedDate;
-            else if (datePickerTarget === 'CUSTOM_START') {
+            if (datePickerTarget === 'SINGLE_DAY') {
+                filterCustomDate = selectedDate;
+            } else if (datePickerTarget === 'CUSTOM_START') {
                 filterStartDate = selectedDate;
-                if (filterStartDate > filterEndDate) filterEndDate = filterStartDate;
-            }
-            else if (datePickerTarget === 'CUSTOM_END') {
+                if (filterStartDate > filterEndDate) {
+                    filterEndDate = filterStartDate;
+                }
+            } else if (datePickerTarget === 'CUSTOM_END') {
                 filterEndDate = selectedDate;
-                if (filterEndDate < filterStartDate) filterStartDate = filterEndDate;
-            }
-            else if (datePickerTarget === 'TX_INPUT') { 
+                if (filterEndDate < filterStartDate) {
+                    filterStartDate = filterEndDate;
+                }
+            } else if (datePickerTarget === 'TX_INPUT') { 
                 document.getElementById('input-date').value = selectedDate; 
                 document.getElementById('input-date-display').innerText = selectedDate; 
-            }
-            else if (datePickerTarget === 'REC_DATE') { 
+            } else if (datePickerTarget === 'REC_DATE') { 
                 document.getElementById('rec-date-val').value = selectedDate; 
                 document.getElementById('rec-date-btn-txt').innerText = selectedDate; 
-            }
-            else if (datePickerTarget === 'INST_DATE') { 
+            } else if (datePickerTarget === 'INST_DATE') { 
                 document.getElementById('inst-date-val').value = selectedDate; 
                 document.getElementById('inst-date-btn-txt').innerText = selectedDate; 
-            }
-            else if (datePickerTarget === 'EXPORT_JPG_SINGLE') { exportJpgCustomDate = selectedDate; updateExportJpgRangeUI(); }
-            else if (datePickerTarget === 'EXPORT_JPG_START') {
+            } else if (datePickerTarget === 'EXPORT_JPG_SINGLE') { 
+                exportJpgCustomDate = selectedDate; 
+                updateExportJpgRangeUI(); 
+            } else if (datePickerTarget === 'EXPORT_JPG_START') {
                 exportJpgStartDate = selectedDate;
-                if (exportJpgStartDate > exportJpgEndDate) exportJpgEndDate = exportJpgStartDate;
+                if (exportJpgStartDate > exportJpgEndDate) {
+                    exportJpgEndDate = exportJpgStartDate;
+                }
                 updateExportJpgRangeUI();
-            }
-            else if (datePickerTarget === 'EXPORT_JPG_END') {
+            } else if (datePickerTarget === 'EXPORT_JPG_END') {
                 exportJpgEndDate = selectedDate;
-                if (exportJpgEndDate < exportJpgStartDate) exportJpgStartDate = exportJpgEndDate;
+                if (exportJpgEndDate < exportJpgStartDate) {
+                    exportJpgStartDate = exportJpgEndDate;
+                }
                 updateExportJpgRangeUI();
             }
 
