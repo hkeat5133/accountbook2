@@ -30,7 +30,7 @@
             --bg-surface: #ffffff;
             --bg-card: #ece8df;
             --bg-input: #ffffff;
-            --text-main: #7a7f78;
+            --text-main: #2c2e2b;
             --text-muted: #7a7f78;
             --border-line: #d8d2c4;
             --phone-border: #d2cbba;
@@ -41,7 +41,7 @@
             --bg-surface: #272825;
             --bg-card: #333530;
             --bg-input: #21221f;
-            --text-main: #939890;
+            --text-main: #f0eee6;
             --text-muted: #939890;
             --border-line: #454841;
             --phone-border: #2b2c28;
@@ -55,6 +55,10 @@
             -webkit-user-select: none;
             touch-action: manipulation;
             transition: background-color 0.35s ease, color 0.35s ease;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
         }
 
         /* 鎖定背景捲動防穿透 */
@@ -78,8 +82,6 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
@@ -89,8 +91,6 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
-                padding-top: 0;
-                padding-bottom: 0;
             }
         }
 
@@ -125,19 +125,37 @@
 
         /* 背景朦朧層進出場動畫完全對稱 */
         .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 50;
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            display: flex;
+            overflow: hidden;
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
+        /* 標準彈出視窗（由底部升起/降下） */
         .modal-sheet {
             will-change: transform, opacity;
             transform: translateY(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-surface);
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+            padding: 1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom)) 1.25rem;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-top: 1px solid var(--border-line);
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
         }
 
         .modal-sheet.is-open {
@@ -150,12 +168,27 @@
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
+        /* 通知抽屜專用（由右側滑出/收回） */
+        #notif-drawer {
+            justify-content: flex-end;
+            align-items: stretch;
+        }
         #notif-drawer .modal-sheet {
+            top: 0;
+            bottom: 0;
+            left: auto;
+            right: 0;
+            width: 88%;
+            max-width: 380px;
+            height: 100%;
+            max-height: 100vh;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-left: 1px solid var(--border-line);
             transform: translateX(100%);
-            opacity: 0;
-            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+            padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom)) 1.25rem;
+            display: flex;
+            flex-direction: column;
         }
 
         #notif-drawer .modal-sheet.is-open {
@@ -273,8 +306,8 @@
         </div>
 
         <!-- Notification Drawer Modal -->
-        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
-            <div class="modal-sheet w-[88%] max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
+        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop hidden">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <div class="flex items-center gap-2.5">
@@ -283,7 +316,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-app-main text-xs">系統動態與通知紀錄</h3>
-                            <p class="text-[10px] text-app-muted">自動扣/入款與分期執行明細</p>
+                            <p class="text-[10px] text-app-muted">自動扣款與分期執行明細</p>
                         </div>
                     </div>
                     <button onclick="closeModal('notif-drawer')" class="text-app-muted hover:text-app-main p-1.5 rounded-xl bg-app-card active:scale-90 border border-app-line">
@@ -291,15 +324,15 @@
                     </button>
                 </div>
                 <div id="notif-list" class="flex-1 overflow-y-auto my-3 space-y-2.5 pr-0.5"></div>
-                <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-3 border-t border-app-line active:scale-95 font-medium flex items-center justify-center gap-1.5 bg-app-card/50 rounded-xl">
+                <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-3 border-t border-app-line active:scale-95 font-medium flex items-center justify-center gap-1.5 bg-app-card/50 rounded-xl shrink-0 mt-auto">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 清空所有紀錄
                 </button>
             </div>
         </div>
 
         <!-- Add Transaction Modal -->
-        <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop hidden items-end justify-center p-0">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
@@ -315,7 +348,7 @@
                     <button type="button" onclick="setModalMode('stock')" id="btn-mode-stock" class="py-2 rounded-lg font-medium transition-all text-app-muted active:scale-90">股票買賣</button>
                 </div>
 
-                <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs pb-6">
+                <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs pb-4">
                     <div class="flex gap-2">
                         <label onclick="setTxType('支出')" class="flex-1 text-center py-2.5 rounded-xl border-2 border-brand-red bg-brand-red/10 cursor-pointer transition-all shadow-sm active:scale-95" id="label-type-out">
                             <input type="radio" name="txType" value="支出" class="hidden" checked onchange="setTxType('支出')">
@@ -416,7 +449,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-4 hover:opacity-90 active:scale-95 transition-all shadow-md text-sm">
+                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-2 hover:opacity-90 active:scale-95 transition-all shadow-md text-sm">
                         確認儲存交易
                     </button>
                 </form>
@@ -424,8 +457,8 @@
         </div>
 
         <!-- Custom Toast Modal -->
-        <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
+        <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop hidden items-center justify-center p-6">
+            <div class="modal-sheet relative transform-none w-full max-w-xs text-center space-y-3 mx-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
                     <i data-lucide="info" class="w-6 h-6"></i>
@@ -433,16 +466,16 @@
                 <h3 id="toast-title" class="font-bold text-sm text-app-main">系統提示</h3>
                 <p id="toast-msg" class="text-xs text-app-muted leading-relaxed"></p>
                 <div class="pt-2 flex gap-2">
-                    <button onclick="closeModal('toast-modal')" class="w-full bg-brand-gold text-white py-2 rounded-xl text-xs font-bold active:scale-95">確定</button>
+                    <button onclick="closeModal('toast-modal')" class="w-full bg-brand-gold text-white py-2.5 rounded-xl text-xs font-bold active:scale-95">確定</button>
                 </div>
             </div>
         </div>
 
         <!-- Confirm Reset Modal -->
-        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop hidden items-end justify-center p-0">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line mb-3">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
                         <i data-lucide="alert-triangle" class="w-4 h-4"></i> 確認初始化重置？
                     </h3>
@@ -450,10 +483,7 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div class="py-2 space-y-3">
-                    <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red mb-1">
-                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
-                    </div>
+                <div class="py-1 space-y-3">
                     <p class="text-xs text-app-muted leading-relaxed text-center">請選擇您要執行的重置範圍：</p>
                     <div class="space-y-2">
                         <label class="flex items-start gap-2.5 bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-red transition-all">
@@ -472,18 +502,18 @@
                         </label>
                     </div>
                 </div>
-                <div class="pt-2 pb-4 flex gap-2">
-                    <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold active:scale-95">取消</button>
-                    <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow active:scale-95">確定執行重置</button>
+                <div class="pt-3 flex gap-2">
+                    <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-3 rounded-xl text-xs font-bold active:scale-95">取消</button>
+                    <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-3 rounded-xl text-xs font-bold shadow active:scale-95">確定執行重置</button>
                 </div>
             </div>
         </div>
 
         <!-- Custom Option Picker Modal -->
-        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop hidden items-end justify-center p-0" style="z-index: 70;">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line mb-2">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="list" class="w-4 h-4"></i> 選擇選項
                     </h3>
@@ -491,38 +521,38 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div id="option-modal-list" class="space-y-1.5 max-h-[45vh] overflow-y-auto py-1 pr-0.5"></div>
-                <div id="custom-category-add-box" class="hidden pt-2 pb-4 border-t border-app-line space-y-2">
+                <div id="option-modal-list" class="space-y-1.5 max-h-[40vh] overflow-y-auto py-1 pr-0.5"></div>
+                <div id="custom-category-add-box" class="hidden pt-2 border-t border-app-line space-y-2 mt-2">
                     <label class="text-[10px] text-app-muted block font-medium">+ 新增自訂分類</label>
                     <div class="flex gap-1.5">
-                        <input type="text" id="new-category-input" placeholder="輸入新分類名稱..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
-                        <button type="button" onclick="addNewCustomCategory()" class="bg-brand-gold text-white font-bold px-3 py-1.5 rounded-xl text-xs shrink-0 active:scale-95">新增</button>
+                        <input type="text" id="new-category-input" placeholder="輸入新分類名稱..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-2 text-xs text-app-main outline-none focus:border-brand-gold">
+                        <button type="button" onclick="addNewCustomCategory()" class="bg-brand-gold text-white font-bold px-3 py-2 rounded-xl text-xs shrink-0 active:scale-95">新增</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Category Edit Modal -->
-        <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
-            <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full space-y-3" onclick="event.stopPropagation()">
+        <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop hidden items-center justify-center p-6" style="z-index: 80;">
+            <div class="modal-sheet relative transform-none w-full max-w-xs space-y-3 mx-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <h3 class="font-bold text-sm text-app-main flex items-center gap-1.5">
                     <i data-lucide="edit-3" class="w-4 h-4 text-brand-gold"></i> 編輯分類名稱
                 </h3>
                 <input type="hidden" id="edit-category-old-name">
-                <input type="text" id="edit-category-new-name" placeholder="輸入新分類名稱..." class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-xs text-app-main outline-none focus:border-brand-gold">
+                <input type="text" id="edit-category-new-name" placeholder="輸入新分類名稱..." class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeModal('category-edit-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs active:scale-95">取消</button>
-                    <button type="button" onclick="confirmEditCategory()" class="flex-1 bg-brand-gold text-white py-2 rounded-xl text-xs font-bold active:scale-95">確認修改</button>
+                    <button type="button" onclick="closeModal('category-edit-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs active:scale-95">取消</button>
+                    <button type="button" onclick="confirmEditCategory()" class="flex-1 bg-brand-gold text-white py-2.5 rounded-xl text-xs font-bold active:scale-95">確認修改</button>
                 </div>
             </div>
         </div>
 
         <!-- Custom Date Picker Modal -->
-        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop hidden items-end justify-center p-0" style="z-index: 70;">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line mb-2">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期
                     </h3>
@@ -535,25 +565,25 @@
         </div>
 
         <!-- Stock History Modal -->
-        <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop hidden items-end justify-center p-0">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line mb-2">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">股票交易歷史</h3>
                     <button type="button" onclick="closeModal('stock-history-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div id="stock-modal-summary" class="bg-app-card p-3 rounded-xl border border-app-line"></div>
-                <div id="stock-modal-list" class="space-y-2 max-h-[45vh] overflow-y-auto py-1"></div>
+                <div id="stock-modal-summary" class="bg-app-card p-3 rounded-xl border border-app-line mb-2"></div>
+                <div id="stock-modal-list" class="space-y-2 max-h-[40vh] overflow-y-auto py-1"></div>
             </div>
         </div>
 
         <!-- Recurring Rule Modal -->
-        <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop hidden items-end justify-center p-0">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line mb-2">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="repeat" class="w-4 h-4"></i> 新增固定支出/存入規則</h3>
                     <button type="button" onclick="closeModal('recurring-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
@@ -592,10 +622,10 @@
         </div>
 
         <!-- Installment Modal -->
-        <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop hidden items-end justify-center p-0">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line mb-2">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="credit-card" class="w-4 h-4"></i> 新增分期付款項目</h3>
                     <button type="button" onclick="closeModal('installment-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
@@ -628,10 +658,10 @@
         </div>
 
         <!-- Export JPG Modal -->
-        <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop hidden items-end justify-center p-0">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line mb-2">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4"></i> 匯出資產報表 (JPG)</h3>
                     <button type="button" onclick="closeModal('export-jpg-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
@@ -1117,8 +1147,6 @@
             if (drawer.classList.contains('hidden')) {
                 openModal('notif-drawer');
                 renderNotifications();
-                const badge = document.getElementById('notif-badge');
-                if (badge) badge.classList.add('hidden');
             } else {
                 closeModal('notif-drawer');
             }
@@ -1129,11 +1157,14 @@
             if (!container) return;
             if (!appData.notifications || appData.notifications.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12 text-app-muted space-y-2">
-                        <div class="w-12 h-12 rounded-2xl bg-app-card mx-auto flex items-center justify-center text-brand-gold/40 border border-app-line shadow-xs">
-                            <i data-lucide="bell-off" class="w-6 h-6"></i>
+                    <div class="text-center py-20 text-app-muted space-y-3">
+                        <div class="w-16 h-16 rounded-3xl bg-app-card mx-auto flex items-center justify-center text-brand-gold/40 border border-app-line shadow-xs">
+                            <i data-lucide="bell-off" class="w-8 h-8"></i>
                         </div>
-                        <p class="text-xs font-bold text-app-main">目前尚無動態通知</p>
+                        <div class="space-y-1">
+                            <p class="text-xs font-bold text-app-main">目前尚無動態通知</p>
+                            <p class="text-[10px] text-app-muted">系統自動扣款或分期執行時將即時顯示於此</p>
+                        </div>
                     </div>
                 `;
                 return;
@@ -1753,8 +1784,8 @@
                                 <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
                             </div>
                         </div>
-                        <div class="space-y-3 pt-3 border-t border-app-line">
-                            <label class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-3.5 h-3.5"></i> 本月預算設定</label>
+                        <div class="space-y-3 pt-1 border-t border-app-line">
+                            <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-3.5 h-3.5 text-brand-gold"></i> 本月預算設定</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
@@ -2081,7 +2112,7 @@
             const todayStr = new Date().toISOString().split('T')[0];
             const currentYear = new Date().getFullYear();
             return `
-                <div class="space-y-3 text-xs pb-4">
+                <div class="space-y-3 text-xs pb-2">
                     <div class="grid grid-cols-3 gap-1">
                         <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-year" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-2 text-app-main font-mono">${Array.from({length: currentYear - 2000 + 1}, (_, i) => 2000 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
                         <div><label class="block text-app-muted text-[10px] mb-1">月份</label><select id="dp-month" class="w-full bg-app-input border border-app-line rounded-xl px-1.5 py-2 text-app-main font-mono">${Array.from({length: 12}, (_, i) => i + 1).map(mo => `<option value="${String(mo).padStart(2,'0')}" ${mo === m ? 'selected' : ''}>${mo}月</option>`).join('')}</select></div>
@@ -2101,7 +2132,7 @@
             const [y, m] = (currMonthStr || new Date().toISOString().slice(0, 7)).split('-').map(Number);
             const currentYear = new Date().getFullYear();
             return `
-                <div class="space-y-3 text-xs pb-4">
+                <div class="space-y-3 text-xs pb-2">
                     <div class="grid grid-cols-2 gap-2">
                         <div><label class="block text-app-muted text-[10px] mb-1">年份</label><select id="dp-m-year" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2.5 text-app-main font-mono">${Array.from({length: currentYear - 2000 + 1}, (_, i) => 2000 + i).map(yr => `<option value="${yr}" ${yr === y ? 'selected' : ''}>${yr}年</option>`).join('')}</select></div>
                         <div><label class="block text-app-muted text-[10px] mb-1">月份</label><select id="dp-m-month" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2.5 text-app-main font-mono">${Array.from({length: 12}, (_, i) => i + 1).map(mo => `<option value="${String(mo).padStart(2,'0')}" ${mo === m ? 'selected' : ''}>${mo}月</option>`).join('')}</select></div>
