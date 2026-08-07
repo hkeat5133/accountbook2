@@ -79,7 +79,7 @@
             overflow: hidden;
             border-color: var(--phone-border);
             padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            padding-bottom: 0;
         }
 
         @media (min-width: 640px) {
@@ -137,7 +137,7 @@
             transform: translateY(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+            padding-bottom: 1.5rem;
         }
 
         .modal-sheet.is-open {
@@ -155,7 +155,7 @@
             transform: translateX(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: env(safe-area-inset-bottom);
+            padding-bottom: 0;
         }
 
         #notif-drawer .modal-sheet.is-open {
@@ -274,7 +274,7 @@
 
         <!-- Notification Drawer Modal -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
-            <div class="modal-sheet w-[88%] max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-[88%] max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-0" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <div class="flex items-center gap-2.5">
@@ -1756,7 +1756,7 @@
                             </div>
                         </div>
                         <div class="space-y-3 pt-1 border-t border-app-line">
-                            <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-3.5 h-3.5 text-brand-gold"></i> 本月預算設定</label>
+                            <label class="text-xs font-bold text-brand-gold uppercase tracking-wider block flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4"></i> 本月預算設定</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
