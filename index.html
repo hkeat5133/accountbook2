@@ -133,8 +133,8 @@
         }
 
         .modal-sheet.is-open {
-            transform: translateY(0) !important;
-            opacity: 1 !important;
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .modal-sheet.is-closing {
@@ -150,8 +150,8 @@
         }
 
         #notif-drawer .modal-sheet.is-open {
-            transform: translateX(0) !important;
-            opacity: 1 !important;
+            transform: translateX(0);
+            opacity: 1;
         }
 
         #notif-drawer .modal-sheet.is-closing {
@@ -167,8 +167,8 @@
         }
 
         #settings-drawer .modal-sheet.is-open {
-            transform: translateX(0) !important;
-            opacity: 1 !important;
+            transform: translateX(0);
+            opacity: 1;
         }
 
         #settings-drawer .modal-sheet.is-closing {
@@ -945,24 +945,26 @@
                 let isNotifDragging = false;
                 let isNotifHorizontal = false;
 
-                notifDrawer.addEventListener('touchstart', (e) => {
+                const onNotifStart = (e) => {
                     if (notifDrawer.classList.contains('hidden')) return;
-                    notifStartX = e.touches[0].clientX;
-                    notifStartY = e.touches[0].clientY;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    notifStartX = clientX;
+                    notifStartY = clientY;
                     notifStartTime = Date.now();
                     isNotifDragging = true;
                     isNotifHorizontal = false;
-                }, { passive: true });
+                };
 
-                notifDrawer.addEventListener('touchmove', (e) => {
+                const onNotifMove = (e) => {
                     if (!isNotifDragging || !sheet) return;
-                    const curX = e.touches[0].clientX;
-                    const curY = e.touches[0].clientY;
-                    const deltaX = curX - notifStartX;
-                    const deltaY = curY - notifStartY;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    const deltaX = clientX - notifStartX;
+                    const deltaY = clientY - notifStartY;
 
                     if (!isNotifHorizontal) {
-                        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+                        if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
                             if (deltaX > 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
                                 isNotifHorizontal = true;
                             } else {
@@ -979,19 +981,19 @@
                         const opacityRatio = Math.max(0, 1 - deltaX / (window.innerWidth * 0.7));
                         notifDrawer.style.backgroundColor = `rgba(0, 0, 0, ${0.6 * opacityRatio})`;
                     }
-                }, { passive: false });
+                };
 
-                notifDrawer.addEventListener('touchend', (e) => {
+                const onNotifEnd = (e) => {
                     if (!isNotifDragging && !isNotifHorizontal) return;
                     isNotifDragging = false;
                     if (!sheet) return;
 
-                    const endX = e.changedTouches[0].clientX;
-                    const deltaX = endX - notifStartX;
+                    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+                    const deltaX = clientX - notifStartX;
                     const duration = Date.now() - notifStartTime;
                     const velocity = deltaX / (duration || 1);
 
-                    sheet.style.transition = '';
+                    sheet.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
                     notifDrawer.style.backgroundColor = '';
 
                     if (isNotifHorizontal && (deltaX > 80 || (deltaX > 30 && velocity > 0.35))) {
@@ -1000,7 +1002,24 @@
                     } else {
                         sheet.style.transform = '';
                     }
-                }, { passive: true });
+                };
+
+                notifDrawer.addEventListener('touchstart', onNotifStart, { passive: true });
+                notifDrawer.addEventListener('touchmove', onNotifMove, { passive: false });
+                notifDrawer.addEventListener('touchend', onNotifEnd, { passive: true });
+
+                notifDrawer.addEventListener('mousedown', (e) => {
+                    if (e.button !== 0) return;
+                    onNotifStart(e);
+                    const moveHandler = (me) => onNotifMove(me);
+                    const upHandler = (ue) => {
+                        onNotifEnd(ue);
+                        window.removeEventListener('mousemove', moveHandler);
+                        window.removeEventListener('mouseup', upHandler);
+                    };
+                    window.addEventListener('mousemove', moveHandler, { passive: false });
+                    window.addEventListener('mouseup', upHandler);
+                });
             }
 
             // 1:1 即時跟手拖拽返回 - 系統設定面板 (Settings Drawer)
@@ -1011,24 +1030,26 @@
                 let isDragging = false;
                 let isHorizontal = false;
 
-                settingsDrawer.addEventListener('touchstart', (e) => {
+                const onSetStart = (e) => {
                     if (settingsDrawer.classList.contains('hidden')) return;
-                    setStartX = e.touches[0].clientX;
-                    setStartY = e.touches[0].clientY;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    setStartX = clientX;
+                    setStartY = clientY;
                     setStartTime = Date.now();
                     isDragging = true;
                     isHorizontal = false;
-                }, { passive: true });
+                };
 
-                settingsDrawer.addEventListener('touchmove', (e) => {
+                const onSetMove = (e) => {
                     if (!isDragging || !sheet) return;
-                    const curX = e.touches[0].clientX;
-                    const curY = e.touches[0].clientY;
-                    const deltaX = curX - setStartX;
-                    const deltaY = curY - setStartY;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    const deltaX = clientX - setStartX;
+                    const deltaY = clientY - setStartY;
 
                     if (!isHorizontal) {
-                        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+                        if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
                             if (deltaX < 0 && Math.abs(deltaX) > Math.abs(deltaY)) {
                                 isHorizontal = true;
                             } else {
@@ -1045,19 +1066,19 @@
                         const opacityRatio = Math.max(0, 1 - Math.abs(deltaX) / (window.innerWidth * 0.7));
                         settingsDrawer.style.backgroundColor = `rgba(0, 0, 0, ${0.6 * opacityRatio})`;
                     }
-                }, { passive: false });
+                };
 
-                settingsDrawer.addEventListener('touchend', (e) => {
+                const onSetEnd = (e) => {
                     if (!isDragging && !isHorizontal) return;
                     isDragging = false;
                     if (!sheet) return;
 
-                    const endX = e.changedTouches[0].clientX;
-                    const deltaX = endX - setStartX;
+                    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+                    const deltaX = clientX - setStartX;
                     const duration = Date.now() - setStartTime;
                     const velocity = Math.abs(deltaX) / (duration || 1);
 
-                    sheet.style.transition = '';
+                    sheet.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
                     settingsDrawer.style.backgroundColor = '';
 
                     if (isHorizontal && (deltaX < -80 || (deltaX < -30 && velocity > 0.35))) {
@@ -1066,7 +1087,24 @@
                     } else {
                         sheet.style.transform = '';
                     }
-                }, { passive: true });
+                };
+
+                settingsDrawer.addEventListener('touchstart', onSetStart, { passive: true });
+                settingsDrawer.addEventListener('touchmove', onSetMove, { passive: false });
+                settingsDrawer.addEventListener('touchend', onSetEnd, { passive: true });
+
+                settingsDrawer.addEventListener('mousedown', (e) => {
+                    if (e.button !== 0) return;
+                    onSetStart(e);
+                    const moveHandler = (me) => onSetMove(me);
+                    const upHandler = (ue) => {
+                        onSetEnd(ue);
+                        window.removeEventListener('mousemove', moveHandler);
+                        window.removeEventListener('mouseup', upHandler);
+                    };
+                    window.addEventListener('mousemove', moveHandler, { passive: false });
+                    window.addEventListener('mouseup', upHandler);
+                });
             }
 
             initBottomSheetSwipeGestures();
@@ -1091,10 +1129,12 @@
                 let isDragging = false;
                 let isVertical = false;
 
-                modal.addEventListener('touchstart', (e) => {
+                const onStart = (e) => {
                     if (modal.classList.contains('hidden')) return;
-                    startY = e.touches[0].clientY;
-                    startX = e.touches[0].clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    startY = clientY;
+                    startX = clientX;
                     startTime = Date.now();
                     isDragging = false;
                     isVertical = false;
@@ -1104,9 +1144,9 @@
                         return;
                     }
                     isDragging = true;
-                }, { passive: true });
+                };
 
-                modal.addEventListener('touchmove', (e) => {
+                const onMove = (e) => {
                     if (!isDragging || !sheet) return;
 
                     let scrollableParent = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
@@ -1118,10 +1158,10 @@
                         return;
                     }
 
-                    const curY = e.touches[0].clientY;
-                    const curX = e.touches[0].clientX;
-                    const deltaY = curY - startY;
-                    const deltaX = curX - startX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const deltaY = clientY - startY;
+                    const deltaX = clientX - startX;
 
                     if (!isVertical) {
                         if (Math.abs(deltaY) > 6 || Math.abs(deltaX) > 6) {
@@ -1141,19 +1181,19 @@
                         const opacityRatio = Math.max(0, 1 - deltaY / (window.innerHeight * 0.5));
                         modal.style.backgroundColor = `rgba(0, 0, 0, ${0.6 * opacityRatio})`;
                     }
-                }, { passive: false });
+                };
 
-                modal.addEventListener('touchend', (e) => {
+                const onEnd = (e) => {
                     if (!isDragging && !isVertical) return;
                     isDragging = false;
                     if (!sheet) return;
 
-                    const endY = e.changedTouches[0].clientY;
-                    const deltaY = endY - startY;
+                    const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+                    const deltaY = clientY - startY;
                     const duration = Date.now() - startTime;
                     const velocity = deltaY / (duration || 1);
 
-                    sheet.style.transition = '';
+                    sheet.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
                     modal.style.backgroundColor = '';
 
                     if (isVertical && (deltaY > 80 || (deltaY > 30 && velocity > 0.35))) {
@@ -1162,7 +1202,25 @@
                     } else {
                         sheet.style.transform = '';
                     }
-                }, { passive: true });
+                };
+
+                modal.addEventListener('touchstart', onStart, { passive: true });
+                modal.addEventListener('touchmove', onMove, { passive: false });
+                modal.addEventListener('touchend', onEnd, { passive: true });
+
+                // 支援滑鼠按壓拖拽（用於 Desktop 測試與瀏覽器預覽）
+                modal.addEventListener('mousedown', (e) => {
+                    if (e.button !== 0) return;
+                    onStart(e);
+                    const mouseMoveHandler = (me) => onMove(me);
+                    const mouseUpHandler = (ue) => {
+                        onEnd(ue);
+                        window.removeEventListener('mousemove', mouseMoveHandler);
+                        window.removeEventListener('mouseup', mouseUpHandler);
+                    };
+                    window.addEventListener('mousemove', mouseMoveHandler, { passive: false });
+                    window.addEventListener('mouseup', mouseUpHandler);
+                });
             });
         }
 
