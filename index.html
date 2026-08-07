@@ -30,7 +30,7 @@
             --bg-surface: #ffffff;
             --bg-card: #ece8df;
             --bg-input: #ffffff;
-            --text-main: #2c2e2b;
+            --text-main: #7a7f78;
             --text-muted: #7a7f78;
             --border-line: #d8d2c4;
             --phone-border: #d2cbba;
@@ -41,7 +41,7 @@
             --bg-surface: #272825;
             --bg-card: #333530;
             --bg-input: #21221f;
-            --text-main: #f0eee6;
+            --text-main: #939890;
             --text-muted: #939890;
             --border-line: #454841;
             --phone-border: #2b2c28;
@@ -79,7 +79,7 @@
             overflow: hidden;
             border-color: var(--phone-border);
             padding-top: env(safe-area-inset-top);
-            padding-bottom: 0;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
@@ -137,7 +137,7 @@
             transform: translateY(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: 1.5rem;
+            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
         }
 
         .modal-sheet.is-open {
@@ -155,7 +155,7 @@
             transform: translateX(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: 0;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #notif-drawer .modal-sheet.is-open {
@@ -274,7 +274,7 @@
 
         <!-- Notification Drawer Modal -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
-            <div class="modal-sheet w-[88%] max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-0" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-[88%] max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <div class="flex items-center gap-2.5">
@@ -424,7 +424,7 @@
         </div>
 
         <!-- Custom Toast Modal -->
-        <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
+        <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-[80] hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
@@ -439,7 +439,7 @@
         </div>
 
         <!-- Confirm Reset Modal -->
-        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-end justify-center p-0">
+        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -480,7 +480,7 @@
         </div>
 
         <!-- Custom Option Picker Modal -->
-        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden flex items-end justify-center p-0">
+        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -503,7 +503,7 @@
         </div>
 
         <!-- Category Edit Modal -->
-        <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
+        <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full space-y-3" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <h3 class="font-bold text-sm text-app-main flex items-center gap-1.5">
@@ -519,7 +519,7 @@
         </div>
 
         <!-- Custom Date Picker Modal -->
-        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[95] hidden flex items-end justify-center p-0">
+        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-end justify-center p-0">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -1755,8 +1755,8 @@
                                 <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
                             </div>
                         </div>
-                        <div class="space-y-3 pt-1 border-t border-app-line">
-                            <label class="text-xs font-bold text-brand-gold uppercase tracking-wider block flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4"></i> 本月預算設定</label>
+                        <div class="space-y-3 pt-3 border-t border-app-line">
+                            <label class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-3.5 h-3.5"></i> 本月預算設定</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
