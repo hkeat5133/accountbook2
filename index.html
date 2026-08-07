@@ -67,50 +67,23 @@
             overflow: hidden;
         }
 
-        /* Desktop Mockup Phone Frame */
-        @media (min-width: 640px) {
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: #e5e1d5;
-            }
-            .phone-container {
-                width: 100%;
-                max-width: 420px;
-                height: 96vh;
-                max-height: 900px;
-                margin: 0 auto;
-                position: relative;
-                background-color: var(--bg-app);
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                border-radius: 40px;
-                border: 8px solid var(--phone-border);
-                box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
-            }
-        }
-
-        /* Mobile Native Full Viewport */
-        @media (max-width: 639px) {
-            .phone-container {
-                width: 100vw;
-                height: 100dvh;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                margin: 0;
-                padding: 0;
-                border: none;
-                border-radius: 0;
-                background-color: var(--bg-app);
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-            }
+        /* Mobile Native Full Viewport Layout */
+        .phone-container {
+            width: 100vw;
+            height: 100dvh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background-color: var(--bg-app);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         @keyframes fadeIn {
@@ -277,7 +250,7 @@
             </button>
         </div>
 
-        <!-- Bottom Navigation Bar (Stretched completely to the bottom edge with bg matching) -->
+        <!-- Bottom Navigation Bar (Stretched to bottom edge) -->
         <nav class="w-full bg-app-surface border-t border-app-line px-3 pt-2.5 pb-[max(1.8rem,calc(1rem+env(safe-area-inset-bottom)))] flex justify-around items-center absolute bottom-0 left-0 right-0 z-30 shrink-0 transform-gpu">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold font-bold">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
@@ -799,8 +772,8 @@
             if (txType === '存入') {
                 return ['💰 薪資收入', '📈 投資收益', '📝 其他雜項'];
             } else {
-                const excludeKeywords = ['薪資收入', '固定扣款', '投資收益'];
-                return appData.categories.filter(cat => !excludeKeywords.some(kw => cat.includes(kw)));
+                const fixedKeywords = ['薪資收入', '固定扣款', '投資收益'];
+                return appData.categories.filter(c => !fixedKeywords.some(kw => c.includes(kw)));
             }
         }
 
@@ -2207,14 +2180,12 @@
                             <span class="text-app-main">${opt.label}</span>
                             ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold"></i>' : ''}
                         </button>
-                        ${isCustom ? `
-                            <button type="button" onclick="event.stopPropagation(); openEditCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-blue hover:opacity-80 shrink-0" title="編輯名稱">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                            </button>
-                            <button type="button" onclick="event.stopPropagation(); deleteCustomCategory('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-red hover:opacity-80 shrink-0" title="刪除分類">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </button>
-                        ` : ''}
+                        <button type="button" onclick="event.stopPropagation(); openEditCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-blue hover:opacity-80 shrink-0" title="編輯名稱">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button type="button" onclick="event.stopPropagation(); openDeleteCategoryModal('${opt.value.replace(/'/g, "\\'")}')" class="p-2.5 rounded-xl bg-app-card border border-app-line text-brand-red hover:opacity-80 shrink-0" title="刪除分類">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
                     </div>
                 `;
             }).join('');
@@ -2251,16 +2222,24 @@
                 });
                 saveData();
                 closeModal('edit-category-modal');
-                triggerTxCategoryPicker();
+                closeModal('custom-option-modal');
                 showToast("編輯成功", `分類已更名為「${newName}」。`);
             }
         }
 
-        function deleteCustomCategory(catName) {
+        function openDeleteCategoryModal(catName) {
+            document.getElementById('delete-category-target-name').value = catName;
+            document.getElementById('delete-category-msg').innerText = `確定要刪除分類「${catName}」嗎？刪除後將無法復原。`;
+            openModal('delete-category-modal');
+        }
+
+        function confirmDeleteCategory() {
+            const catName = document.getElementById('delete-category-target-name').value;
             appData.categories = appData.categories.filter(c => c !== catName);
-            saveData();
-            triggerTxCategoryPicker();
-            showToast("已刪除分類", `自訂分類「${catName}」已刪除。`);
+            saveData(false);
+            closeModal('delete-category-modal');
+            closeModal('custom-option-modal');
+            showToast("已刪除分類", `分類「${catName}」已刪除。`);
         }
 
         function addNewCustomCategory() {
@@ -2270,10 +2249,11 @@
             if (!newCat) return;
             if (!appData.categories.includes(newCat)) {
                 appData.categories.push(newCat);
-                saveData();
+                saveData(false);
             }
             input.value = '';
-            if (currentOptionTarget === 'TX_CATEGORY') { triggerTxCategoryPicker(); selectOptionValue(newCat, newCat); }
+            closeModal('custom-option-modal');
+            showToast("新增成功", `已新增分類「${newCat}」。`);
         }
 
         function selectOptionValue(val, label) {
