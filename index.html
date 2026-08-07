@@ -117,7 +117,7 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        /* Modal Backdrops & Sheets */
+        /* Modal Backdrop */
         .modal-backdrop {
             will-change: opacity;
             animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -131,6 +131,7 @@
             transform: translate3d(0, 100%, 0);
             opacity: 0;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+            padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
         }
 
         .modal-sheet.is-open {
@@ -139,14 +140,15 @@
         }
 
         .modal-sheet.is-closing {
-            transform: translate3d(0, 100%, 0);
-            opacity: 0;
+            transform: translate3d(0, 100%, 0) !important;
+            opacity: 0 !important;
         }
 
         #notif-drawer .modal-sheet {
             transform: translate3d(100%, 0, 0);
             opacity: 0;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #notif-drawer .modal-sheet.is-open {
@@ -155,14 +157,15 @@
         }
 
         #notif-drawer .modal-sheet.is-closing {
-            transform: translate3d(100%, 0, 0);
-            opacity: 0;
+            transform: translate3d(100%, 0, 0) !important;
+            opacity: 0 !important;
         }
 
         #settings-drawer .modal-sheet {
             transform: translate3d(-100%, 0, 0);
             opacity: 0;
             transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #settings-drawer .modal-sheet.is-open {
@@ -171,16 +174,17 @@
         }
 
         #settings-drawer .modal-sheet.is-closing {
-            transform: translate3d(-100%, 0, 0);
-            opacity: 0;
+            transform: translate3d(-100%, 0, 0) !important;
+            opacity: 0 !important;
         }
 
-        button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), opacity 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+        /* Unified Global Interactive Feedback Animation */
+        button, a, label[class*="cursor-pointer"], .cursor-pointer {
+            transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
-        button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.96);
-            opacity: 0.85;
+        button:active, a:active, label[class*="cursor-pointer"]:active, .cursor-pointer:active {
+            transform: scale(0.96) !important;
+            opacity: 0.85 !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -221,7 +225,7 @@
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
         <!-- App Main Header Bar -->
-        <header class="px-5 pb-3 pt-[calc(0.5rem+env(safe-area-inset-top))] bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
+        <header class="px-5 pb-3 pt-3 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-xs">
             <div class="flex items-center gap-1.5">
                 <button onclick="toggleSettingsDrawer()" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card text-app-main border border-app-line" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -290,7 +294,7 @@
 
         <!-- Notification Drawer -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-end">
-            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-4/5 max-w-xs bg-app-surface shadow-2xl p-4 flex flex-col h-full border-l border-app-line pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-2 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold flex items-center gap-2 text-xs">
@@ -309,7 +313,7 @@
 
         <!-- Settings Drawer (Full Screen Mode) -->
         <div id="settings-drawer" onclick="closeModal('settings-drawer')" class="modal-backdrop absolute inset-0 bg-black/50 z-40 hidden flex justify-start">
-            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1.25rem+env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-full bg-app-surface shadow-2xl p-5 flex flex-col h-full pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))]" onclick="event.stopPropagation()">
                 <div class="flex items-center pb-3.5 border-b border-app-line">
                     <div class="flex items-center gap-2">
                         <button onclick="closeModal('settings-drawer')" class="p-1.5 rounded-xl bg-app-card border border-app-line text-brand-gold hover:opacity-80" title="返回">
@@ -320,7 +324,7 @@
                         </h3>
                     </div>
                 </div>
-                <div id="settings-drawer-content" class="flex-1 overflow-y-auto my-3 space-y-4"></div>
+                <div id="settings-drawer-content" class="flex-1 overflow-y-auto my-3 space-y-4 pr-0.5"></div>
             </div>
         </div>
 
@@ -417,7 +421,7 @@
                     <div>
                         <label class="block text-app-muted mb-1">金額 <span id="auto-calc-notice" class="text-brand-gold text-[10px] font-normal hidden">(自動計算總額)</span></label>
                         <div class="relative flex items-center">
-                            <input type="number" id="input-amount" step="any" required placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold placeholder:text-app-muted/40 placeholder:font-normal">
+                            <input type="number" id="input-amount" step="any" required placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main font-medium outline-none focus:border-brand-gold placeholder:text-app-muted/40 placeholder:font-normal">
                             <button type="button" onclick="clearInput('input-amount')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                         </div>
                     </div>
@@ -679,7 +683,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-app-muted mb-1 font-medium font-sans">交易紀錄日期篩選</label>
+                        <label class="block text-app-muted mb-1 font-medium">交易紀錄日期篩選</label>
                         <select id="export-jpg-range-select" onchange="updateExportJpgRangeUI()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-xs font-medium outline-none focus:border-brand-gold">
                             <option value="ALL">全部歷史紀錄</option>
                             <option value="RECENT30">最近 30 筆交易</option>
@@ -755,6 +759,16 @@
 
         let touchStartX = 0;
         let touchEndX = 0;
+
+        function getValidCategoriesForType(txType) {
+            if (txType === '存入') {
+                return ['💰 薪資收入', '📈 投資收益', '📝 其他雜項'];
+            } else {
+                // 支出: 不可含有薪資收入、固定扣款、投資收益
+                const excludeKeywords = ['薪資收入', '固定扣款', '投資收益'];
+                return appData.categories.filter(cat => !excludeKeywords.some(kw => cat.includes(kw)));
+            }
+        }
 
         function loadAppData() {
             const saved = localStorage.getItem('wealth_app_data_v21_final');
@@ -936,7 +950,7 @@
                 }, { passive: true });
             }
 
-            // 1:1 Real-time Drag - Notification Drawer
+            // Notification Drawer Gesture
             const notifDrawer = document.getElementById('notif-drawer');
             if (notifDrawer) {
                 const sheet = notifDrawer.querySelector('.modal-sheet');
@@ -1026,7 +1040,7 @@
                 });
             }
 
-            // 1:1 Real-time Drag - Settings Drawer
+            // Settings Drawer Gesture
             const settingsDrawer = document.getElementById('settings-drawer');
             if (settingsDrawer) {
                 const sheet = settingsDrawer.querySelector('.modal-sheet');
@@ -1515,6 +1529,9 @@
                 autoNotice.classList.add('hidden');
                 document.getElementById('txt-type-out').innerText = '支出';
                 document.getElementById('txt-type-in').innerText = '存入';
+                
+                const txType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
+                setTxType(txType);
             } else {
                 btnStock.className = "py-2 rounded-lg font-medium transition-all bg-brand-gold text-white shadow";
                 btnCash.className = "py-2 rounded-lg font-medium transition-all text-app-muted";
@@ -1551,6 +1568,17 @@
                 if (labelOut) {
                     labelOut.className = "flex-1 text-center py-2.5 rounded-xl border border-app-line opacity-60 cursor-pointer transition-all hover:opacity-100";
                     labelOut.style.borderColor = "";
+                }
+            }
+
+            // 自動適應並校正目前的分類選項
+            if (currentModalMode === 'cash') {
+                const validCats = getValidCategoriesForType(val);
+                const currentCat = document.getElementById('input-category').value;
+                if (!validCats.includes(currentCat)) {
+                    const fallbackCat = validCats[0];
+                    document.getElementById('input-category').value = fallbackCat;
+                    document.getElementById('tx-category-btn-txt').innerText = fallbackCat;
                 }
             }
         }
@@ -1767,7 +1795,7 @@
                             <span onclick="navigateToDetails('ALL')" class="flex items-center gap-1 font-medium cursor-pointer hover:text-brand-gold">
                                 淨資產總額估算 (NTD) <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i>
                             </span>
-                            <button onclick="updateExchangeRateAuto(true)" title="即時刷新匯率" class="bg-app-surface text-brand-gold px-2 py-0.5 rounded-full text-[10px] border border-brand-gold/30 font-mono flex items-center gap-1 hover:scale-105">
+                            <button onclick="updateExchangeRateAuto(true)" title="即時刷新匯率" class="bg-app-surface text-brand-gold px-2 py-0.5 rounded-full text-[10px] border border-brand-gold/30 font-mono flex items-center gap-1">
                                 1 USD = ${appData.usdExchangeRate} TWD <i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i>
                             </button>
                         </div>
@@ -2174,7 +2202,9 @@
             openOptionModal('TX_STOCK_MARKET', '選擇股票市場', [{ label: '台股 (TWD)', value: 'TW_STOCK' }, { label: '美股 (USD)', value: 'US_STOCK' }], document.getElementById('input-stock-market').value);
         }
         function triggerTxCategoryPicker() {
-            openOptionModal('TX_CATEGORY', '選擇消費 / 收入分類', appData.categories.map(c => ({ label: c, value: c })), document.getElementById('input-category').value);
+            const currentTxType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
+            const validCats = getValidCategoriesForType(currentTxType);
+            openOptionModal('TX_CATEGORY', `選擇 ${currentTxType} 分類`, validCats.map(c => ({ label: c, value: c })), document.getElementById('input-category').value);
         }
 
         function handleRecurringSubmit(e) {
