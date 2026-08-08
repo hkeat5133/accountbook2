@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -77,6 +77,8 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
@@ -86,6 +88,8 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                padding-top: 0;
+                padding-bottom: 0;
             }
         }
 
@@ -118,7 +122,7 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        /* 背景朦朧層進出場動畫完全對稱 */
+        /* 背景模糊效果與彈窗動畫 */
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             backdrop-filter: blur(8px);
@@ -128,7 +132,6 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 彈出視窗採用由中心縮放與淡入動畫，極速流暢 */
         .modal-sheet {
             will-change: transform, opacity;
             transform: scale(0.92) translateY(10px);
@@ -150,7 +153,7 @@
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由中心縮放與淡入動畫） */
+        /* 通知抽屜專用 */
         #notif-drawer .modal-sheet {
             transform: scale(0.92) translateY(10px);
             opacity: 0;
@@ -171,13 +174,11 @@
             opacity: 0 !important;
         }
 
-        /* 最佳化按鈕點擊極速流暢回饋動畫 */
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
-            will-change: transform;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.93) translateY(1px) !important;
+            transform: scale(0.90) translateY(1px) !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -219,7 +220,7 @@
                 <h1 id="app-title-display" class="font-bold text-lg text-brand-gold tracking-wide flex items-center justify-center gap-2">
                     智慧帳本
                 </h1>
-                <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 8 日</p>
+                <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 9 日</p>
             </div>
             <div class="flex items-center gap-1.5">
                 <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-90 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
@@ -277,12 +278,18 @@
         </div>
 
         <!-- Notification Drawer Modal -->
-        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-center justify-center p-4">
+        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface shadow-2xl p-5 flex flex-col border border-app-line max-w-sm rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
-                    <div>
-                        <h3 class="font-bold text-app-main text-xs">系統動態與通知紀錄</h3>
-                        <p class="text-[10px] text-app-muted">自動扣款＆入款與分期執行明細</p>
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-2xl bg-brand-gold/15 text-brand-gold flex items-center justify-center shadow-2xs">
+                            <i data-lucide="activity" class="w-4.5 h-4.5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-app-main text-xs">系統動態與通知紀錄</h3>
+                            <p class="text-[10px] text-app-muted">自動扣/入款與分期執行明細</p>
+                        </div>
                     </div>
                     <button onclick="closeModal('notif-drawer')" class="text-app-muted hover:text-app-main p-1.5 rounded-xl bg-app-card active:scale-90 border border-app-line">
                         <i data-lucide="x" class="w-4 h-4"></i>
@@ -296,8 +303,9 @@
         </div>
 
         <!-- Add Transaction Modal -->
-        <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+        <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> 新增帳務交易
@@ -312,7 +320,7 @@
                     <button type="button" onclick="setModalMode('stock')" id="btn-mode-stock" class="py-2 rounded-lg font-medium transition-all text-app-muted active:scale-90">股票買賣</button>
                 </div>
 
-                <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs pb-6">
+                <form id="tx-form" onsubmit="handleTransactionSubmit(event)" class="space-y-3 text-xs pb-2">
                     <div class="flex gap-2">
                         <label onclick="setTxType('支出')" class="flex-1 text-center py-2.5 rounded-xl border-2 border-brand-red bg-brand-red/10 cursor-pointer transition-all shadow-sm active:scale-95" id="label-type-out">
                             <input type="radio" name="txType" value="支出" class="hidden" checked onchange="setTxType('支出')">
@@ -398,9 +406,9 @@
                             <button type="button" onclick="openCustomDatePicker('TX_INPUT')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2.5 text-app-main text-left flex items-center justify-between active:scale-98">
                                 <span class="flex items-center gap-1 font-mono text-xs">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
-                                    <span id="input-date-display">2026-08-08</span>
+                                    <span id="input-date-display">2026-08-09</span>
                                 </span>
-                                <input type="hidden" id="input-date" value="2026-08-08">
+                                <input type="hidden" id="input-date" value="2026-08-09">
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted shrink-0"></i>
                             </button>
                         </div>
@@ -421,8 +429,9 @@
         </div>
 
         <!-- Custom Toast Modal -->
-        <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-6">
+        <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
                     <i data-lucide="info" class="w-6 h-6"></i>
                 </div>
@@ -435,8 +444,8 @@
         </div>
 
         <!-- Confirm Reset Modal -->
-        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
@@ -468,7 +477,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="pt-2 pb-4 flex gap-2">
+                <div class="pt-2 pb-2 flex gap-2">
                     <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold active:scale-95">取消</button>
                     <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow active:scale-95">確定執行重置</button>
                 </div>
@@ -476,8 +485,8 @@
         </div>
 
         <!-- Confirm Delete Transaction Modal -->
-        <div id="confirm-delete-modal" onclick="closeModal('confirm-delete-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="confirm-delete-modal" onclick="closeModal('confirm-delete-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
@@ -494,7 +503,7 @@
                     <p class="text-xs text-app-main font-bold">您確定要刪除這筆帳務紀錄嗎？</p>
                     <p class="text-[11px] text-app-muted leading-relaxed">刪除後系統將會自動反向扣除或還原該筆交易對應的帳戶資產餘額，此操作無法復原。</p>
                 </div>
-                <div class="pt-2 pb-4 flex gap-2">
+                <div class="pt-2 pb-2 flex gap-2">
                     <button type="button" onclick="closeModal('confirm-delete-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold active:scale-95">取消</button>
                     <button type="button" onclick="confirmExecuteDeleteTx()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow active:scale-95">確定刪除</button>
                 </div>
@@ -503,7 +512,8 @@
 
         <!-- Custom Option Picker Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="list" class="w-4 h-4"></i> 選擇選項
@@ -513,7 +523,7 @@
                     </button>
                 </div>
                 <div id="option-modal-list" class="space-y-1.5 max-h-[45vh] overflow-y-auto py-1 pr-0.5"></div>
-                <div id="custom-category-add-box" class="hidden pt-2 pb-4 border-t border-app-line space-y-2">
+                <div id="custom-category-add-box" class="hidden pt-2 pb-2 border-t border-app-line space-y-2">
                     <label class="text-[10px] text-app-muted block font-medium">+ 新增自訂分類</label>
                     <div class="flex gap-1.5">
                         <input type="text" id="new-category-input" placeholder="輸入新分類名稱..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
@@ -526,6 +536,7 @@
         <!-- Category Edit Modal -->
         <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full space-y-3" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <h3 class="font-bold text-sm text-app-main flex items-center gap-1.5">
                     <i data-lucide="edit-3" class="w-4 h-4 text-brand-gold"></i> 編輯分類名稱
                 </h3>
@@ -540,7 +551,8 @@
 
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期
@@ -555,7 +567,8 @@
 
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">股票交易歷史</h3>
                     <button type="button" onclick="closeModal('stock-history-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
@@ -569,7 +582,8 @@
 
         <!-- Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="repeat" class="w-4 h-4"></i> 新增固定支出/存入規則</h3>
                     <button type="button" onclick="closeModal('recurring-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -594,8 +608,8 @@
                     <div>
                         <label class="block text-app-muted mb-1">起始日期 (每月自動執行)</label>
                         <button type="button" onclick="openCustomDatePicker('REC_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt">2026-08-08</span></span>
-                            <input type="hidden" id="rec-date-val" value="2026-08-08">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt">2026-08-09</span></span>
+                            <input type="hidden" id="rec-date-val" value="2026-08-09">
                             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                         </button>
                     </div>
@@ -610,7 +624,8 @@
 
         <!-- Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="credit-card" class="w-4 h-4"></i> 新增分期付款項目</h3>
                     <button type="button" onclick="closeModal('installment-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -633,8 +648,8 @@
                     <div>
                         <label class="block text-app-muted mb-1">起始日期 (每月自動扣款)</label>
                         <button type="button" onclick="openCustomDatePicker('INST_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt">2026-08-08</span></span>
-                            <input type="hidden" id="inst-date-val" value="2026-08-08">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt">2026-08-09</span></span>
+                            <input type="hidden" id="inst-date-val" value="2026-08-09">
                             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                         </button>
                     </div>
@@ -645,7 +660,8 @@
 
         <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full max-w-md bg-app-surface p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
+                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-1 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4"></i> 匯出資產報表 (JPG)</h3>
                     <button type="button" onclick="closeModal('export-jpg-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -659,6 +675,7 @@
                             <option value="TW_STOCK">台股市值 (TW Stock)</option>
                             <option value="USD">美金現金 (USD)</option>
                             <option value="US_STOCK">美股市值 (US Stock)</option>
+                            <option value="MYR">馬幣現金 (MYR)</option>
                         </select>
                     </div>
                     <div>
@@ -697,6 +714,12 @@
             appTitle: "智慧帳本",
             theme: "light",
             usdExchangeRate: 32.5,
+            myrExchangeRate: 7.25,
+            enableTWD: true,
+            enableTWStock: true,
+            enableUSD: true,
+            enableUSStock: true,
+            enableMYR: false,
             budgetFood: 0,
             budgetFoodCurrency: 'TWD',
             budgetShopping: 0,
@@ -705,10 +728,11 @@
                 '🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒',
                 '💰 薪資收入', '📈 投資收益', '🔄 固定扣款', '📝 其他款項'
             ],
-            assets: { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0 },
+            assets: { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 },
             recurringRules: [],
             installments: [],
             notifications: [],
+            hasUnreadNotifications: false,
             transactions: []
         };
 
@@ -728,18 +752,21 @@
         let filterSearchQuery = '';
 
         let exportJpgCustomDate = getLocalDateStr();
-        let exportJpgStartDate = new Date().toISOString().split('T')[0];
-        let exportJpgEndDate = new Date().toISOString().split('T')[0];
-        let exportJpgMonthDate = new Date().toISOString().slice(0, 7);
+        let exportJpgStartDate = getLocalDateStr();
+        let exportJpgEndDate = getLocalDateStr();
+        let exportJpgMonthDate = getLocalMonthStr();
 
         let tabScrollPositions = { home: 0, details: 0, 'stock-stats': 0, settings: 0 };
         let datePickerTarget = null;
         let currentOptionTarget = null;
         let pendingDeleteTxId = null;
         let pendingDeleteSymbol = null;
+        let isAccountManageOpen = false;
 
-        let touchStartX = 0;
-        let touchEndX = 0;
+        function toggleAccountManageAccordion() {
+            isAccountManageOpen = !isAccountManageOpen;
+            renderCurrentView();
+        }
 
         function loadAppData() {
             const saved = localStorage.getItem('wealth_app_data_v18_final');
@@ -751,6 +778,16 @@
                     } else {
                         parsed.categories = parsed.categories.map(c => c === '📝 其他雜項' ? '📝 其他款項' : c);
                     }
+                    if (parsed.assets) {
+                        if (parsed.assets.MYR === undefined) parsed.assets.MYR = 0;
+                    }
+                    if (parsed.enableTWD === undefined) parsed.enableTWD = true;
+                    if (parsed.enableTWStock === undefined) parsed.enableTWStock = true;
+                    if (parsed.enableUSD === undefined) parsed.enableUSD = true;
+                    if (parsed.enableUSStock === undefined) parsed.enableUSStock = true;
+                    if (parsed.enableMYR === undefined) parsed.enableMYR = false;
+                    if (parsed.myrExchangeRate === undefined) parsed.myrExchangeRate = 7.25;
+                    if (parsed.hasUnreadNotifications === undefined) parsed.hasUnreadNotifications = false;
                     return parsed;
                 } catch(e) { console.error(e); }
             }
@@ -783,12 +820,18 @@
                 const response = await fetch('https://open.er-api.com/v6/latest/USD');
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.rates && data.rates.TWD) {
-                        const newRate = parseFloat(data.rates.TWD.toFixed(2));
-                        if (newRate > 0) {
-                            appData.usdExchangeRate = newRate;
-                            saveData(true);
-                            if (isManual) showToast("匯率即時更新成功", `1 USD = ${newRate} TWD`);
+                    if (data && data.rates) {
+                        if (data.rates.TWD) {
+                            appData.usdExchangeRate = parseFloat(data.rates.TWD.toFixed(2));
+                        }
+                        if (data.rates.TWD && data.rates.MYR) {
+                            appData.myrExchangeRate = parseFloat((data.rates.TWD / data.rates.MYR).toFixed(2));
+                        }
+                        saveData(true);
+                        if (isManual) {
+                            let msg = `1 USD = ${appData.usdExchangeRate} TWD`;
+                            if (appData.enableMYR) msg += `\n1 MYR = ${appData.myrExchangeRate} TWD`;
+                            showToast("匯率即時更新成功", msg);
                         }
                     }
                 }
@@ -916,6 +959,8 @@
             const mainContainer = document.getElementById('main-content');
             if (!mainContainer) return;
 
+            let touchStartX = 0;
+            let touchEndX = 0;
             let edgeStartX = 0;
             let isEdgeSwipe = false;
 
@@ -928,7 +973,7 @@
             mainContainer.addEventListener('touchend', (e) => {
                 touchEndX = e.changedTouches[0].screenX;
                 const diff = touchEndX - touchStartX;
-                const swipeThreshold = 50;
+                const swipeThreshold = 55;
 
                 if (isEdgeSwipe && diff > swipeThreshold) {
                     if (currentTab === 'settings' || currentTab === 'stock-stats' || currentTab === 'details') {
@@ -937,34 +982,41 @@
                     }
                 }
 
-                handleSwipeGesture();
+                if (Math.abs(diff) >= swipeThreshold) {
+                    if (currentTab === 'settings') {
+                        if (diff > 0) switchTabWithAnimation('home', 'right', false);
+                        return;
+                    }
+                    const tabOrder = ['home', 'details', 'stock-stats'];
+                    const currentIndex = tabOrder.indexOf(currentTab);
+                    if (currentIndex !== -1) {
+                        if (diff > 0 && currentIndex > 0) {
+                            switchTabWithAnimation(tabOrder[currentIndex - 1], 'right', false);
+                        } else if (diff < 0 && currentIndex < tabOrder.length - 1) {
+                            switchTabWithAnimation(tabOrder[currentIndex + 1], 'left', false);
+                        }
+                    }
+                }
             }, { passive: true });
         }
 
-        function handleSwipeGesture() {
-            const swipeThreshold = 55;
-            const diff = touchEndX - touchStartX;
-            if (Math.abs(diff) < swipeThreshold) return;
-
-            if (currentTab === 'settings') {
-                if (diff > 0) {
-                    switchTabWithAnimation('home', 'right', false);
+        function switchTab(tab) {
+            if (tab === currentTab) {
+                const main = document.getElementById('main-content');
+                if (main) main.scrollTop = 0;
+                tabScrollPositions[tab] = 0;
+                if (tab === 'details') {
+                    filterAsset = 'ALL';
+                    filterRange = 'RECENT30';
+                    filterType = 'ALL';
+                    filterCategoryName = 'ALL';
+                    filterSearchQuery = '';
+                } else if (tab === 'stock-stats') {
+                    stockSubFilter = 'ALL';
                 }
+                renderCurrentView();
                 return;
             }
-
-            const tabOrder = ['home', 'details', 'stock-stats'];
-            const currentIndex = tabOrder.indexOf(currentTab);
-            if (currentIndex === -1) return;
-
-            if (diff > 0 && currentIndex > 0) {
-                switchTabWithAnimation(tabOrder[currentIndex - 1], 'right', false);
-            } else if (diff < 0 && currentIndex < tabOrder.length - 1) {
-                switchTabWithAnimation(tabOrder[currentIndex + 1], 'left', false);
-            }
-        }
-
-        function switchTab(tab) {
             switchTabWithAnimation(tab, 'fade', false);
         }
 
@@ -972,6 +1024,10 @@
             const main = document.getElementById('main-content');
             if (main) {
                 tabScrollPositions[currentTab] = main.scrollTop;
+            }
+
+            if (tab === 'settings') {
+                tabScrollPositions['settings'] = 0;
             }
 
             if (resetFilters && tab !== currentTab) {
@@ -1142,6 +1198,8 @@
             if (!drawer) return;
             if (drawer.classList.contains('hidden')) {
                 openModal('notif-drawer');
+                appData.hasUnreadNotifications = false;
+                saveData(false);
                 renderNotifications();
                 const badge = document.getElementById('notif-badge');
                 if (badge) badge.classList.add('hidden');
@@ -1157,7 +1215,7 @@
                 container.innerHTML = `
                     <div class="text-center py-20 text-app-muted space-y-3">
                         <div class="w-16 h-16 rounded-3xl bg-app-card mx-auto flex items-center justify-center text-brand-gold/40 border border-app-line shadow-xs">
-                            <i data-lucide="bell" class="w-8 h-8"></i>
+                            <i data-lucide="bell-off" class="w-8 h-8"></i>
                         </div>
                         <div class="space-y-1">
                             <p class="text-xs font-bold text-app-main">目前尚無動態通知</p>
@@ -1170,7 +1228,7 @@
 
             container.innerHTML = `
                 <div class="space-y-2.5">
-                    ${appData.notifications.map((n, idx) => `
+                    ${appData.notifications.map((n) => `
                         <div class="bg-app-card/90 backdrop-blur-xs p-3.5 rounded-2xl border border-app-line space-y-1.5 transition-all hover:border-brand-gold/60 shadow-2xs relative overflow-hidden">
                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-gold"></div>
                             <div class="flex justify-between items-center pl-1">
@@ -1189,6 +1247,7 @@
 
         function clearNotifications() {
             appData.notifications = [];
+            appData.hasUnreadNotifications = false;
             saveData(true);
             renderNotifications();
         }
@@ -1196,8 +1255,11 @@
         function updateNotificationBadge() {
             const badge = document.getElementById('notif-badge');
             if (!badge) return;
-            if (appData.notifications && appData.notifications.length > 0) badge.classList.remove('hidden');
-            else badge.classList.add('hidden');
+            if (appData.hasUnreadNotifications && appData.notifications && appData.notifications.length > 0) {
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
         }
 
         function showToast(title, msg) {
@@ -1316,7 +1378,7 @@
             e.preventDefault();
             const txType = document.querySelector('input[name="txType"]:checked').value;
             const amount = parseFloat(document.getElementById('input-amount').value) || 0;
-            const date = document.getElementById('input-date').value || new Date().toISOString().split('T')[0];
+            const date = document.getElementById('input-date').value || getLocalDateStr();
             const note = document.getElementById('input-note').value || '';
 
             let asset = 'TWD', category = '🍱 餐飲美食', stockSymbol = '', shares = 0, price = 0, fee = 0;
@@ -1338,7 +1400,7 @@
                 if (txType === '存入') {
                     appData.assets[asset] = (appData.assets[asset] || 0) + amount;
                 } else {
-                    appData.assets[asset] = Math.max(0, (appData.assets[asset] || 0) - amount);
+                    appData.assets[asset] = (appData.assets[asset] || 0) - amount;
                 }
             }
 
@@ -1366,9 +1428,9 @@
             const idx = appData.transactions.findIndex(t => t.id === id);
             if (idx !== -1) {
                 const tx = appData.transactions[idx];
-                if (tx.asset === 'TWD' || tx.asset === 'USD' || tx.asset === 'TW_STOCK' || tx.asset === 'US_STOCK') {
+                if (['TWD', 'USD', 'TW_STOCK', 'US_STOCK', 'MYR'].includes(tx.asset)) {
                     if (tx.type === '存入') {
-                        appData.assets[tx.asset] = Math.max(0, (appData.assets[tx.asset] || 0) - tx.amount);
+                        appData.assets[tx.asset] = (appData.assets[tx.asset] || 0) - tx.amount;
                     } else {
                         appData.assets[tx.asset] = (appData.assets[tx.asset] || 0) + tx.amount;
                     }
@@ -1446,7 +1508,7 @@
             const val = document.getElementById('setting-budget-food')?.value;
             appData.budgetFood = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
             const curr = appData.budgetFoodCurrency || 'TWD';
-            const symbol = curr === 'USD' ? 'USD $' : 'NT$';
+            const symbol = curr === 'USD' ? 'USD $' : (curr === 'MYR' ? 'RM ' : 'NT$');
             saveData(true);
             const foodName = appData.categories[0] || '餐飲美食';
             showToast("預算設定完成", `本月${foodName}預算已成功更新為 ${symbol} ${appData.budgetFood.toLocaleString()} (${curr})。`);
@@ -1469,7 +1531,7 @@
             const val = document.getElementById('setting-budget-shopping')?.value;
             appData.budgetShopping = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
             const curr = appData.budgetShoppingCurrency || 'TWD';
-            const symbol = curr === 'USD' ? 'USD $' : 'NT$';
+            const symbol = curr === 'USD' ? 'USD $' : (curr === 'MYR' ? 'RM ' : 'NT$');
             saveData(true);
             const shopName = appData.categories[1] || '日常購物';
             showToast("預算設定完成", `本月${shopName}預算已成功更新為 ${symbol} ${appData.budgetShopping.toLocaleString()} (${curr})。`);
@@ -1483,25 +1545,64 @@
             showToast("預算已重置", "本月日常購物預算已歸零。");
         }
 
-        function toggleBudgetCurrency(type) {
+        function selectBudgetCurrency(type, curr) {
             if (type === 'food') {
-                appData.budgetFoodCurrency = (appData.budgetFoodCurrency === 'USD') ? 'TWD' : 'USD';
-            } else if (type === 'shopping') {
-                appData.budgetShoppingCurrency = (appData.budgetShoppingCurrency === 'USD') ? 'TWD' : 'USD';
+                appData.budgetFoodCurrency = curr;
+            } else {
+                appData.budgetShoppingCurrency = curr;
             }
             saveData(true);
+            closeModal('custom-option-modal');
         }
 
-        function saveAssetExplicitly(assetKey, val) {
-            appData.assets[assetKey] = val === '' ? 0 : (parseFloat(val) || 0);
-            saveData(true);
+        function triggerBudgetCurrencyPicker(type) {
+            const opts = [];
+            if (appData.enableTWD) opts.push({ label: '台幣 (TWD)', value: 'TWD' });
+            if (appData.enableUSD) opts.push({ label: '美金 (USD)', value: 'USD' });
+            if (appData.enableMYR) opts.push({ label: '馬幣 (MYR)', value: 'MYR' });
+            if (opts.length === 0) opts.push({ label: '台幣 (TWD)', value: 'TWD' });
+
+            const target = type === 'food' ? 'BUDGET_FOOD_CURR' : 'BUDGET_SHOPPING_CURR';
+            const currentVal = type === 'food' ? (appData.budgetFoodCurrency || 'TWD') : (appData.budgetShoppingCurrency || 'TWD');
+            const catName = type === 'food' ? (appData.categories[0] || '餐飲美食') : (appData.categories[1] || '日常購物');
+            const title = `選擇${catName}預算幣別`;
+
+            currentOptionTarget = target;
+            document.getElementById('option-modal-title').innerHTML = `<i data-lucide="list" class="w-4 h-4"></i> ${title}`;
+            document.getElementById('option-modal-list').innerHTML = opts.map(opt => {
+                const isSelected = opt.value === currentVal;
+                return `
+                    <div onclick="selectBudgetCurrency('${type}', '${opt.value}')" class="w-full p-2.5 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all cursor-pointer">
+                        <span class="text-app-main">${opt.label}</span>
+                        ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold shrink-0"></i>' : ''}
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('custom-category-add-box').classList.add('hidden');
+            openModal('custom-option-modal');
         }
 
-        function saveAssetFromInput(assetKey, inputId) {
-            const val = document.getElementById(inputId)?.value;
-            appData.assets[assetKey] = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
+        function toggleEnableAsset(assetFlagKey, enabled) {
+            const flags = ['enableTWD', 'enableTWStock', 'enableUSD', 'enableUSStock', 'enableMYR'];
+            const activeCount = flags.reduce((count, k) => count + (appData[k] ? 1 : 0), 0);
+
+            if (!enabled && activeCount <= 1) {
+                showToast("無法停用", "系統至少需要保留一個開啟的資產帳戶。");
+                renderCurrentView();
+                return;
+            }
+
+            appData[assetFlagKey] = enabled;
             saveData(true);
-            showToast("初始本金設定完成", `資產帳戶已成功更新。`);
+
+            const labels = {
+                enableTWD: '台幣現金 (TWD)',
+                enableTWStock: '台股市值 (TW Stock)',
+                enableUSD: '美金現金 (USD)',
+                enableUSStock: '美股市值 (US Stock)',
+                enableMYR: '馬幣現金 (MYR)'
+            };
+            showToast("帳戶設定已更新", enabled ? `已成功啟用「${labels[assetFlagKey]}」！` : `已停用「${labels[assetFlagKey]}」。`);
         }
 
         function deleteRecurringRule(id) { appData.recurringRules = appData.recurringRules.filter(r => r.id !== id); saveData(true); }
@@ -1512,7 +1613,7 @@
             return txList.map(tx => {
                 const isExpense = tx.type === '支出', isStock = tx.asset === 'TW_STOCK' || tx.asset === 'US_STOCK';
                 const assetLabel = tx.asset === 'TW_STOCK' ? '台股' : tx.asset === 'US_STOCK' ? '美股' : tx.asset;
-                const currency = (tx.asset === 'USD' || tx.asset === 'US_STOCK') ? 'USD $' : 'NT$';
+                const currency = (tx.asset === 'USD' || tx.asset === 'US_STOCK') ? 'USD $' : (tx.asset === 'MYR' ? 'RM ' : 'NT$');
                 return `
                     <div class="bg-app-card border border-app-line p-3 rounded-2xl flex justify-between items-center transition-all hover:border-brand-gold/50 w-full">
                         <div class="flex items-center gap-3 min-w-0">
@@ -1541,31 +1642,21 @@
         }
 
         function renderHomeView(container) {
-            const twdStockInTWD = appData.assets.TW_STOCK;
-            const usdCashInTWD = appData.assets.USD * appData.usdExchangeRate;
-            const usdStockInTWD = appData.assets.US_STOCK * appData.usdExchangeRate;
-            const grandTotalTWD = appData.assets.TWD + twdStockInTWD + usdCashInTWD + usdStockInTWD;
-            const currentMonthStr = new Date().toISOString().slice(0, 7);
+            const twdCashInTWD = appData.enableTWD ? appData.assets.TWD : 0;
+            const twdStockInTWD = appData.enableTWStock ? appData.assets.TW_STOCK : 0;
+            const usdCashInTWD = appData.enableUSD ? (appData.assets.USD * appData.usdExchangeRate) : 0;
+            const usdStockInTWD = appData.enableUSStock ? (appData.assets.US_STOCK * appData.usdExchangeRate) : 0;
+            const myrCashInTWD = appData.enableMYR ? ((appData.assets.MYR || 0) * (appData.myrExchangeRate || 7.25)) : 0;
+            const grandTotalTWD = twdCashInTWD + twdStockInTWD + usdCashInTWD + usdStockInTWD + myrCashInTWD;
+            const currentMonthStr = getLocalMonthStr();
             
             const monthTxs = appData.transactions.filter(tx => tx.type === '支出' && tx.date.startsWith(currentMonthStr));
             const catFoodName = appData.categories[0] || '🍱 餐飲美食';
             const catShopName = appData.categories[1] || '🛒 日常購物';
             
             const getSpentInCurrency = (catName, currency) => {
-                const txs = monthTxs.filter(tx => tx.category === catName);
-                let totalTWD = 0;
-                txs.forEach(tx => {
-                    const amt = Number(tx.amount) || 0;
-                    if (tx.asset === 'USD' || tx.asset === 'US_STOCK') {
-                        totalTWD += amt * appData.usdExchangeRate;
-                    } else {
-                        totalTWD += amt;
-                    }
-                });
-                if (currency === 'USD') {
-                    return totalTWD / (appData.usdExchangeRate || 32.5);
-                }
-                return totalTWD;
+                const txs = monthTxs.filter(tx => tx.category === catName && tx.asset === currency);
+                return txs.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
             };
 
             const foodCurr = appData.budgetFoodCurrency || 'TWD';
@@ -1576,8 +1667,8 @@
             
             const foodPercent = appData.budgetFood > 0 ? Math.min(100, Math.round((spentFood / appData.budgetFood) * 100)) : 0;
             const shoppingPercent = appData.budgetShopping > 0 ? Math.min(100, Math.round((spentShopping / appData.budgetShopping) * 100)) : 0;
-            const foodSym = foodCurr === 'USD' ? 'USD $' : '$';
-            const shoppingSym = shoppingCurr === 'USD' ? 'USD $' : '$';
+            const foodSym = foodCurr === 'USD' ? 'USD $' : (foodCurr === 'MYR' ? 'RM ' : '$');
+            const shoppingSym = shoppingCurr === 'USD' ? 'USD $' : (shoppingCurr === 'MYR' ? 'RM ' : '$');
 
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
@@ -1587,7 +1678,7 @@
                                 淨資產總額估算 (NTD) <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i>
                             </span>
                             <button onclick="updateExchangeRateAuto(true)" title="即時刷新匯率" class="bg-app-surface text-brand-gold px-2 py-0.5 rounded-full text-[10px] border border-brand-gold/30 font-mono flex items-center gap-1 active:scale-90 hover:scale-105">
-                                1 USD = ${appData.usdExchangeRate} TWD <i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i>
+                                1 USD = ${appData.usdExchangeRate} TWD ${appData.enableMYR ? `| 1 MYR = ${appData.myrExchangeRate || 7.25} TWD` : ''} <i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i>
                             </button>
                         </div>
                         <div onclick="navigateToDetails('ALL')" class="text-3xl font-extrabold text-brand-gold tracking-tight font-mono cursor-pointer">
@@ -1596,38 +1687,56 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 w-full">
-                        <div onclick="navigateToDetails('TWD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
-                            <div class="flex justify-between items-start mb-1.5">
-                                <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> 台幣現金</span>
-                                <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">TWD</span>
+                        ${appData.enableTWD ? `
+                            <div onclick="navigateToDetails('TWD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> 台幣現金</span>
+                                    <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">TWD</span>
+                                </div>
+                                <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()}</div>
+                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">活存 / 現金儲蓄</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
                             </div>
-                            <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()}</div>
-                            <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">活存 / 現金儲蓄</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
-                        </div>
-                        <div onclick="navigateToDetails('TW_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
-                            <div class="flex justify-between items-start mb-1.5">
-                                <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> 台股市值</span>
-                                <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">TW Stock</span>
+                        ` : ''}
+                        ${appData.enableTWStock ? `
+                            <div onclick="navigateToDetails('TW_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> 台股市值</span>
+                                    <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">TW Stock</span>
+                                </div>
+                                <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
+                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">股票證券 (TWD)</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>
                             </div>
-                            <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
-                            <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">股票證券 (TWD)</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>
-                        </div>
-                        <div onclick="navigateToDetails('USD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
-                            <div class="flex justify-between items-start mb-1.5">
-                                <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> 美金現金</span>
-                                <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">USD</span>
+                        ` : ''}
+                        ${appData.enableUSD ? `
+                            <div onclick="navigateToDetails('USD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> 美金現金</span>
+                                    <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">USD</span>
+                                </div>
+                                <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()}</div>
+                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ NT$ ${(appData.assets.USD * appData.usdExchangeRate).toLocaleString('zh-TW', {maximumFractionDigits:0})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
                             </div>
-                            <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()}</div>
-                            <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ NT$ ${(appData.assets.USD * appData.usdExchangeRate).toLocaleString('zh-TW', {maximumFractionDigits:0})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
-                        </div>
-                        <div onclick="navigateToDetails('US_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
-                            <div class="flex justify-between items-start mb-1.5">
-                                <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> 美股市值</span>
-                                <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">US Stock</span>
+                        ` : ''}
+                        ${appData.enableUSStock ? `
+                            <div onclick="navigateToDetails('US_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> 美股市值</span>
+                                    <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">US Stock</span>
+                                </div>
+                                <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()}</div>
+                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">股票證券 (USD)</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>
                             </div>
-                            <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()}</div>
-                            <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted">股票證券 (USD)</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>
-                        </div>
+                        ` : ''}
+                        ${appData.enableMYR ? `
+                            <div onclick="navigateToDetails('MYR')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> 馬幣現金</span>
+                                    <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">MYR</span>
+                                </div>
+                                <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
+                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ NT$ ${((appData.assets.MYR || 0) * (appData.myrExchangeRate || 7.25)).toLocaleString('zh-TW', {maximumFractionDigits:0})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
+                            </div>
+                        ` : ''}
                     </div>
 
                     <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
@@ -1673,7 +1782,7 @@
         }
 
         function navigateToCategoryDetails(categoryName, currency = 'TWD') {
-            filterAsset = currency === 'USD' ? 'USD' : 'TWD';
+            filterAsset = currency === 'USD' ? 'USD' : (currency === 'MYR' ? 'MYR' : 'TWD');
             filterRange = 'MONTHLY';
             filterType = '支出';
             filterMonthDate = getLocalMonthStr();
@@ -1745,6 +1854,12 @@
 
         function renderDetailsView(container) {
             const list = getFilteredDetailsList();
+            const availableAssets = ['ALL'];
+            if (appData.enableTWD) availableAssets.push('TWD');
+            if (appData.enableTWStock) availableAssets.push('TW_STOCK');
+            if (appData.enableUSD) availableAssets.push('USD');
+            if (appData.enableUSStock) availableAssets.push('US_STOCK');
+            if (appData.enableMYR) availableAssets.push('MYR');
 
             container.innerHTML = `
                 <div class="animate-fade space-y-3 w-full">
@@ -1767,7 +1882,7 @@
                         </div>
 
                         <div class="flex gap-1 overflow-x-auto pb-1 text-xs">
-                            ${['ALL', 'TWD', 'TW_STOCK', 'USD', 'US_STOCK'].map(a => `
+                            ${availableAssets.map(a => `
                                 <button onclick="setFilterAsset('${a}')" class="px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all ${filterAsset === a ? 'bg-brand-gold text-white font-bold' : 'bg-app-surface text-app-muted hover:text-app-main'}">
                                     ${a === 'ALL' ? '全部資產' : a === 'TW_STOCK' ? '台股' : a === 'US_STOCK' ? '美股' : a}
                                 </button>
@@ -1815,8 +1930,8 @@
             const holdingsList = Object.values(holdingsMap);
             const twHoldings = holdingsList.filter(h => h.asset === 'TW_STOCK');
             const usHoldings = holdingsList.filter(h => h.asset === 'US_STOCK');
-            const twStockVal = appData.assets.TW_STOCK;
-            const usStockValUSD = appData.assets.US_STOCK;
+            const twStockVal = appData.enableTWStock ? appData.assets.TW_STOCK : 0;
+            const usStockValUSD = appData.enableUSStock ? appData.assets.US_STOCK : 0;
             const usStockValTWD = usStockValUSD * appData.usdExchangeRate;
             const totalStockVal = twStockVal + usStockValTWD;
 
@@ -1844,8 +1959,8 @@
                 `;
             };
 
-            const showTW = stockSubFilter === 'ALL' || stockSubFilter === 'TW_STOCK';
-            const showUS = stockSubFilter === 'ALL' || stockSubFilter === 'US_STOCK';
+            const showTW = appData.enableTWStock && (stockSubFilter === 'ALL' || stockSubFilter === 'TW_STOCK');
+            const showUS = appData.enableUSStock && (stockSubFilter === 'ALL' || stockSubFilter === 'US_STOCK');
 
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
@@ -1858,8 +1973,8 @@
                     </div>
                     <div class="grid grid-cols-3 gap-1.5 bg-app-card p-1.5 rounded-2xl border border-app-line text-xs font-medium">
                         <button onclick="setStockSubFilter('ALL')" class="py-2 rounded-xl transition-all ${stockSubFilter === 'ALL' ? 'bg-brand-blue text-white font-bold shadow' : 'bg-app-surface text-app-muted'}">全部 (${holdingsList.length})</button>
-                        <button onclick="setStockSubFilter('TW_STOCK')" class="py-2 rounded-xl transition-all ${stockSubFilter === 'TW_STOCK' ? 'bg-brand-blue text-white font-bold shadow' : 'bg-app-surface text-app-muted'}">🇹🇼 台股 (${twHoldings.length})</button>
-                        <button onclick="setStockSubFilter('US_STOCK')" class="py-2 rounded-xl transition-all ${stockSubFilter === 'US_STOCK' ? 'bg-brand-blue text-white font-bold shadow' : 'bg-app-surface text-app-muted'}">🇺🇸 美股 (${usHoldings.length})</button>
+                        ${appData.enableTWStock ? `<button onclick="setStockSubFilter('TW_STOCK')" class="py-2 rounded-xl transition-all ${stockSubFilter === 'TW_STOCK' ? 'bg-brand-blue text-white font-bold shadow' : 'bg-app-surface text-app-muted'}">🇹🇼 台股 (${twHoldings.length})</button>` : ''}
+                        ${appData.enableUSStock ? `<button onclick="setStockSubFilter('US_STOCK')" class="py-2 rounded-xl transition-all ${stockSubFilter === 'US_STOCK' ? 'bg-brand-blue text-white font-bold shadow' : 'bg-app-surface text-app-muted'}">🇺🇸 美股 (${usHoldings.length})</button>` : ''}
                     </div>
                     ${holdingsList.length === 0 ? `
                         <div class="text-center py-12 text-app-muted bg-app-card rounded-2xl border border-app-line w-full">
@@ -1900,6 +2015,70 @@
                         <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">‹ 返回首頁</button>
                     </div>
 
+                    <!-- 帳戶與幣別開關管理區塊 (收合/展開) -->
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
+                        <button type="button" onclick="toggleAccountManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="coins" class="w-4 h-4"></i> 帳戶與幣別開關管理
+                            </h3>
+                            <i data-lucide="${isAccountManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-brand-gold"></i>
+                        </button>
+                        ${isAccountManageOpen ? `
+                            <div class="px-4 pb-4 space-y-2 animate-fade border-t border-app-line pt-3">
+                                <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                    <div>
+                                        <span class="font-bold text-app-main block text-xs">🇹🇼 台幣現金帳戶 (TWD)</span>
+                                        <span class="text-[10px] text-app-muted block">顯示活存、現金與台幣收支項目</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                    <div>
+                                        <span class="font-bold text-app-main block text-xs">🇹🇼 台股證券帳戶 (TW Stock)</span>
+                                        <span class="text-[10px] text-app-muted block">顯示台股持股、交易與市值統計</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                    <div>
+                                        <span class="font-bold text-app-main block text-xs">🇺🇸 美金現金帳戶 (USD)</span>
+                                        <span class="text-[10px] text-app-muted block">顯示美金儲蓄與美金現金收支</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                    <div>
+                                        <span class="font-bold text-app-main block text-xs">🇺🇸 美股證券帳戶 (US Stock)</span>
+                                        <span class="text-[10px] text-app-muted block">顯示美股持股、交易與市值統計</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                    </label>
+                                </div>
+                                <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                    <div>
+                                        <span class="font-bold text-app-main block text-xs">🇲🇾 馬幣現金帳戶 (MYR)</span>
+                                        <span class="text-[10px] text-app-muted block">顯示馬幣現金 (RM) 儲蓄與收支</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
                         <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4"></i> 基本參數設定</h3>
                         <div>
@@ -1921,7 +2100,10 @@
                                         <button onclick="resetBudgetFoodSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
                                     </div>
                                     <div class="flex gap-1 mb-1.5">
-                                        <button type="button" onclick="toggleBudgetCurrency('food')" id="btn-budget-food-curr" class="bg-app-surface text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 shrink-0 font-mono shadow-2xs">幣別: ${appData.budgetFoodCurrency || 'TWD'}</button>
+                                        <button type="button" onclick="triggerBudgetCurrencyPicker('food')" id="btn-budget-food-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
+                                            <span>幣別: ${appData.budgetFoodCurrency || 'TWD'}</span>
+                                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
+                                        </button>
                                     </div>
                                     <div class="flex gap-1">
                                         <div class="relative flex-1 flex items-center">
@@ -1937,7 +2119,10 @@
                                         <button onclick="resetBudgetShoppingSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
                                     </div>
                                     <div class="flex gap-1 mb-1.5">
-                                        <button type="button" onclick="toggleBudgetCurrency('shopping')" id="btn-budget-shopping-curr" class="bg-app-surface text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 shrink-0 font-mono shadow-2xs">幣別: ${appData.budgetShoppingCurrency || 'TWD'}</button>
+                                        <button type="button" onclick="triggerBudgetCurrencyPicker('shopping')" id="btn-budget-shopping-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
+                                            <span>幣別: ${appData.budgetShoppingCurrency || 'TWD'}</span>
+                                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
+                                        </button>
                                     </div>
                                     <div class="flex gap-1">
                                         <div class="relative flex-1 flex items-center">
@@ -2118,13 +2303,30 @@
             openOptionModal('REC_TYPE', '選擇交易類型', [{ label: '支出 (Expense)', value: '支出' }, { label: '存入 (Deposit)', value: '存入' }], document.getElementById('rec-type-val').value);
         }
         function triggerRecAssetPicker() {
-            openOptionModal('REC_ASSET', '選擇扣款帳戶', [{ label: '台幣帳戶 (TWD)', value: 'TWD' }, { label: '美金帳戶 (USD)', value: 'USD' }], document.getElementById('rec-asset-val').value);
+            const opts = [];
+            if (appData.enableTWD) opts.push({ label: '台幣帳戶 (TWD)', value: 'TWD' });
+            if (appData.enableUSD) opts.push({ label: '美金帳戶 (USD)', value: 'USD' });
+            if (appData.enableMYR) opts.push({ label: '馬幣帳戶 (MYR)', value: 'MYR' });
+            if (opts.length === 0) opts.push({ label: '台幣帳戶 (TWD)', value: 'TWD' });
+            openOptionModal('REC_ASSET', '選擇扣款帳戶', opts, document.getElementById('rec-asset-val').value);
         }
         function triggerTxAssetPicker() {
-            openOptionModal('TX_ASSET', '選擇資產帳戶', [{ label: '台幣帳戶 (TWD)', value: 'TWD' }, { label: '美金帳戶 (USD)', value: 'USD' }], document.getElementById('input-asset-type').value);
+            const opts = [];
+            if (appData.enableTWD) opts.push({ label: '台幣帳戶 (TWD)', value: 'TWD' });
+            if (appData.enableUSD) opts.push({ label: '美金帳戶 (USD)', value: 'USD' });
+            if (appData.enableMYR) opts.push({ label: '馬幣帳戶 (MYR)', value: 'MYR' });
+            if (opts.length === 0) opts.push({ label: '台幣帳戶 (TWD)', value: 'TWD' });
+            openOptionModal('TX_ASSET', '選擇資產帳戶', opts, document.getElementById('input-asset-type').value);
         }
         function triggerTxMarketPicker() {
-            openOptionModal('TX_STOCK_MARKET', '選擇股票市場', [{ label: '台股 (TWD)', value: 'TW_STOCK' }, { label: '美股 (USD)', value: 'US_STOCK' }], document.getElementById('input-stock-market').value);
+            const opts = [];
+            if (appData.enableTWStock) opts.push({ label: '台股 (TWD)', value: 'TW_STOCK' });
+            if (appData.enableUSStock) opts.push({ label: '美股 (USD)', value: 'US_STOCK' });
+            if (opts.length === 0) {
+                showToast("提示", "目前沒有開啟任何股票帳戶，請至系統設定中開啟。");
+                return;
+            }
+            openOptionModal('TX_STOCK_MARKET', '選擇股票市場', opts, document.getElementById('input-stock-market').value);
         }
         function triggerTxCategoryPicker() {
             const txType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
@@ -2193,6 +2395,7 @@
                         const newTx = { id: 'auto_' + Date.now() + '_' + rule.id, type: rule.type, asset: assetKey, category: rule.category || '固定支出/存入', amount: amount, note: `[自動週期] ${rule.name}`, date: todayStr };
                         appData.transactions.unshift(newTx);
                         appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '固定項目執行通知', message: `已自動執行「${rule.name}」固定${rule.type} NT$ ${amount.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+                        appData.hasUnreadNotifications = true;
                         triggeredCount++;
                     }
                 }
@@ -2211,6 +2414,7 @@
                         const newTx = { id: 'inst_tx_' + Date.now() + '_' + inst.id, type: '支出', asset: assetKey, category: '固定支出/存入', amount: monthlyAmt, note: `[分期自動扣款] ${inst.name} (${inst.paidMonths}/${inst.totalMonths}期)`, date: todayStr };
                         appData.transactions.unshift(newTx);
                         appData.notifications.unshift({ id: 'notif_' + Date.now(), title: '分期付款扣款通知', message: `已自動扣款分期項目「${inst.name}」第 ${inst.paidMonths}/${inst.totalMonths} 期，金額 NT$ ${monthlyAmt.toLocaleString()}`, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+                        appData.hasUnreadNotifications = true;
                         triggeredCount++;
                     }
                 }
@@ -2374,16 +2578,19 @@
 
             ctx.strokeStyle = borderCol; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(50, 130); ctx.lineTo(750, 130); ctx.stroke();
 
-            const twdStockInTWD = appData.assets.TW_STOCK;
-            const usdCashInTWD = appData.assets.USD * appData.usdExchangeRate;
-            const usdStockInTWD = appData.assets.US_STOCK * appData.usdExchangeRate;
-            const grandTotalTWD = appData.assets.TWD + twdStockInTWD + usdCashInTWD + usdStockInTWD;
+            const twdCashInTWD = appData.enableTWD ? appData.assets.TWD : 0;
+            const twdStockInTWD = appData.enableTWStock ? appData.assets.TW_STOCK : 0;
+            const usdCashInTWD = appData.enableUSD ? (appData.assets.USD * appData.usdExchangeRate) : 0;
+            const usdStockInTWD = appData.enableUSStock ? (appData.assets.US_STOCK * appData.usdExchangeRate) : 0;
+            const myrCashInTWD = appData.enableMYR ? ((appData.assets.MYR || 0) * (appData.myrExchangeRate || 7.25)) : 0;
+            const grandTotalTWD = twdCashInTWD + twdStockInTWD + usdCashInTWD + usdStockInTWD + myrCashInTWD;
 
             let assetName = '全部資產總覽', mainValStr = `$ ${grandTotalTWD.toLocaleString()} NTD`, subValStr = '';
             if (assetKey === 'TWD') { assetName = '台幣現金 (TWD)'; mainValStr = `$ ${appData.assets.TWD.toLocaleString()} NTD`; }
             else if (assetKey === 'TW_STOCK') { assetName = '台股市值 (TW Stock)'; mainValStr = `$ ${appData.assets.TW_STOCK.toLocaleString()} NTD`; }
             else if (assetKey === 'USD') { assetName = '美金現金 (USD)'; mainValStr = `$ ${appData.assets.USD.toLocaleString()} USD`; subValStr = `折合台幣約：NT$ ${(appData.assets.USD * appData.usdExchangeRate).toLocaleString('zh-TW', {maximumFractionDigits:0})}`; }
             else if (assetKey === 'US_STOCK') { assetName = '美股市值 (US Stock)'; mainValStr = `$ ${appData.assets.US_STOCK.toLocaleString()} USD`; subValStr = `折合台幣約：NT$ ${(appData.assets.US_STOCK * appData.usdExchangeRate).toLocaleString('zh-TW', {maximumFractionDigits:0})}`; }
+            else if (assetKey === 'MYR') { assetName = '馬幣現金 (MYR)'; mainValStr = `$ ${(appData.assets.MYR || 0).toLocaleString()} MYR`; subValStr = `折合台幣約：NT$ ${((appData.assets.MYR || 0) * (appData.myrExchangeRate || 7.25)).toLocaleString('zh-TW', {maximumFractionDigits:0})}`; }
 
             ctx.fillStyle = cardBg;
             if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(50, 150, 700, 140, 16); ctx.fill(); }
@@ -2398,12 +2605,13 @@
             if (assetKey === 'ALL') {
                 ctx.fillStyle = textMain; ctx.font = '20px sans-serif'; ctx.fillText('資產配置分布', 50, startY + 25);
                 startY += 40;
-                const cards = [
-                    { title: '台幣現金', val: `$ ${appData.assets.TWD.toLocaleString()} TWD`, col: goldCol },
-                    { title: '台股市值', val: `$ ${appData.assets.TW_STOCK.toLocaleString()} TWD`, col: blueCol },
-                    { title: '美金現金', val: `$ ${appData.assets.USD.toLocaleString()} USD`, col: goldCol },
-                    { title: '美股市值', val: `$ ${appData.assets.US_STOCK.toLocaleString()} USD`, col: blueCol }
-                ];
+                const cards = [];
+                if (appData.enableTWD) cards.push({ title: '台幣現金', val: `$ ${appData.assets.TWD.toLocaleString()} TWD`, col: goldCol });
+                if (appData.enableTWStock) cards.push({ title: '台股市值', val: `$ ${appData.assets.TW_STOCK.toLocaleString()} TWD`, col: blueCol });
+                if (appData.enableUSD) cards.push({ title: '美金現金', val: `$ ${appData.assets.USD.toLocaleString()} USD`, col: goldCol });
+                if (appData.enableUSStock) cards.push({ title: '美股市值', val: `$ ${appData.assets.US_STOCK.toLocaleString()} USD`, col: blueCol });
+                if (appData.enableMYR) cards.push({ title: '馬幣現金', val: `$ ${(appData.assets.MYR || 0).toLocaleString()} MYR`, col: goldCol });
+
                 cards.forEach((c, idx) => {
                     const x = 50 + (idx % 2) * 360, y = startY + Math.floor(idx / 2) * 100;
                     ctx.fillStyle = cardBg;
@@ -2412,7 +2620,7 @@
                     ctx.fillStyle = textMuted; ctx.font = '15px sans-serif'; ctx.fillText(c.title, x + 20, y + 30);
                     ctx.fillStyle = c.col; ctx.font = '20px sans-serif'; ctx.fillText(c.val, x + 20, y + 65);
                 });
-                startY += 210;
+                startY += Math.ceil(cards.length / 2) * 105;
             }
 
             ctx.fillStyle = textMain; ctx.font = '20px sans-serif'; ctx.fillText('近期交易紀錄', 50, startY + 25);
@@ -2434,7 +2642,8 @@
                     ctx.fillStyle = cardBg;
                     if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(50, y, 700, 65, 12); ctx.fill(); ctx.strokeStyle = borderCol; ctx.lineWidth = 1; ctx.stroke(); }
                     else ctx.fillRect(50, y, 700, 65);
-                    const isExpense = tx.type === '支出', curStr = (tx.asset === 'USD' || tx.asset === 'US_STOCK') ? 'USD' : 'NT$';
+                    const isExpense = tx.type === '支出';
+                    const curStr = (tx.asset === 'USD' || tx.asset === 'US_STOCK') ? 'USD' : (tx.asset === 'MYR' ? 'RM' : 'NT$');
                     ctx.fillStyle = textMain; ctx.font = '16px sans-serif'; ctx.fillText(`${tx.stockSymbol ? tx.stockSymbol : tx.category || '一般交易'}`, 70, y + 32);
                     ctx.fillStyle = textMuted; ctx.font = '13px sans-serif'; ctx.fillText(`${tx.date} ${tx.note ? ' • ' + tx.note : ''} ${tx.shares ? ' • ' + tx.shares + '股' : ''}`, 70, y + 52);
                     ctx.fillStyle = isExpense ? redCol : greenCol; ctx.font = '18px sans-serif'; ctx.textAlign = 'right';
@@ -2468,7 +2677,7 @@
                 try {
                     const imported = JSON.parse(e.target.result);
                     if (imported.assets && imported.transactions) { appData = imported; saveData(true); showToast("還原成功", "備份資料已成功還原！"); }
-                    else showToast("格式不符", "匯入的檔案格式不合。");
+                    else showToast("格式不符", "匯入.json 檔案格式不合。");
                 } catch(err) { showToast("讀取失敗", "無法解析 JSON 檔案。"); }
             };
             reader.readAsText(file);
@@ -2488,11 +2697,12 @@
                 showToast("完全重置完成", "系統所有資料與所有設定已恢復為出廠預設狀態！");
                 setTimeout(() => location.reload(), 400);
             } else {
-                appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0 };
+                appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
                 appData.transactions = [];
                 appData.recurringRules = [];
                 appData.installments = [];
                 appData.notifications = [];
+                appData.hasUnreadNotifications = false;
                 appData.budgetFood = 0;
                 appData.budgetFoodCurrency = 'TWD';
                 appData.budgetShopping = 0;
