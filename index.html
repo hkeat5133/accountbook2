@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>智慧帳本 - 理財</title>
 
     <meta name="theme-color" content="#c89b3c">
@@ -79,6 +79,8 @@
             border-color: var(--phone-border);
             touch-action: none;
             overscroll-behavior: none;
+            /* 啟用頂部動態島 / 安全區域 */
+            padding-top: env(safe-area-inset-top);
         }
 
         @media (min-width: 640px) {
@@ -88,6 +90,7 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                padding-top: 0;
             }
         }
 
@@ -131,7 +134,7 @@
             opacity: 0 !important;
         }
 
-        /* 零延遲超流暢按鈕點擊觸控回饋動畫 */
+        /* 超即點即響應之手指觸控回饋動畫 */
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.08s cubic-bezier(0, 0, 0.2, 1), opacity 0.08s ease;
             will-change: transform;
@@ -140,11 +143,11 @@
         }
         button:active, label[class*="cursor-pointer"]:active {
             transform: scale(0.95) !important;
-            opacity: 0.8 !important;
+            opacity: 0.82 !important;
             transition-duration: 0.01s !important;
         }
 
-        /* 系統設定卡片按鈕專用高質感微亮點擊動畫 */
+        /* 系統設定卡片按鈕專用微亮點擊動畫 */
         .accordion-header-btn {
             transition: background-color 0.15s ease, opacity 0.12s ease, transform 0.12s cubic-bezier(0.2, 0, 0, 1);
             will-change: background-color, transform, opacity;
@@ -203,7 +206,7 @@
                 <h1 id="app-title-display" class="font-bold text-lg text-brand-gold tracking-wide flex items-center justify-center gap-2">
                     智慧帳本
                 </h1>
-                <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 9 日</p>
+                <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 10 日</p>
             </div>
             <div class="flex items-center gap-1.5">
                 <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
@@ -394,9 +397,9 @@
                             <button type="button" onclick="openCustomDatePicker('TX_INPUT')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2.5 text-app-main text-left flex items-center justify-between active:scale-98">
                                 <span class="flex items-center gap-1.5 font-mono text-xs">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
-                                    <span id="input-date-display">2026-08-09</span>
+                                    <span id="input-date-display">2026-08-10</span>
                                 </span>
-                                <input type="hidden" id="input-date" value="2026-08-09">
+                                <input type="hidden" id="input-date" value="2026-08-10">
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted shrink-0"></i>
                             </button>
                         </div>
@@ -588,8 +591,8 @@
                     <div>
                         <label class="block text-app-muted mb-1">起始日期 (每月自動執行)</label>
                         <button type="button" onclick="openCustomDatePicker('REC_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt">2026-08-09</span></span>
-                            <input type="hidden" id="rec-date-val" value="2026-08-09">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt">2026-08-10</span></span>
+                            <input type="hidden" id="rec-date-val" value="2026-08-10">
                             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                         </button>
                     </div>
@@ -627,8 +630,8 @@
                     <div>
                         <label class="block text-app-muted mb-1">起始日期 (每月自動扣款)</label>
                         <button type="button" onclick="openCustomDatePicker('INST_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt">2026-08-09</span></span>
-                            <input type="hidden" id="inst-date-val" value="2026-08-09">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt">2026-08-10</span></span>
+                            <input type="hidden" id="inst-date-val" value="2026-08-10">
                             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                         </button>
                     </div>
@@ -2300,7 +2303,7 @@
                         </div>
                     </div>
 
-                    <!-- 分期付款設定 (Accordion with (每期:$xxxx) and (起始日) moved to Row 2) -->
+                    <!-- 分期付款設定 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleInstallmentManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
