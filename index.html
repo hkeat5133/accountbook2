@@ -103,26 +103,6 @@
             to { opacity: 0; }
         }
 
-        @keyframes slideLeft {
-            from { opacity: 0; transform: translateX(25px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes slideRight {
-            from { opacity: 0; transform: translateX(-25px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .animate-fade { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-left { animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-right { animation: slideRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        @keyframes pulseGold {
-            0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
-            50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
-        }
-
-        /* 背景模糊效果與彈窗動畫 */
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             backdrop-filter: blur(8px);
@@ -132,7 +112,6 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 統一採用中央彈跳縮放與淡入卡片動畫 */
         .modal-sheet {
             will-change: transform, opacity;
             transform: scale(0.92) translateY(10px);
@@ -161,6 +140,10 @@
             transform: scale(0.90) translateY(1px) !important;
         }
 
+        @keyframes pulseGold {
+            0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
+            50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
+        }
         .pulse-gold { animation: pulseGold 2.5s infinite; }
 
         .bg-app-bg { background-color: var(--bg-app); }
@@ -189,6 +172,7 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
+        <!-- App Main Header Bar -->
         <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
@@ -212,8 +196,17 @@
             </div>
         </header>
 
-        <!-- MAIN VIEW CONTAINER -->
-        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-28 relative w-full touch-pan-y" id="main-content"></main>
+        <!-- MAIN VIEW CONTAINER (Side-by-Side Track for Smooth Swiping) -->
+        <main class="flex-1 relative overflow-hidden w-full bg-app-bg" id="main-track-wrapper">
+            <div id="main-track" class="absolute inset-0 flex w-[300%] h-full transition-transform duration-300 ease-out" style="transform: translateX(0%);">
+                <!-- Tab 0: Home -->
+                <div class="w-[33.3333%] h-full overflow-y-scroll p-4 space-y-4 pb-28 box-border" id="tab-pane-home"></div>
+                <!-- Tab 1: Details -->
+                <div class="w-[33.3333%] h-full overflow-y-scroll p-4 space-y-4 pb-28 box-border" id="tab-pane-details"></div>
+                <!-- Tab 2: Stock Stats -->
+                <div class="w-[33.3333%] h-full overflow-y-scroll p-4 space-y-4 pb-28 box-border" id="tab-pane-stock-stats"></div>
+            </div>
+        </main>
 
         <!-- Floating Action Button -->
         <div class="absolute bottom-20 right-5 z-20">
@@ -687,10 +680,7 @@
             enableUSD: true,
             enableUSStock: true,
             enableMYR: false,
-            budgetFood: 0,
-            budgetFoodCurrency: 'TWD',
-            budgetShopping: 0,
-            budgetShoppingCurrency: 'TWD',
+            budgets: {},
             categories: [
                 '🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒',
                 '💰 薪資收入', '📈 投資收益', '🔄 固定扣款', '📝 其他款項'
@@ -729,9 +719,15 @@
         let pendingDeleteTxId = null;
         let pendingDeleteSymbol = null;
         let isAccountManageOpen = false;
+        let isBudgetManageOpen = false;
 
         function toggleAccountManageAccordion() {
             isAccountManageOpen = !isAccountManageOpen;
+            renderCurrentView();
+        }
+
+        function toggleBudgetManageAccordion() {
+            isBudgetManageOpen = !isBudgetManageOpen;
             renderCurrentView();
         }
 
@@ -744,6 +740,9 @@
                         parsed.categories = ['🍱 餐飲美食', '🛒 日常購物', '🚗 交通出行', '🎮 娛樂休閒', '📝 其他款項'];
                     } else {
                         parsed.categories = parsed.categories.map(c => c === '📝 其他雜項' ? '📝 其他款項' : c);
+                    }
+                    if (!parsed.budgets || typeof parsed.budgets !== 'object' || Array.isArray(parsed.budgets)) {
+                        parsed.budgets = {};
                     }
                     if (parsed.assets) {
                         if (parsed.assets.MYR === undefined) parsed.assets.MYR = 0;
@@ -886,7 +885,7 @@
             applyTheme();
             lucide.createIcons();
             initPWA();
-            initRealtimeSwipeGestures();
+            initSideBySideSwipeTrack();
             const todayStr = getLocalDateStr();
             const inputDateElem = document.getElementById('input-date');
             if (inputDateElem) inputDateElem.value = todayStr;
@@ -922,84 +921,102 @@
             }, 900);
         };
 
-        function initRealtimeSwipeGestures() {
-            const mainContainer = document.getElementById('main-content');
-            if (!mainContainer) return;
+        function initSideBySideSwipeTrack() {
+            const trackWrapper = document.getElementById('main-track-wrapper');
+            const track = document.getElementById('main-track');
+            if (!trackWrapper || !track) return;
 
-            let touchStartX = 0;
-            let touchCurrentX = 0;
+            let startX = 0;
+            let startY = 0;
+            let currentX = 0;
             let isDragging = false;
-            let edgeStartX = 0;
-            let isEdgeSwipe = false;
+            let isHorizontalSwipe = null;
 
-            mainContainer.addEventListener('touchstart', (e) => {
+            track.addEventListener('touchstart', (e) => {
                 if (currentTab === 'settings') return;
-                touchStartX = e.touches[0].clientX;
-                edgeStartX = touchStartX;
-                isEdgeSwipe = (edgeStartX <= 35);
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
                 isDragging = true;
-                mainContainer.style.transition = 'none';
+                isHorizontalSwipe = null;
+                track.style.transition = 'none';
             }, { passive: true });
 
-            mainContainer.addEventListener('touchmove', (e) => {
+            track.addEventListener('touchmove', (e) => {
                 if (!isDragging || currentTab === 'settings') return;
-                touchCurrentX = e.touches[0].clientX;
-                const diff = touchCurrentX - touchStartX;
+                currentX = e.touches[0].clientX;
+                const currentY = e.touches[0].clientY;
+                const diffX = currentX - startX;
+                const diffY = currentY - startY;
 
-                const tabOrder = ['home', 'details', 'stock-stats'];
-                const currentIndex = tabOrder.indexOf(currentTab);
-
-                if ((currentIndex === 0 && diff > 0) || (currentIndex === tabOrder.length - 1 && diff < 0)) {
-                    mainContainer.style.transform = `translateX(${diff * 0.25}px)`;
-                    return;
+                if (isHorizontalSwipe === null) {
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 8) {
+                        isHorizontalSwipe = true;
+                    } else if (Math.abs(diffY) > 8) {
+                        isHorizontalSwipe = false;
+                    }
                 }
 
-                mainContainer.style.transform = `translateX(${diff}px)`;
+                if (isHorizontalSwipe) {
+                    const tabOrder = ['home', 'details', 'stock-stats'];
+                    const currentIndex = tabOrder.indexOf(currentTab);
+                    const basePercent = -currentIndex * 33.3333;
+                    const containerWidth = trackWrapper.offsetWidth || 400;
+                    const percentDelta = (diffX / containerWidth) * 33.3333;
+                    let targetTranslate = basePercent + percentDelta;
+
+                    if ((currentIndex === 0 && diffX > 0) || (currentIndex === tabOrder.length - 1 && diffX < 0)) {
+                        targetTranslate = basePercent + (percentDelta * 0.25);
+                    }
+
+                    track.style.transform = `translateX(${targetTranslate}%)`;
+                }
             }, { passive: true });
 
-            mainContainer.addEventListener('touchend', (e) => {
+            track.addEventListener('touchend', (e) => {
                 if (!isDragging || currentTab === 'settings') return;
                 isDragging = false;
-                const touchEndX = e.changedTouches[0].clientX;
-                const diff = touchEndX - touchStartX;
-                const threshold = Math.max(85, window.innerWidth * 0.25);
+                if (!isHorizontalSwipe) {
+                    updateTrackPosition(false);
+                    return;
+                }
 
-                mainContainer.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+                const endX = e.changedTouches[0].clientX;
+                const diffX = endX - startX;
+                const threshold = Math.max(70, trackWrapper.offsetWidth * 0.25);
 
                 const tabOrder = ['home', 'details', 'stock-stats'];
                 const currentIndex = tabOrder.indexOf(currentTab);
 
-                if (isEdgeSwipe && diff > threshold && currentIndex === -1 && currentTab !== 'home') {
-                    mainContainer.style.transform = `translateX(100%)`;
-                    setTimeout(() => {
-                        mainContainer.style.transform = 'none';
-                        switchTabWithAnimation('home', 'right', false);
-                    }, 300);
-                    return;
-                }
-
-                if (diff > threshold && currentIndex > 0) {
-                    mainContainer.style.transform = `translateX(100%)`;
-                    setTimeout(() => {
-                        mainContainer.style.transform = 'none';
-                        switchTabWithAnimation(tabOrder[currentIndex - 1], 'right', false);
-                    }, 300);
-                } else if (diff < -threshold && currentIndex < tabOrder.length - 1 && currentIndex !== -1) {
-                    mainContainer.style.transform = `translateX(-100%)`;
-                    setTimeout(() => {
-                        mainContainer.style.transform = 'none';
-                        switchTabWithAnimation(tabOrder[currentIndex + 1], 'left', false);
-                    }, 300);
+                if (diffX > threshold && currentIndex > 0) {
+                    switchTabWithAnimation(tabOrder[currentIndex - 1], 'right', false);
+                } else if (diffX < -threshold && currentIndex < tabOrder.length - 1) {
+                    switchTabWithAnimation(tabOrder[currentIndex + 1], 'left', false);
                 } else {
-                    mainContainer.style.transform = `translateX(0)`;
+                    updateTrackPosition(true);
                 }
             }, { passive: true });
         }
 
+        function updateTrackPosition(withTransition = true) {
+            const track = document.getElementById('main-track');
+            if (!track) return;
+            const tabOrder = ['home', 'details', 'stock-stats'];
+            const currentIndex = tabOrder.indexOf(currentTab);
+            const targetPercent = currentIndex !== -1 ? -currentIndex * 33.3333 : 0;
+
+            if (withTransition) {
+                track.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+            } else {
+                track.style.transition = 'none';
+            }
+            track.style.transform = `translateX(${targetPercent}%)`;
+        }
+
         function switchTab(tab) {
-            const main = document.getElementById('main-content');
+            const paneId = `tab-pane-${tab}`;
+            const pane = document.getElementById(paneId);
             if (tab === currentTab) {
-                if (main) main.scrollTop = 0;
+                if (pane) pane.scrollTop = 0;
                 tabScrollPositions[tab] = 0;
                 if (tab === 'details') {
                     filterAsset = 'ALL';
@@ -1011,29 +1028,33 @@
                     stockSubFilter = 'ALL';
                 } else if (tab === 'settings') {
                     isAccountManageOpen = false;
+                    isBudgetManageOpen = false;
                 }
                 renderCurrentView();
                 return;
             }
             if (tab !== 'settings') {
                 isAccountManageOpen = false;
+                isBudgetManageOpen = false;
             }
             switchTabWithAnimation(tab, 'fade', false);
         }
 
         function switchTabWithAnimation(tab, direction = 'fade', resetFilters = false) {
-            const main = document.getElementById('main-content');
-            if (main) {
-                tabScrollPositions[currentTab] = main.scrollTop;
+            const oldPane = document.getElementById(`tab-pane-${currentTab}`);
+            if (oldPane) {
+                tabScrollPositions[currentTab] = oldPane.scrollTop;
             }
 
             if (currentTab === 'settings' && tab !== 'settings') {
                 isAccountManageOpen = false;
+                isBudgetManageOpen = false;
             }
 
             if (tab === 'settings') {
                 tabScrollPositions['settings'] = 0;
                 isAccountManageOpen = false;
+                isBudgetManageOpen = false;
             }
 
             if (resetFilters && tab !== currentTab) {
@@ -1064,22 +1085,13 @@
                 }
             }
 
-            if (main) {
-                main.classList.remove('animate-fade', 'animate-slide-left', 'animate-slide-right');
-                void main.offsetWidth;
-                if (direction === 'left') {
-                    main.classList.add('animate-slide-left');
-                } else if (direction === 'right') {
-                    main.classList.add('animate-slide-right');
-                } else {
-                    main.classList.add('animate-fade');
-                }
-            }
             renderCurrentView();
+            updateTrackPosition(true);
 
-            if (main) {
+            const newPane = document.getElementById(`tab-pane-${tab}`);
+            if (newPane) {
                 setTimeout(() => {
-                    main.scrollTop = tabScrollPositions[tab] || 0;
+                    newPane.scrollTop = tabScrollPositions[tab] || 0;
                 }, 10);
             }
         }
@@ -1094,13 +1106,31 @@
         }
 
         function renderCurrentView() {
-            const main = document.getElementById('main-content');
-            if (!main) return;
-            main.innerHTML = '';
-            if (currentTab === 'home') renderHomeView(main);
-            else if (currentTab === 'details') renderDetailsView(main);
-            else if (currentTab === 'stock-stats') renderStockStatsView(main);
-            else if (currentTab === 'settings') renderSettingsView(main);
+            if (currentTab === 'settings') {
+                let wrapper = document.getElementById('tab-pane-settings');
+                if (!wrapper) {
+                    wrapper = document.createElement('div');
+                    wrapper.id = 'tab-pane-settings';
+                    wrapper.className = 'absolute inset-0 overflow-y-scroll p-4 space-y-4 pb-28 bg-app-bg animate-fade z-10';
+                    document.getElementById('main-track-wrapper').appendChild(wrapper);
+                }
+                wrapper.classList.remove('hidden');
+                renderSettingsView(wrapper);
+                ['home', 'details', 'stock-stats'].forEach(t => {
+                    const p = document.getElementById(`tab-pane-${t}`);
+                    if (p) p.classList.add('opacity-0', 'pointer-events-none');
+                });
+            } else {
+                const settingsPane = document.getElementById('tab-pane-settings');
+                if (settingsPane) settingsPane.classList.add('hidden');
+                ['home', 'details', 'stock-stats'].forEach(t => {
+                    const p = document.getElementById(`tab-pane-${t}`);
+                    if (p) p.classList.remove('opacity-0', 'pointer-events-none');
+                });
+                renderHomeView(document.getElementById('tab-pane-home'));
+                renderDetailsView(document.getElementById('tab-pane-details'));
+                renderStockStatsView(document.getElementById('tab-pane-stock-stats'));
+            }
             if (window.lucide) lucide.createIcons();
             updateNotificationBadge();
         }
@@ -1505,80 +1535,56 @@
             }
         }
 
-        function saveBudgetFoodExplicitly(val) {
-            appData.budgetFood = val === '' ? 0 : (parseFloat(val) || 0);
-            saveData(true);
-        }
-
-        function saveBudgetFoodFromInput() {
-            const val = document.getElementById('setting-budget-food')?.value;
-            appData.budgetFood = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
-            const curr = appData.budgetFoodCurrency || 'TWD';
-            const symbol = curr === 'USD' ? 'USD $' : (curr === 'MYR' ? 'RM ' : 'NT$');
-            saveData(true);
-            const foodName = appData.categories[0] || '餐飲美食';
-            showToast("預算設定完成", `本月${foodName}預算已成功更新為 ${symbol} ${appData.budgetFood.toLocaleString()} (${curr})。`);
-        }
-
-        function resetBudgetFoodSetting() {
-            appData.budgetFood = 0;
-            const input = document.getElementById('setting-budget-food');
-            if (input) input.value = '';
-            saveData(true);
-            showToast("預算已重置", "本月餐飲美食預算已歸零。");
-        }
-
-        function saveBudgetShoppingExplicitly(val) {
-            appData.budgetShopping = val === '' ? 0 : (parseFloat(val) || 0);
-            saveData(true);
-        }
-
-        function saveBudgetShoppingFromInput() {
-            const val = document.getElementById('setting-budget-shopping')?.value;
-            appData.budgetShopping = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
-            const curr = appData.budgetShoppingCurrency || 'TWD';
-            const symbol = curr === 'USD' ? 'USD $' : (curr === 'MYR' ? 'RM ' : 'NT$');
-            saveData(true);
-            const shopName = appData.categories[1] || '日常購物';
-            showToast("預算設定完成", `本月${shopName}預算已成功更新為 ${symbol} ${appData.budgetShopping.toLocaleString()} (${curr})。`);
-        }
-
-        function resetBudgetShoppingSetting() {
-            appData.budgetShopping = 0;
-            const input = document.getElementById('setting-budget-shopping');
-            if (input) input.value = '';
-            saveData(true);
-            showToast("預算已重置", "本月日常購物預算已歸零。");
-        }
-
-        function selectBudgetCurrency(type, curr) {
-            if (type === 'food') {
-                appData.budgetFoodCurrency = curr;
-            } else {
-                appData.budgetShoppingCurrency = curr;
+        function removeBudgetCategory(catName) {
+            if (appData.budgets && appData.budgets[catName]) {
+                delete appData.budgets[catName];
+                saveData(true);
+                showToast("已移除", `已停止追蹤「${catName}」的預算。`);
             }
+        }
+
+        function saveBudgetCategoryAmount(catName, val) {
+            if (!appData.budgets) appData.budgets = {};
+            if (!appData.budgets[catName]) appData.budgets[catName] = { amount: 0, currency: 'TWD' };
+            appData.budgets[catName].amount = val === '' ? 0 : (parseFloat(val) || 0);
+            saveData(true);
+        }
+
+        function saveBudgetCategoryFromInput(catName, inputId) {
+            const val = document.getElementById(inputId)?.value;
+            if (!appData.budgets) appData.budgets = {};
+            if (!appData.budgets[catName]) appData.budgets[catName] = { amount: 0, currency: 'TWD' };
+            appData.budgets[catName].amount = val === '' || val === undefined ? 0 : (parseFloat(val) || 0);
+            saveData(true);
+            const curr = appData.budgets[catName].currency || 'TWD';
+            const symbol = curr === 'USD' ? 'USD $' : (curr === 'MYR' ? 'RM ' : 'NT$');
+            showToast("預算設定完成", `${catName}預算已成功更新為 ${symbol} ${appData.budgets[catName].amount.toLocaleString()} (${curr})。`);
+        }
+
+        function selectBudgetCurrency(catName, curr) {
+            if (!appData.budgets) appData.budgets = {};
+            if (!appData.budgets[catName]) appData.budgets[catName] = { amount: 0, currency: 'TWD' };
+            appData.budgets[catName].currency = curr;
             saveData(true);
             closeModal('custom-option-modal');
         }
 
-        function triggerBudgetCurrencyPicker(type) {
+        function triggerBudgetCurrencyPicker(catName) {
             const opts = [];
             if (appData.enableTWD) opts.push({ label: '台幣 (TWD)', value: 'TWD' });
             if (appData.enableUSD) opts.push({ label: '美金 (USD)', value: 'USD' });
             if (appData.enableMYR) opts.push({ label: '馬幣 (MYR)', value: 'MYR' });
             if (opts.length === 0) opts.push({ label: '台幣 (TWD)', value: 'TWD' });
 
-            const target = type === 'food' ? 'BUDGET_FOOD_CURR' : 'BUDGET_SHOPPING_CURR';
-            const currentVal = type === 'food' ? (appData.budgetFoodCurrency || 'TWD') : (appData.budgetShoppingCurrency || 'TWD');
-            const catName = type === 'food' ? (appData.categories[0] || '餐飲美食') : (appData.categories[1] || '日常購物');
-            const title = `選擇${catName}預算幣別`;
+            const currentVal = appData.budgets && appData.budgets[catName] ? (appData.budgets[catName].currency || 'TWD') : 'TWD';
+            const title = `選擇 ${catName} 預算幣別`;
 
-            currentOptionTarget = target;
+            currentOptionTarget = `BUDGET_CURR_${catName}`;
             document.getElementById('option-modal-title').innerHTML = `<i data-lucide="list" class="w-4 h-4"></i> ${title}`;
             document.getElementById('option-modal-list').innerHTML = opts.map(opt => {
                 const isSelected = opt.value === currentVal;
                 return `
-                    <div onclick="selectBudgetCurrency('${type}', '${opt.value}')" class="w-full p-2.5 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all cursor-pointer">
+                    <div onclick="selectBudgetCurrency('${catName.replace(/'/g, "\\'")}', '${opt.value}')" class="w-full p-2.5 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all cursor-pointer">
                         <span class="text-app-main">${opt.label}</span>
                         ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold shrink-0"></i>' : ''}
                     </div>
@@ -1586,6 +1592,13 @@
             }).join('');
             document.getElementById('custom-category-add-box').classList.add('hidden');
             openModal('custom-option-modal');
+        }
+
+        function triggerAddBudgetCategoryPicker() {
+            const expenseCategories = (appData.categories || []).filter(c => !['💰 薪資收入', '📈 投資收益', '🔄 固定扣款'].includes(c) && (!appData.budgets || !appData.budgets[c]));
+            const opts = expenseCategories.map(c => ({ label: c, value: c }));
+            currentOptionTarget = 'ADD_BUDGET_CAT';
+            openOptionModal('ADD_BUDGET_CAT', '選擇要加入預算追蹤的分類', opts, '');
         }
 
         function toggleEnableAsset(assetFlagKey, enabled) {
@@ -1657,24 +1670,32 @@
             const currentMonthStr = getLocalMonthStr();
             
             const monthTxs = appData.transactions.filter(tx => tx.type === '支出' && tx.date.startsWith(currentMonthStr));
-            const catFoodName = appData.categories[0] || '🍱 餐飲美食';
-            const catShopName = appData.categories[1] || '🛒 日常購物';
             
             const getSpentInCurrency = (catName, currency) => {
                 const txs = monthTxs.filter(tx => tx.category === catName && tx.asset === currency);
                 return txs.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
             };
 
-            const foodCurr = appData.budgetFoodCurrency || 'TWD';
-            const shoppingCurr = appData.budgetShoppingCurrency || 'TWD';
-            
-            const spentFood = getSpentInCurrency(catFoodName, foodCurr);
-            const spentShopping = getSpentInCurrency(catShopName, shoppingCurr);
-            
-            const foodPercent = appData.budgetFood > 0 ? Math.min(100, Math.round((spentFood / appData.budgetFood) * 100)) : 0;
-            const shoppingPercent = appData.budgetShopping > 0 ? Math.min(100, Math.round((spentShopping / appData.budgetShopping) * 100)) : 0;
-            const foodSym = foodCurr === 'USD' ? 'USD $' : (foodCurr === 'MYR' ? 'RM ' : '$');
-            const shoppingSym = shoppingCurr === 'USD' ? 'USD $' : (shoppingCurr === 'MYR' ? 'RM ' : '$');
+            const enabledBudgets = [];
+            if (appData.budgets) {
+                Object.keys(appData.budgets).forEach(catName => {
+                    const b = appData.budgets[catName];
+                    if (b) {
+                        const curr = b.currency || 'TWD';
+                        const spent = getSpentInCurrency(catName, curr);
+                        const percent = b.amount > 0 ? Math.min(100, Math.round((spent / b.amount) * 100)) : 0;
+                        const sym = curr === 'USD' ? 'USD $' : (curr === 'MYR' ? 'RM ' : '$');
+                        enabledBudgets.push({
+                            catName,
+                            curr,
+                            spent,
+                            amount: b.amount,
+                            percent,
+                            sym
+                        });
+                    }
+                });
+            }
 
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
@@ -1745,36 +1766,31 @@
                         ` : ''}
                     </div>
 
-                    <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
-                        <div class="flex justify-between items-center pb-1 border-b border-app-line">
-                            <div class="text-xs font-bold text-app-main flex items-center gap-1.5">
-                                <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算
+                    ${enabledBudgets.length > 0 ? `
+                        <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
+                            <div class="flex justify-between items-center pb-1 border-b border-app-line">
+                                <div class="text-xs font-bold text-app-main flex items-center gap-1.5">
+                                    <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算 (${enabledBudgets.length} 項目)
+                                </div>
+                                <button onclick="switchTab('settings')" class="text-[11px] text-brand-blue hover:underline font-medium active:scale-95">
+                                    預算設定
+                                </button>
                             </div>
-                            <button onclick="switchTab('settings')" class="text-[11px] text-brand-blue hover:underline font-medium active:scale-95">
-                                預算設定
-                            </button>
-                        </div>
-                        <div class="space-y-2.5">
-                            <div onclick="navigateToCategoryDetails('${catFoodName}', '${foodCurr}')" class="bg-app-surface p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold active:scale-98">
-                                <div class="flex justify-between items-center text-xs mb-1.5">
-                                    <span class="text-app-main font-medium flex items-center gap-1">${catFoodName} <i data-lucide="chevron-right" class="w-3 h-3 text-brand-gold"></i></span>
-                                    <span class="${foodPercent > 90 ? 'text-brand-red' : 'text-brand-gold'} font-bold font-mono">${foodSym}${Math.round(spentFood).toLocaleString()} / ${foodSym}${appData.budgetFood.toLocaleString()} (${foodPercent}%)</span>
-                                </div>
-                                <div class="w-full bg-app-bg h-2 rounded-full overflow-hidden">
-                                    <div class="h-full ${foodPercent > 90 ? 'bg-brand-red' : 'bg-brand-gold'} transition-all duration-500" style="width: ${foodPercent}%"></div>
-                                </div>
-                            </div>
-                            <div onclick="navigateToCategoryDetails('${catShopName}', '${shoppingCurr}')" class="bg-app-surface p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-blue active:scale-98">
-                                <div class="flex justify-between items-center text-xs mb-1.5">
-                                    <span class="text-app-main font-medium flex items-center gap-1">${catShopName} <i data-lucide="chevron-right" class="w-3 h-3 text-brand-blue"></i></span>
-                                    <span class="${shoppingPercent > 90 ? 'text-brand-red' : 'text-brand-blue'} font-bold font-mono">${shoppingSym}${Math.round(spentShopping).toLocaleString()} / ${shoppingSym}${appData.budgetShopping.toLocaleString()} (${shoppingPercent}%)</span>
-                                </div>
-                                <div class="w-full bg-app-bg h-2 rounded-full overflow-hidden">
-                                    <div class="h-full ${shoppingPercent > 90 ? 'bg-brand-red' : 'bg-brand-blue'} transition-all duration-500" style="width: ${shoppingPercent}%"></div>
-                                </div>
+                            <div class="space-y-2.5">
+                                ${enabledBudgets.map(b => `
+                                    <div onclick="navigateToCategoryDetails('${b.catName.replace(/'/g, "\\'")}', '${b.curr}')" class="bg-app-surface p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold active:scale-98">
+                                        <div class="flex justify-between items-center text-xs mb-1.5">
+                                            <span class="text-app-main font-medium flex items-center gap-1">${b.catName} <i data-lucide="chevron-right" class="w-3 h-3 text-brand-gold"></i></span>
+                                            <span class="${b.percent > 90 ? 'text-brand-red' : 'text-brand-gold'} font-bold font-mono">${b.sym}${Math.round(b.spent).toLocaleString()} / ${b.sym}${b.amount.toLocaleString()} (${b.percent}%)</span>
+                                        </div>
+                                        <div class="w-full bg-app-bg h-2 rounded-full overflow-hidden">
+                                            <div class="h-full ${b.percent > 90 ? 'bg-brand-red' : 'bg-brand-gold'} transition-all duration-500" style="width: ${b.percent}%"></div>
+                                        </div>
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
-                    </div>
+                    ` : ''}
 
                     <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
                         <div class="flex justify-between items-center pb-1 border-b border-app-line">
@@ -2012,8 +2028,9 @@
         }
 
         function renderSettingsView(container) {
-            const catFoodLabel = appData.categories[0] || '餐飲美食';
-            const catShopLabel = appData.categories[1] || '日常購物';
+            const activeBudgets = appData.budgets || {};
+            const activeBudgetKeys = Object.keys(activeBudgets);
+
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
                     <div class="flex justify-between items-center bg-app-card px-4 py-3 rounded-2xl border border-app-line">
@@ -2085,7 +2102,8 @@
                         ` : ''}
                     </div>
 
-                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
+                    <!-- 基本參數設定與色彩主題合併區塊 -->
+                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-4 w-full">
                         <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4"></i> 基本參數設定</h3>
                         <div>
                             <label class="block text-xs text-app-muted mb-1">自訂 App 標題名稱</label>
@@ -2097,50 +2115,62 @@
                                 <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
-                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算設定</h3>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="text-xs text-app-muted">${catFoodLabel}</label>
-                                    <button onclick="resetBudgetFoodSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
-                                </div>
-                                <div class="flex gap-1 mb-1.5">
-                                    <button type="button" onclick="triggerBudgetCurrencyPicker('food')" id="btn-budget-food-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
-                                        <span>幣別: ${appData.budgetFoodCurrency || 'TWD'}</span>
-                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
-                                    </button>
-                                </div>
-                                <div class="flex gap-1">
-                                    <div class="relative flex-1 flex items-center">
-                                        <input type="number" id="setting-budget-food" value="${appData.budgetFood === 0 ? '' : appData.budgetFood}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
-                                        <button type="button" onclick="clearInput('setting-budget-food', function(){ saveBudgetFoodExplicitly(0); })" class="clear-btn ${appData.budgetFood === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                    </div>
-                                    <button onclick="saveBudgetFoodFromInput()" title="確認設定餐飲預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="text-xs text-app-muted">${catShopLabel}</label>
-                                    <button onclick="resetBudgetShoppingSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
-                                </div>
-                                <div class="flex gap-1 mb-1.5">
-                                    <button type="button" onclick="triggerBudgetCurrencyPicker('shopping')" id="btn-budget-shopping-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
-                                        <span>幣別: ${appData.budgetShoppingCurrency || 'TWD'}</span>
-                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
-                                    </button>
-                                </div>
-                                <div class="flex gap-1">
-                                    <div class="relative flex-1 flex items-center">
-                                        <input type="number" id="setting-budget-shopping" value="${appData.budgetShopping === 0 ? '' : appData.budgetShopping}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
-                                        <button type="button" onclick="clearInput('setting-budget-shopping', function(){ saveBudgetShoppingExplicitly(0); })" class="clear-btn ${appData.budgetShopping === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                    </div>
-                                    <button onclick="saveBudgetShoppingFromInput()" title="確認設定購物預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
-                                </div>
+                        <!-- 介面色彩主題合併在最下方 -->
+                        <div class="pt-3 border-t border-app-line space-y-2">
+                            <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> 介面色彩主題</label>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> 淺色模式 Light</button>
+                                <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> 深色模式 Dark</button>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- 本月預算設定區塊 (收合/展開) -->
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
+                        <button type="button" onclick="toggleBudgetManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="pie-chart" class="w-4 h-4"></i> 本月預算設定 (${activeBudgetKeys.length} 追蹤中)
+                            </h3>
+                            <i data-lucide="${isBudgetManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-brand-gold"></i>
+                        </button>
+                        ${isBudgetManageOpen ? `
+                            <div class="px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                                <p class="text-[11px] text-app-muted">點擊下方「+」按鈕可自行加入現有或新增的分類來追蹤本月預算：</p>
+                                <div class="space-y-2.5">
+                                    ${activeBudgetKeys.length === 0 ? `
+                                        <div class="text-center py-6 text-xs text-app-muted bg-app-surface rounded-2xl border border-app-line">
+                                            目前尚無設定任何預算分類
+                                        </div>
+                                    ` : activeBudgetKeys.map(catName => {
+                                        const b = activeBudgets[catName];
+                                        const curr = b.currency || 'TWD';
+                                        const safeId = catName.replace(/[^a-zA-Z0-9]/g, '_');
+                                        return `
+                                            <div class="bg-app-surface p-3 rounded-2xl border border-app-line space-y-2">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-app-main text-xs flex items-center gap-1.5">${catName}</span>
+                                                    <button type="button" onclick="removeBudgetCategory('${catName.replace(/'/g, "\\'")}')" class="text-[11px] text-app-muted hover:text-brand-red flex items-center gap-1 active:scale-95"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 移除</button>
+                                                </div>
+                                                <div class="flex gap-2 items-center pt-1">
+                                                    <button type="button" onclick="triggerBudgetCurrencyPicker('${catName.replace(/'/g, "\\'")}')" class="bg-app-input text-[11px] font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 font-mono shrink-0 flex items-center gap-1">
+                                                        <span>${curr}</span> <i data-lucide="chevron-down" class="w-3 h-3 text-app-muted"></i>
+                                                    </button>
+                                                    <div class="relative flex-1 flex items-center">
+                                                        <input type="number" id="budget-input-${safeId}" value="${b.amount === 0 ? '' : b.amount}" placeholder="輸入預算金額..." oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                                        <button type="button" onclick="clearInput('budget-input-${safeId}', function(){ saveBudgetCategoryAmount('${catName.replace(/'/g, "\\'")}', 0); })" class="clear-btn ${b.amount === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                                    </div>
+                                                    <button onclick="saveBudgetCategoryFromInput('${catName.replace(/'/g, "\\'")}', 'budget-input-${safeId}')" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold shrink-0 active:scale-95 flex items-center gap-1">儲存</button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                                <button type="button" onclick="triggerAddBudgetCategoryPicker()" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-2">
+                                    <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> 新增預算追蹤分類 (+)
+                                </button>
+                            </div>
+                        ` : ''}
                     </div>
 
                     <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
@@ -2187,14 +2217,6 @@
                         </button>
                         <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
                     </div>
-
-                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
-                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-4 h-4"></i> 介面色彩主題</h3>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> 淺色模式 Light</button>
-                            <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> 深色模式 Dark</button>
-                        </div>
-                    </div>
                 </div>
             `;
         }
@@ -2202,13 +2224,13 @@
         function openOptionModal(target, title, options, currentVal) {
             currentOptionTarget = target;
             document.getElementById('option-modal-title').innerHTML = `<i data-lucide="list" class="w-4 h-4"></i> ${title}`;
-            const isCategoryPicker = (target === 'TX_CATEGORY' || target === 'REC_CATEGORY');
+            const isCategoryPicker = (target === 'TX_CATEGORY' || target === 'REC_CATEGORY' || target === 'ADD_BUDGET_CAT');
             document.getElementById('option-modal-list').innerHTML = options.map(opt => {
                 const isSelected = opt.value === currentVal;
-                const canEditDelete = isCategoryPicker;
+                const canEditDelete = (target === 'TX_CATEGORY' || target === 'REC_CATEGORY');
                 return `
                     <div class="w-full p-2.5 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all">
-                        <div onclick="selectOptionValue('${opt.value.replace(/'/g, "\\kr")}', '${opt.label.replace(/'/g, "\\'")}')" class="flex-1 cursor-pointer flex items-center justify-between pr-2">
+                        <div onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="flex-1 cursor-pointer flex items-center justify-between pr-2">
                             <span class="text-app-main">${opt.label}</span>
                             ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold shrink-0"></i>' : ''}
                         </div>
@@ -2244,6 +2266,11 @@
             if (idx !== -1) appData.categories[idx] = newName;
             appData.transactions.forEach(t => { if (t.category === oldName) t.category = newName; });
             
+            if (appData.budgets && appData.budgets[oldName]) {
+                appData.budgets[newName] = appData.budgets[oldName];
+                delete appData.budgets[oldName];
+            }
+
             const inputCat = document.getElementById('input-category');
             if (inputCat && inputCat.value === oldName) {
                 inputCat.value = newName;
@@ -2259,6 +2286,9 @@
         function deleteCategoryItem(catName) {
             if (appData.categories.length <= 1) { showToast("無法刪除", "至少需保留一個分類。"); return; }
             appData.categories = appData.categories.filter(c => c !== catName);
+            if (appData.budgets && appData.budgets[catName]) {
+                delete appData.budgets[catName];
+            }
             appData.transactions.forEach(t => { if (t.category === catName) t.category = '其他款項'; });
             
             const inputCat = document.getElementById('input-category');
@@ -2284,6 +2314,13 @@
             }
             input.value = '';
             if (currentOptionTarget === 'TX_CATEGORY') { triggerTxCategoryPicker(); selectOptionValue(newCat, newCat); }
+            else if (currentOptionTarget === 'ADD_BUDGET_CAT') {
+                if (!appData.budgets) appData.budgets = {};
+                appData.budgets[newCat] = { amount: 0, currency: 'TWD' };
+                saveData(true);
+                closeModal('custom-option-modal');
+                showToast("新增成功", `已新增自訂分類「${newCat}」並加入本月預算追蹤！`);
+            }
         }
 
         function selectOptionValue(val, label) {
@@ -2302,6 +2339,13 @@
             } else if (currentOptionTarget === 'TX_CATEGORY') {
                 document.getElementById('input-category').value = val;
                 document.getElementById('tx-category-btn-txt').innerText = label;
+            } else if (currentOptionTarget === 'ADD_BUDGET_CAT') {
+                if (!appData.budgets) appData.budgets = {};
+                if (!appData.budgets[val]) {
+                    appData.budgets[val] = { amount: 0, currency: 'TWD' };
+                    saveData(true);
+                    showToast("加入成功", `已將「${val}」加入本月預算追蹤！`);
+                }
             }
             closeModal('custom-option-modal');
         }
@@ -2696,8 +2740,6 @@
             if (resetMode === 'all') {
                 appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
                 appData.appTitle = "智慧帳本";
-                appData.budgetFoodCurrency = 'TWD';
-                appData.budgetShoppingCurrency = 'TWD';
                 saveData(true);
                 await updateExchangeRateAuto(false);
                 updateHeaderDate();
@@ -2710,10 +2752,7 @@
                 appData.installments = [];
                 appData.notifications = [];
                 appData.hasUnreadNotifications = false;
-                appData.budgetFood = 0;
-                appData.budgetFoodCurrency = 'TWD';
-                appData.budgetShopping = 0;
-                appData.budgetShoppingCurrency = 'TWD';
+                appData.budgets = {};
                 saveData(true);
                 updateHeaderDate();
                 showToast("資料重置完成", "所有資產、交易與預算資料已清空，設定已保留。");
