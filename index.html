@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -54,6 +54,8 @@
             -webkit-user-select: none;
             touch-action: manipulation;
             transition: background-color 0.35s ease, color 0.35s ease;
+            overflow: hidden;
+            overscroll-behavior: none;
         }
 
         /* 鎖定背景捲動防穿透 */
@@ -77,8 +79,8 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            touch-action: none;
+            overscroll-behavior: none;
         }
 
         @media (min-width: 640px) {
@@ -88,8 +90,6 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
-                padding-top: 0;
-                padding-bottom: 0;
             }
         }
 
@@ -209,7 +209,7 @@
         ::-webkit-scrollbar-thumb { background: var(--border-line); border-radius: 4px; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen theme-light">
+<body class="flex items-center justify-center min-h-screen theme-light" style="touch-action: none; overscroll-behavior: none;">
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
