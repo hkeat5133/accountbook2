@@ -133,12 +133,14 @@
 
         /* 最佳化按鈕點擊極速流暢回饋動畫 */
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.06s ease-out, opacity 0.06s ease-out, background-color 0.12s ease, box-shadow 0.12s ease;
+            transition: transform 0.08s cubic-bezier(0, 0, 0.2, 1), opacity 0.08s ease;
             will-change: transform;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.97) !important;
+            transform: scale(0.94) !important;
+            opacity: 0.8 !important;
             transition-duration: 0.01s !important;
         }
 
@@ -978,6 +980,7 @@
                 isHorizontalSwiping = false;
                 isVerticalScrolling = false;
                 slider.style.transition = 'none';
+                slider.style.willChange = 'transform';
             }, { passive: true });
 
             trackContainer.addEventListener('touchmove', (e) => {
@@ -1004,13 +1007,13 @@
                         effectiveDeltaX = deltaX * 0.3;
                     }
                     const offsetPct = - (currentIdx * (100 / 3)) + (effectiveDeltaX / containerWidth * (100 / 3));
-                    slider.style.transform = `translateX(${offsetPct}%)`;
+                    slider.style.transform = `translate3d(${offsetPct}%, 0, 0)`;
                 }
             }, { passive: true });
 
             trackContainer.addEventListener('touchend', (e) => {
                 if (currentTab === 'settings') return;
-                slider.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
+                slider.style.transition = 'transform 0.24s cubic-bezier(0.16, 1, 0.3, 1)';
                 if (isHorizontalSwiping) {
                     const deltaX = swipeCurrentX - swipeStartX;
                     const threshold = 50;
@@ -1037,7 +1040,7 @@
             const slider = document.getElementById('swipe-slider');
             if (!slider) return;
             const currentIdx = tabIndexes[currentTab] || 0;
-            slider.style.transform = `translateX(-${currentIdx * (100 / 3)}%)`;
+            slider.style.transform = `translate3d(-${currentIdx * (100 / 3)}%, 0, 0)`;
         }
 
         function switchTab(tab, resetFilters = false) {
