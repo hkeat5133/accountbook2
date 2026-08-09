@@ -131,7 +131,7 @@
             opacity: 0 !important;
         }
 
-        /* 最佳化按鈕點擊極速流暢回饋動畫 */
+        /* 零延遲超流暢按鈕點擊觸控回饋動畫 */
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.08s cubic-bezier(0, 0, 0.2, 1), opacity 0.08s ease;
             will-change: transform;
@@ -139,7 +139,7 @@
             touch-action: manipulation;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.94) !important;
+            transform: scale(0.95) !important;
             opacity: 0.8 !important;
             transition-duration: 0.01s !important;
         }
@@ -229,7 +229,7 @@
                 <i data-lucide="receipt" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">資產明細</span>
             </button>
-            <button onclick="switchTab('stock-stats', true)" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-95">
+            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-95">
                 <i data-lucide="trending-up" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">持股統計</span>
             </button>
@@ -739,16 +739,13 @@
             if (settingsPanel) settingsPanel.scrollTop = 0;
         }
 
-        /* 零延遲 DOM 即時切換，避免全文 reload 導致遲鈍感 */
+        /* 零延遲超極速 DOM 開關切換，無整體 reload 或 CPU 運算重繪 */
         function toggleAccountManageAccordion() {
             isAccountManageOpen = !isAccountManageOpen;
             const content = document.getElementById('acc-content-account');
             const icon = document.getElementById('acc-icon-account');
             if (content) content.classList.toggle('hidden', !isAccountManageOpen);
-            if (icon) {
-                icon.setAttribute('data-lucide', isAccountManageOpen ? 'chevron-up' : 'chevron-down');
-                if (window.lucide) lucide.createIcons();
-            }
+            if (icon) icon.classList.toggle('rotate-180', isAccountManageOpen);
         }
 
         function toggleBudgetManageAccordion() {
@@ -756,10 +753,7 @@
             const content = document.getElementById('acc-content-budget');
             const icon = document.getElementById('acc-icon-budget');
             if (content) content.classList.toggle('hidden', !isBudgetManageOpen);
-            if (icon) {
-                icon.setAttribute('data-lucide', isBudgetManageOpen ? 'chevron-up' : 'chevron-down');
-                if (window.lucide) lucide.createIcons();
-            }
+            if (icon) icon.classList.toggle('rotate-180', isBudgetManageOpen);
         }
 
         function toggleRecurringManageAccordion() {
@@ -767,10 +761,7 @@
             const content = document.getElementById('acc-content-recurring');
             const icon = document.getElementById('acc-icon-recurring');
             if (content) content.classList.toggle('hidden', !isRecurringManageOpen);
-            if (icon) {
-                icon.setAttribute('data-lucide', isRecurringManageOpen ? 'chevron-up' : 'chevron-down');
-                if (window.lucide) lucide.createIcons();
-            }
+            if (icon) icon.classList.toggle('rotate-180', isRecurringManageOpen);
         }
 
         function toggleInstallmentManageAccordion() {
@@ -778,10 +769,7 @@
             const content = document.getElementById('acc-content-installment');
             const icon = document.getElementById('acc-icon-installment');
             if (content) content.classList.toggle('hidden', !isInstallmentManageOpen);
-            if (icon) {
-                icon.setAttribute('data-lucide', isInstallmentManageOpen ? 'chevron-up' : 'chevron-down');
-                if (window.lucide) lucide.createIcons();
-            }
+            if (icon) icon.classList.toggle('rotate-180', isInstallmentManageOpen);
         }
 
         function toggleBackupManageAccordion() {
@@ -789,10 +777,7 @@
             const content = document.getElementById('acc-content-backup');
             const icon = document.getElementById('acc-icon-backup');
             if (content) content.classList.toggle('hidden', !isBackupManageOpen);
-            if (icon) {
-                icon.setAttribute('data-lucide', isBackupManageOpen ? 'chevron-up' : 'chevron-down');
-                if (window.lucide) lucide.createIcons();
-            }
+            if (icon) icon.classList.toggle('rotate-180', isBackupManageOpen);
         }
 
         function toggleBasicParamsAccordion() {
@@ -800,10 +785,7 @@
             const content = document.getElementById('acc-content-params');
             const icon = document.getElementById('acc-icon-params');
             if (content) content.classList.toggle('hidden', !isBasicParamsOpen);
-            if (icon) {
-                icon.setAttribute('data-lucide', isBasicParamsOpen ? 'chevron-up' : 'chevron-down');
-                if (window.lucide) lucide.createIcons();
-            }
+            if (icon) icon.classList.toggle('rotate-180', isBasicParamsOpen);
         }
 
         function loadAppData() {
@@ -2179,7 +2161,7 @@
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> 帳戶與幣別開關管理
                             </h3>
-                            <i data-lucide="${isAccountManageOpen ? 'chevron-up' : 'chevron-down'}" id="acc-icon-account" class="w-4 h-4 text-app-muted"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
                         <div id="acc-content-account" class="${isAccountManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
                             <div>
@@ -2237,7 +2219,7 @@
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算設定 (${activeBudgetKeys.length} 追蹤中)
                             </h3>
-                            <i data-lucide="${isBudgetManageOpen ? 'chevron-up' : 'chevron-down'}" id="acc-icon-budget" class="w-4 h-4 text-app-muted"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-budget" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBudgetManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
                         <div id="acc-content-budget" class="${isBudgetManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
                             <p class="text-[11px] text-app-muted">點擊下方「+」按鈕可自行加入現有或新增的分類來追蹤本月預算：</p>
@@ -2282,7 +2264,7 @@
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> 每月固定支出/存入 (${recurringRules.length})
                             </h3>
-                            <i data-lucide="${isRecurringManageOpen ? 'chevron-up' : 'chevron-down'}" id="acc-icon-recurring" class="w-4 h-4 text-app-muted"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-recurring" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isRecurringManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
                         <div id="acc-content-recurring" class="${isRecurringManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
                             <div class="${recurringRules.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
@@ -2308,7 +2290,7 @@
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> 分期付款設定 (${installments.length})
                             </h3>
-                            <i data-lucide="${isInstallmentManageOpen ? 'chevron-up' : 'chevron-down'}" id="acc-icon-installment" class="w-4 h-4 text-app-muted"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-installment" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isInstallmentManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
                         <div id="acc-content-installment" class="${isInstallmentManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
                             <div class="${installments.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
@@ -2340,7 +2322,7 @@
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> 備份與重置
                             </h3>
-                            <i data-lucide="${isBackupManageOpen ? 'chevron-up' : 'chevron-down'}" id="acc-icon-backup" class="w-4 h-4 text-app-muted"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-backup" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBackupManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
                         <div id="acc-content-backup" class="${isBackupManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
                             <div class="grid grid-cols-2 gap-2 text-xs">
@@ -2360,7 +2342,7 @@
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> 基本參數設定
                             </h3>
-                            <i data-lucide="${isBasicParamsOpen ? 'chevron-up' : 'chevron-down'}" id="acc-icon-params" class="w-4 h-4 text-app-muted"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-params" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBasicParamsOpen ? 'rotate-180' : ''}"></i>
                         </button>
                         <div id="acc-content-params" class="${isBasicParamsOpen ? '' : 'hidden'} px-4 pb-4 space-y-4 animate-fade border-t border-app-line pt-3">
                             <div>
