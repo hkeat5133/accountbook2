@@ -276,7 +276,6 @@
             </div>
         </div>
 
-        <!-- Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center mb-4">
@@ -740,34 +739,71 @@
             if (settingsPanel) settingsPanel.scrollTop = 0;
         }
 
+        /* 零延遲 DOM 即時切換，避免全文 reload 導致遲鈍感 */
         function toggleAccountManageAccordion() {
             isAccountManageOpen = !isAccountManageOpen;
-            renderCurrentView();
+            const content = document.getElementById('acc-content-account');
+            const icon = document.getElementById('acc-icon-account');
+            if (content) content.classList.toggle('hidden', !isAccountManageOpen);
+            if (icon) {
+                icon.setAttribute('data-lucide', isAccountManageOpen ? 'chevron-up' : 'chevron-down');
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         function toggleBudgetManageAccordion() {
             isBudgetManageOpen = !isBudgetManageOpen;
-            renderCurrentView();
+            const content = document.getElementById('acc-content-budget');
+            const icon = document.getElementById('acc-icon-budget');
+            if (content) content.classList.toggle('hidden', !isBudgetManageOpen);
+            if (icon) {
+                icon.setAttribute('data-lucide', isBudgetManageOpen ? 'chevron-up' : 'chevron-down');
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         function toggleRecurringManageAccordion() {
             isRecurringManageOpen = !isRecurringManageOpen;
-            renderCurrentView();
+            const content = document.getElementById('acc-content-recurring');
+            const icon = document.getElementById('acc-icon-recurring');
+            if (content) content.classList.toggle('hidden', !isRecurringManageOpen);
+            if (icon) {
+                icon.setAttribute('data-lucide', isRecurringManageOpen ? 'chevron-up' : 'chevron-down');
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         function toggleInstallmentManageAccordion() {
             isInstallmentManageOpen = !isInstallmentManageOpen;
-            renderCurrentView();
+            const content = document.getElementById('acc-content-installment');
+            const icon = document.getElementById('acc-icon-installment');
+            if (content) content.classList.toggle('hidden', !isInstallmentManageOpen);
+            if (icon) {
+                icon.setAttribute('data-lucide', isInstallmentManageOpen ? 'chevron-up' : 'chevron-down');
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         function toggleBackupManageAccordion() {
             isBackupManageOpen = !isBackupManageOpen;
-            renderCurrentView();
+            const content = document.getElementById('acc-content-backup');
+            const icon = document.getElementById('acc-icon-backup');
+            if (content) content.classList.toggle('hidden', !isBackupManageOpen);
+            if (icon) {
+                icon.setAttribute('data-lucide', isBackupManageOpen ? 'chevron-up' : 'chevron-down');
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         function toggleBasicParamsAccordion() {
             isBasicParamsOpen = !isBasicParamsOpen;
-            renderCurrentView();
+            const content = document.getElementById('acc-content-params');
+            const icon = document.getElementById('acc-icon-params');
+            if (content) content.classList.toggle('hidden', !isBasicParamsOpen);
+            if (icon) {
+                icon.setAttribute('data-lucide', isBasicParamsOpen ? 'chevron-up' : 'chevron-down');
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         function loadAppData() {
@@ -1896,7 +1932,6 @@
                 }
             });
 
-            // Label updated to "選擇區間:"
             const datePickerBox = document.getElementById('details-range-picker-box');
             if (datePickerBox) {
                 if (filterRange === 'SINGLE_DAY') {
