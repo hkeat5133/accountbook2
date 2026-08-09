@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -79,8 +79,6 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
             touch-action: none;
             overscroll-behavior: none;
         }
@@ -92,8 +90,6 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
-                padding-top: 0;
-                padding-bottom: 0;
             }
         }
 
@@ -117,9 +113,9 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .animate-fade { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-left { animation: slideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-right { animation: slideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-left { animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-right { animation: slideRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
@@ -136,40 +132,46 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
+        /* 彈出視窗採用由中心縮放與淡入動畫，極速流暢 */
         .modal-sheet {
             will-change: transform, opacity;
-            transform: translateY(100%);
+            transform: scale(0.92) translateY(10px);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+            max-height: 82vh;
+            border-radius: 24px !important;
+            width: 100%;
+            max-width: 400px;
         }
 
         .modal-sheet.is-open {
-            transform: translateY(0) !important;
+            transform: scale(1) translateY(0) !important;
             opacity: 1 !important;
         }
 
         .modal-sheet.is-closing {
-            transform: translateY(100%) !important;
+            transform: scale(0.92) translateY(10px) !important;
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
+        /* 通知抽屜專用（由中心縮放與淡入動畫） */
         #notif-drawer .modal-sheet {
-            transform: translateX(100%);
+            transform: scale(0.92) translateY(10px);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: env(safe-area-inset-bottom);
+            max-height: 82vh;
+            border-radius: 24px !important;
+            width: 100%;
+            max-width: 380px;
         }
 
         #notif-drawer .modal-sheet.is-open {
-            transform: translateX(0) !important;
+            transform: scale(1) translateY(0) !important;
             opacity: 1 !important;
         }
 
         #notif-drawer .modal-sheet.is-closing {
-            transform: translateX(100%) !important;
+            transform: scale(0.92) translateY(10px) !important;
             opacity: 0 !important;
         }
 
@@ -235,15 +237,8 @@
             </div>
         </header>
 
-        <!-- MAIN VIEW CONTAINER WITH TOUCH SWIPE TRACK -->
-        <main class="flex-1 overflow-hidden relative w-full" id="main-container" style="touch-action: pan-y; overscroll-behavior: none;">
-            <div id="tab-track" class="flex w-[300%] h-full transition-transform duration-300 ease-out" style="transform: translateX(0%);">
-                <div class="w-1/3 h-full overflow-y-scroll p-4 space-y-4 pb-28 touch-pan-y" id="panel-home"></div>
-                <div class="w-1/3 h-full overflow-y-scroll p-4 space-y-4 pb-28 touch-pan-y" id="panel-details"></div>
-                <div class="w-1/3 h-full overflow-y-scroll p-4 space-y-4 pb-28 touch-pan-y" id="panel-stock-stats"></div>
-            </div>
-            <div id="panel-settings" class="absolute inset-0 bg-app-bg overflow-y-scroll p-4 space-y-4 pb-28 hidden z-10 touch-pan-y"></div>
-        </main>
+        <!-- MAIN VIEW CONTAINER -->
+        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-28 relative w-full touch-pan-y" id="main-content" style="overscroll-behavior-y: none;"></main>
 
         <!-- Floating Action Button -->
         <div class="absolute bottom-20 right-5 z-20">
@@ -765,80 +760,32 @@
 
         function toggleAccountManageAccordion() {
             isAccountManageOpen = !isAccountManageOpen;
-            const content = document.getElementById('acc-content-account');
-            const icon = document.getElementById('acc-icon-account');
-            if (content && icon) {
-                content.classList.toggle('hidden', !isAccountManageOpen);
-                icon.setAttribute('data-lucide', isAccountManageOpen ? 'chevron-up' : 'chevron-down');
-                lucide.createIcons();
-            } else {
-                renderCurrentView();
-            }
+            renderCurrentView();
         }
 
         function toggleBudgetManageAccordion() {
             isBudgetManageOpen = !isBudgetManageOpen;
-            const content = document.getElementById('acc-content-budget');
-            const icon = document.getElementById('acc-icon-budget');
-            if (content && icon) {
-                content.classList.toggle('hidden', !isBudgetManageOpen);
-                icon.setAttribute('data-lucide', isBudgetManageOpen ? 'chevron-up' : 'chevron-down');
-                lucide.createIcons();
-            } else {
-                renderCurrentView();
-            }
+            renderCurrentView();
         }
 
         function toggleRecurringManageAccordion() {
             isRecurringManageOpen = !isRecurringManageOpen;
-            const content = document.getElementById('acc-content-recurring');
-            const icon = document.getElementById('acc-icon-recurring');
-            if (content && icon) {
-                content.classList.toggle('hidden', !isRecurringManageOpen);
-                icon.setAttribute('data-lucide', isRecurringManageOpen ? 'chevron-up' : 'chevron-down');
-                lucide.createIcons();
-            } else {
-                renderCurrentView();
-            }
+            renderCurrentView();
         }
 
         function toggleInstallmentManageAccordion() {
             isInstallmentManageOpen = !isInstallmentManageOpen;
-            const content = document.getElementById('acc-content-installment');
-            const icon = document.getElementById('acc-icon-installment');
-            if (content && icon) {
-                content.classList.toggle('hidden', !isInstallmentManageOpen);
-                icon.setAttribute('data-lucide', isInstallmentManageOpen ? 'chevron-up' : 'chevron-down');
-                lucide.createIcons();
-            } else {
-                renderCurrentView();
-            }
+            renderCurrentView();
         }
 
         function toggleBackupManageAccordion() {
             isBackupManageOpen = !isBackupManageOpen;
-            const content = document.getElementById('acc-content-backup');
-            const icon = document.getElementById('acc-icon-backup');
-            if (content && icon) {
-                content.classList.toggle('hidden', !isBackupManageOpen);
-                icon.setAttribute('data-lucide', isBackupManageOpen ? 'chevron-up' : 'chevron-down');
-                lucide.createIcons();
-            } else {
-                renderCurrentView();
-            }
+            renderCurrentView();
         }
 
         function toggleBasicParamsAccordion() {
             isBasicParamsOpen = !isBasicParamsOpen;
-            const content = document.getElementById('acc-content-params');
-            const icon = document.getElementById('acc-icon-params');
-            if (content && icon) {
-                content.classList.toggle('hidden', !isBasicParamsOpen);
-                icon.setAttribute('data-lucide', isBasicParamsOpen ? 'chevron-up' : 'chevron-down');
-                lucide.createIcons();
-            } else {
-                renderCurrentView();
-            }
+            renderCurrentView();
         }
 
         function loadAppData() {
@@ -995,7 +942,7 @@
             applyTheme();
             lucide.createIcons();
             initPWA();
-            initTouchSwipeTrack();
+            initSwipeGestures();
             const todayStr = getLocalDateStr();
             const inputDateElem = document.getElementById('input-date');
             if (inputDateElem) inputDateElem.value = todayStr;
@@ -1031,69 +978,96 @@
             }, 900);
         };
 
-        // Real-time touch swipe track logic with high precision threshold
         let touchStartX = 0;
-        let touchCurrentX = 0;
-        let isSwiping = false;
-        const tabList = ['home', 'details', 'stock-stats'];
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
 
-        function initTouchSwipeTrack() {
-            const container = document.getElementById('main-container');
-            if (!container) return;
+        function initSwipeGestures() {
+            const mainContainer = document.getElementById('main-content');
+            if (!mainContainer) return;
 
-            container.addEventListener('touchstart', (e) => {
-                if (currentTab === 'settings') return;
-                touchStartX = e.touches[0].clientX;
-                touchCurrentX = touchStartX;
-                isSwiping = true;
-                const track = document.getElementById('tab-track');
-                if (track) track.style.transition = 'none';
+            let edgeStartX = 0;
+            let isEdgeSwipe = false;
+
+            mainContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+                edgeStartX = touchStartX;
+                isEdgeSwipe = (edgeStartX <= 35 && currentTab !== 'home');
             }, { passive: true });
 
-            container.addEventListener('touchmove', (e) => {
-                if (!isSwiping || currentTab === 'settings') return;
-                touchCurrentX = e.touches[0].clientX;
-                const diff = touchCurrentX - touchStartX;
-                const currentIndex = tabList.indexOf(currentTab);
-                const track = document.getElementById('tab-track');
-                if (track) {
-                    const basePercent = -currentIndex * (100 / 3);
-                    const containerWidth = container.offsetWidth;
-                    const percentOffset = (diff / containerWidth) * (100 / 3);
-                    track.style.transform = `translateX(${basePercent + percentOffset}%)`;
-                }
-            }, { passive: true });
+            mainContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+                const swipeThreshold = 60;
 
-            container.addEventListener('touchend', (e) => {
-                if (!isSwiping || currentTab === 'settings') return;
-                isSwiping = false;
-                const diff = touchCurrentX - touchStartX;
-                const currentIndex = tabList.indexOf(currentTab);
-                const track = document.getElementById('tab-track');
-                if (track) track.style.transition = 'transform 0.3s ease-out';
-
-                const threshold = 75;
-                if (diff < -threshold && currentIndex < tabList.length - 1) {
-                    switchTab(tabList[currentIndex + 1]);
-                } else if (diff > threshold && currentIndex > 0) {
-                    switchTab(tabList[currentIndex - 1]);
-                } else {
-                    updateTrackPosition(currentIndex);
+                if (Math.abs(diffY) > Math.abs(diffX) * 1.2) {
+                    return;
                 }
+
+                if (isEdgeSwipe && diffX > swipeThreshold && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+                    if (currentTab === 'settings' || currentTab === 'stock-stats' || currentTab === 'details') {
+                        switchTabWithAnimation('home', 'right', false);
+                        return;
+                    }
+                }
+
+                handleSwipeGesture(diffX, diffY);
             }, { passive: true });
         }
 
-        function updateTrackPosition(index) {
-            const track = document.getElementById('tab-track');
-            if (track) {
-                const basePercent = -index * (100 / 3);
-                track.style.transform = `translateX(${basePercent}%)`;
+        function handleSwipeGesture(diffX, diffY) {
+            const swipeThreshold = 60;
+            if (Math.abs(diffX) < swipeThreshold) return;
+            if (Math.abs(diffY) > Math.abs(diffX) * 0.8) return;
+
+            if (currentTab === 'settings') {
+                if (diffX > 0) {
+                    switchTabWithAnimation('home', 'right', false);
+                }
+                return;
+            }
+
+            const tabOrder = ['home', 'details', 'stock-stats'];
+            const currentIndex = tabOrder.indexOf(currentTab);
+            if (currentIndex === -1) return;
+
+            if (diffX > 0 && currentIndex > 0) {
+                switchTabWithAnimation(tabOrder[currentIndex - 1], 'right', false);
+            } else if (diffX < 0 && currentIndex < tabOrder.length - 1) {
+                switchTabWithAnimation(tabOrder[currentIndex + 1], 'left', false);
             }
         }
 
         function switchTab(tab, expandBudget = false) {
-            const wasSettings = (currentTab === 'settings');
+            switchTabWithAnimation(tab, 'fade', false, expandBudget);
+        }
+
+        function switchTabWithAnimation(tab, direction = 'fade', resetFilters = false, expandBudget = false) {
+            const main = document.getElementById('main-content');
+            if (main) {
+                tabScrollPositions[currentTab] = main.scrollTop;
+            }
+
+            if (resetFilters && tab !== currentTab) {
+                filterAsset = 'ALL';
+                filterRange = 'RECENT30';
+                filterType = 'ALL';
+                stockSubFilter = 'ALL';
+                filterCategoryName = 'ALL';
+                filterSearchQuery = '';
+                filterCustomDate = getLocalDateStr();
+                filterStartDate = getLocalDateStr();
+                filterEndDate = getLocalDateStr();
+                filterMonthDate = getLocalMonthStr();
+            }
             currentTab = tab;
+            if (tab === 'settings' && expandBudget) {
+                isBudgetManageOpen = true;
+            }
 
             ['home', 'details', 'stock-stats'].forEach(t => {
                 const navBtn = document.getElementById(`nav-${t}`);
@@ -1110,39 +1084,27 @@
                 }
             }
 
-            const track = document.getElementById('tab-track');
-            const settingsPanel = document.getElementById('panel-settings');
-
-            if (tab === 'settings') {
-                resetSettingsAccordions();
-                if (expandBudget) {
-                    isBudgetManageOpen = true;
+            if (main) {
+                main.classList.remove('animate-fade', 'animate-slide-left', 'animate-slide-right');
+                void main.offsetWidth;
+                if (direction === 'left') {
+                    main.classList.add('animate-slide-left');
+                } else if (direction === 'right') {
+                    main.classList.add('animate-slide-right');
+                } else {
+                    main.classList.add('animate-fade');
                 }
-                if (track) track.classList.add('hidden');
-                if (settingsPanel) {
-                    settingsPanel.classList.remove('hidden');
-                    renderSettingsView(settingsPanel);
-                }
-            } else {
-                if (wasSettings) {
-                    resetSettingsAccordions();
-                }
-                if (settingsPanel) settingsPanel.classList.add('hidden');
-                if (track) track.classList.remove('hidden');
-                const idx = tabList.indexOf(tab);
-                updateTrackPosition(idx);
             }
             renderCurrentView();
+
+            if (main) {
+                setTimeout(() => {
+                    main.scrollTop = tabScrollPositions[tab] || 0;
+                }, 10);
+            }
         }
 
-        function resetSettingsAccordions() {
-            isAccountManageOpen = false;
-            isBudgetManageOpen = false;
-            isRecurringManageOpen = false;
-            isInstallmentManageOpen = false;
-            isBackupManageOpen = false;
-            isBasicParamsOpen = false;
-        }
+        let tabScrollPositions = { home: 0, details: 0, 'stock-stats': 0, settings: 0 };
 
         function navigateToDetails(assetKey) {
             filterAsset = assetKey;
@@ -1150,32 +1112,31 @@
             filterType = 'ALL';
             filterCategoryName = 'ALL';
             filterSearchQuery = '';
-            switchTab('details');
+            switchTabWithAnimation('details', 'left', false);
         }
 
         function navigateToSettingsBudget() {
-            switchTab('settings', true);
+            switchTabWithAnimation('settings', 'left', false, true);
         }
 
         function renderCurrentView() {
-            const settingsPanel = document.getElementById('panel-settings');
-            const settingsScrollTop = settingsPanel ? settingsPanel.scrollTop : 0;
+            const main = document.getElementById('main-content');
+            if (!main) return;
+            const scrollTop = main.scrollTop;
 
             if (currentTab === 'home') {
-                renderHomeView(document.getElementById('panel-home'));
+                renderHomeView(main);
             } else if (currentTab === 'details') {
-                renderDetailsView(document.getElementById('panel-details'));
+                renderDetailsView(main);
             } else if (currentTab === 'stock-stats') {
-                renderStockStatsView(document.getElementById('panel-stock-stats'));
+                renderStockStatsView(main);
             } else if (currentTab === 'settings') {
-                renderSettingsView(document.getElementById('panel-settings'));
+                renderSettingsView(main);
             }
             if (window.lucide) lucide.createIcons();
             updateNotificationBadge();
 
-            if (currentTab === 'settings' && settingsPanel) {
-                settingsPanel.scrollTop = settingsScrollTop;
-            }
+            main.scrollTop = scrollTop;
         }
 
         function toggleClearBtn(inputElem) {
@@ -1854,7 +1815,7 @@
             filterMonthDate = getLocalMonthStr();
             filterCategoryName = categoryName;
             filterSearchQuery = '';
-            switchTab('details');
+            switchTabWithAnimation('details', 'left', false);
         }
 
         function getFilteredDetailsList() {
@@ -1918,9 +1879,64 @@
             if (window.lucide) lucide.createIcons();
         }
 
+        // Seamless DOM patching for Details View (Zero Flash!)
+        function updateDetailsViewDOM() {
+            const availableAssets = ['ALL'];
+            if (appData.enableTWD) availableAssets.push('TWD');
+            if (appData.enableTWStock) availableAssets.push('TW_STOCK');
+            if (appData.enableUSD) availableAssets.push('USD');
+            if (appData.enableUSStock) availableAssets.push('US_STOCK');
+            if (appData.enableMYR) availableAssets.push('MYR');
+
+            // Asset buttons
+            const assetContainer = document.getElementById('details-asset-pills');
+            if (assetContainer) {
+                assetContainer.innerHTML = availableAssets.map(a => `
+                    <button onclick="setFilterAsset('${a}')" class="px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all ${filterAsset === a ? 'bg-brand-gold text-white font-bold' : 'bg-app-surface text-app-muted hover:text-app-main'}">
+                        ${a === 'ALL' ? '全部資產' : a === 'TW_STOCK' ? '台股' : a === 'US_STOCK' ? '美股' : a}
+                    </button>
+                `).join('');
+            }
+
+            // Range buttons active states
+            ['RECENT30', 'SINGLE_DAY', 'MONTHLY', 'CUSTOM'].forEach(r => {
+                const btn = document.getElementById(`btn-range-${r}`);
+                if (btn) {
+                    btn.className = `py-1.5 rounded-lg font-medium ${filterRange === r ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}`;
+                }
+            });
+
+            // Range specific pickers
+            const datePickerBox = document.getElementById('details-range-picker-box');
+            if (datePickerBox) {
+                if (filterRange === 'SINGLE_DAY') {
+                    datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
+                    datePickerBox.innerHTML = `<span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button>`;
+                } else if (filterRange === 'MONTHLY') {
+                    datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
+                    datePickerBox.innerHTML = `<span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button>`;
+                } else if (filterRange === 'CUSTOM') {
+                    datePickerBox.className = "flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted";
+                    datePickerBox.innerHTML = `<span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button>`;
+                } else {
+                    datePickerBox.className = "hidden";
+                    datePickerBox.innerHTML = "";
+                }
+            }
+
+            // Type buttons active states
+            const typeAll = document.getElementById('btn-type-ALL');
+            const typeOut = document.getElementById('btn-type-支出');
+            const typeIn = document.getElementById('btn-type-存入');
+            if (typeAll) typeAll.className = `flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}`;
+            if (typeOut) typeOut.className = `flex-1 py-1 rounded-md text-center ${filterType === '支出' ? 'text-brand-red font-bold bg-app-surface' : 'text-app-muted'}`;
+            if (typeIn) typeIn.className = `flex-1 py-1 rounded-md text-center ${filterType === '存入' ? 'text-brand-green font-bold bg-app-surface' : 'text-app-muted'}`;
+
+            updateDetailsListContainer();
+        }
+
         function renderDetailsView(container) {
             if (!container) return;
-            const list = getFilteredDetailsList();
             const availableAssets = ['ALL'];
             if (appData.enableTWD) availableAssets.push('TWD');
             if (appData.enableTWStock) availableAssets.push('TW_STOCK');
@@ -1937,7 +1953,7 @@
                             </span>
                             <div class="flex items-center gap-2">
                                 ${filterSearchQuery.trim() !== '' ? `<button onclick="clearDetailsSearch()" class="text-[10px] text-brand-blue hover:underline font-bold">清除搜尋 ✕</button>` : ''}
-                                ${filterCategoryName && filterCategoryName !== 'ALL' ? `<button onclick="filterCategoryName='ALL'; renderDetailsDynamic();" class="text-[10px] text-brand-blue hover:underline font-bold">清除分類篩選 (${filterCategoryName}) ✕</button>` : ''}
+                                ${filterCategoryName && filterCategoryName !== 'ALL' ? `<button onclick="filterCategoryName='ALL'; renderCurrentView();" class="text-[10px] text-brand-blue hover:underline font-bold">清除分類篩選 (${filterCategoryName}) ✕</button>` : ''}
                             </div>
                         </div>
 
@@ -1948,71 +1964,47 @@
                             <button type="button" id="details-search-clear-btn" onclick="clearDetailsSearch()" class="${filterSearchQuery ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                         </div>
 
-                        <div class="flex gap-1 overflow-x-auto pb-1 text-xs" id="details-asset-buttons">
+                        <div id="details-asset-pills" class="flex gap-1 overflow-x-auto pb-1 text-xs">
                             ${availableAssets.map(a => `
                                 <button onclick="setFilterAsset('${a}')" class="px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all ${filterAsset === a ? 'bg-brand-gold text-white font-bold' : 'bg-app-surface text-app-muted hover:text-app-main'}">
                                     ${a === 'ALL' ? '全部資產' : a === 'TW_STOCK' ? '台股' : a === 'US_STOCK' ? '美股' : a}
                                 </button>
                             `).join('')}
                         </div>
-                        <div class="grid grid-cols-4 gap-1 text-[11px]" id="details-range-buttons">
-                            <button onclick="setFilterRange('RECENT30')" class="py-1.5 rounded-lg font-medium ${filterRange === 'RECENT30' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">最近30筆</button>
-                            <button onclick="setFilterRange('SINGLE_DAY')" class="py-1.5 rounded-lg font-medium ${filterRange === 'SINGLE_DAY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">單日明細</button>
-                            <button onclick="setFilterRange('MONTHLY')" class="py-1.5 rounded-lg font-medium ${filterRange === 'MONTHLY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">月度總覽</button>
-                            <button onclick="setFilterRange('CUSTOM')" class="py-1.5 rounded-lg font-medium ${filterRange === 'CUSTOM' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">自訂區間</button>
+                        <div class="grid grid-cols-4 gap-1 text-[11px]">
+                            <button onclick="setFilterRange('RECENT30')" id="btn-range-RECENT30" class="py-1.5 rounded-lg font-medium ${filterRange === 'RECENT30' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">最近30筆</button>
+                            <button onclick="setFilterRange('SINGLE_DAY')" id="btn-range-SINGLE_DAY" class="py-1.5 rounded-lg font-medium ${filterRange === 'SINGLE_DAY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">單日明細</button>
+                            <button onclick="setFilterRange('MONTHLY')" id="btn-range-MONTHLY" class="py-1.5 rounded-lg font-medium ${filterRange === 'MONTHLY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">月度總覽</button>
+                            <button onclick="setFilterRange('CUSTOM')" id="btn-range-CUSTOM" class="py-1.5 rounded-lg font-medium ${filterRange === 'CUSTOM' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">自訂區間</button>
                         </div>
-                        <div id="details-range-extra">
+                        <div id="details-range-picker-box" class="${filterRange === 'RECENT30' ? 'hidden' : ''}">
                             ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
                             ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
                             ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
                         </div>
-                        <div class="flex gap-2 text-xs border-t border-app-line pt-2" id="details-type-buttons">
-                            <button onclick="setFilterType('ALL')" class="flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}">全部種類</button>
-                            <button onclick="setFilterType('支出')" class="flex-1 py-1 rounded-md text-center ${filterType === '支出' ? 'text-brand-red font-bold bg-app-surface' : 'text-app-muted'}">支出明細</button>
-                            <button onclick="setFilterType('存入')" class="flex-1 py-1 rounded-md text-center ${filterType === '存入' ? 'text-brand-green font-bold bg-app-surface' : 'text-app-muted'}">存入明細</button>
+                        <div class="flex gap-2 text-xs border-t border-app-line pt-2">
+                            <button onclick="setFilterType('ALL')" id="btn-type-ALL" class="flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}">全部種類</button>
+                            <button onclick="setFilterType('支出')" id="btn-type-支出" class="flex-1 py-1 rounded-md text-center ${filterType === '支出' ? 'text-brand-red font-bold bg-app-surface' : 'text-app-muted'}">支出明細</button>
+                            <button onclick="setFilterType('存入')" id="btn-type-存入" class="flex-1 py-1 rounded-md text-center ${filterType === '存入' ? 'text-brand-green font-bold bg-app-surface' : 'text-app-muted'}">存入明細</button>
                         </div>
                     </div>
                     <div id="details-count-summary" class="flex justify-between items-center px-1 text-xs text-app-muted">
-                        ${renderDetailsSummaryHtml(list)}
+                        ${renderDetailsSummaryHtml(getFilteredDetailsList())}
                     </div>
-                    <div id="details-tx-list-container" class="space-y-2 w-full">${renderTxList(list)}</div>
+                    <div id="details-tx-list-container" class="space-y-2 w-full">${renderTxList(getFilteredDetailsList())}</div>
                 </div>
             `;
         }
 
-        function renderDetailsDynamic() {
-            if (currentTab !== 'details') return;
-            const container = document.getElementById('panel-details');
-            if (!container) return;
-            
-            // Preserve search focus if any
-            const searchInput = document.getElementById('details-search-input');
-            const searchVal = searchInput ? searchInput.value : filterSearchQuery;
-            filterSearchQuery = searchVal;
-
-            renderDetailsView(container);
-            if (window.lucide) lucide.createIcons();
-            
-            // Restore focus
-            if (searchVal) {
-                const newSearchInput = document.getElementById('details-search-input');
-                if (newSearchInput) {
-                    newSearchInput.focus();
-                    newSearchInput.setSelectionRange(newSearchInput.value.length, newSearchInput.value.length);
-                }
-            }
-        }
-
-        function setFilterAsset(asset) { filterAsset = asset; renderDetailsDynamic(); }
-        function setFilterRange(range) { filterRange = range; renderDetailsDynamic(); }
-        function setFilterType(type) { filterType = type; renderDetailsDynamic(); }
-        function setStockSubFilter(val) { 
-            stockSubFilter = val; 
-            if (currentTab === 'stock-stats') {
-                const container = document.getElementById('panel-stock-stats');
-                if (container) {
-                    renderStockStatsView(container);
-                }
+        function setFilterAsset(asset) { filterAsset = asset; updateDetailsViewDOM(); }
+        function setFilterRange(range) { filterRange = range; updateDetailsViewDOM(); }
+        function setFilterType(type) { filterType = type; updateDetailsViewDOM(); }
+        
+        function setStockSubFilter(val) {
+            stockSubFilter = val;
+            const container = document.getElementById('panel-stock-stats') || document.getElementById('main-content');
+            if (container && currentTab === 'stock-stats') {
+                renderStockStatsView(container);
             }
         }
 
@@ -2104,6 +2096,7 @@
                     `}
                 </div>
             `;
+            if (window.lucide) lucide.createIcons();
         }
 
         function renderSettingsView(container) {
@@ -2334,14 +2327,14 @@
                 const canEditDelete = (target === 'TX_CATEGORY' || target === 'REC_CATEGORY');
                 return `
                     <div class="w-full p-2.5 rounded-xl border ${isSelected ? 'border-brand-gold bg-brand-gold/10 font-bold' : 'border-app-line bg-app-card'} hover:border-brand-gold flex justify-between items-center text-xs transition-all">
-                        <div onclick="selectOptionValue('${opt.value.replace(/'/g, "\\'")}', '${opt.label.replace(/'/g, "\\'")}')" class="flex-1 cursor-pointer flex items-center justify-between pr-2">
+                        <div onclick="selectOptionValue('${opt.value.replace(/'/g, "\\kr")}', '${opt.label.replace(/'/g, "\\'")}')" class="flex-1 cursor-pointer flex items-center justify-between pr-2">
                             <span class="text-app-main">${opt.label}</span>
                             ${isSelected ? '<i data-lucide="check" class="w-4 h-4 text-brand-gold font-bold shrink-0"></i>' : ''}
                         </div>
                         ${canEditDelete ? `
                             <div class="flex items-center gap-1 shrink-0 border-l border-app-line pl-2 ml-1">
-                                <button type="button" onclick="openCategoryEditModal('${opt.value.replace(/'/g, "\\'")}')" class="p-1 text-app-muted hover:text-brand-gold active:scale-90" title="編輯分類"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
-                                <button type="button" onclick="deleteCategoryItem('${opt.value.replace(/'/g, "\\'")}')" class="p-1 text-app-muted hover:text-brand-red active:scale-90" title="刪除分類"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                <button type="button" onclick="openCategoryEditModal('${opt.value.replace(/'/g, "\\kr")}')" class="p-1 text-app-muted hover:text-brand-gold active:scale-90" title="編輯分類"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                                <button type="button" onclick="deleteCategoryItem('${opt.value.replace(/'/g, "\\kr")}')" class="p-1 text-app-muted hover:text-brand-red active:scale-90" title="刪除分類"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                             </div>
                         ` : ''}
                     </div>
@@ -2669,19 +2662,21 @@
             const selectedDate = `${document.getElementById('dp-year').value}-${document.getElementById('dp-month').value}-${document.getElementById('dp-day').value}`;
             if (datePickerTarget === 'SINGLE_DAY') {
                 filterCustomDate = selectedDate;
-                renderDetailsDynamic();
-            } else if (datePickerTarget === 'CUSTOM_START') {
+                updateDetailsViewDOM();
+            }
+            else if (datePickerTarget === 'CUSTOM_START') {
                 filterStartDate = selectedDate;
                 if (filterStartDate > filterEndDate) {
                     filterEndDate = filterStartDate;
                 }
-                renderDetailsDynamic();
-            } else if (datePickerTarget === 'CUSTOM_END') {
+                updateDetailsViewDOM();
+            }
+            else if (datePickerTarget === 'CUSTOM_END') {
                 filterEndDate = selectedDate;
                 if (filterEndDate < filterStartDate) {
                     filterStartDate = filterEndDate;
                 }
-                renderDetailsDynamic();
+                updateDetailsViewDOM();
             }
             else if (datePickerTarget === 'TX_INPUT') { document.getElementById('input-date').value = selectedDate; document.getElementById('input-date-display').innerText = selectedDate; }
             else if (datePickerTarget === 'REC_DATE') { document.getElementById('rec-date-val').value = selectedDate; document.getElementById('rec-date-btn-txt').innerText = selectedDate; }
@@ -2709,7 +2704,7 @@
             if (datePickerTarget === 'EXPORT_JPG_MONTH') { exportJpgMonthDate = mStr; updateExportJpgRangeUI(); }
             else {
                 filterMonthDate = mStr;
-                renderDetailsDynamic();
+                updateDetailsViewDOM();
             }
             closeModal('custom-date-modal');
         }
