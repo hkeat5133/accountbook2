@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -52,11 +52,12 @@
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
+            touch-action: pan-y;
+            overflow: hidden;
+            overscroll-behavior-y: none;
             transition: background-color 0.35s ease, color 0.35s ease;
         }
 
-        /* 鎖定背景捲動防穿透 */
         body.modal-open {
             overflow: hidden;
             position: fixed;
@@ -77,8 +78,7 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            overscroll-behavior-y: none;
         }
 
         @media (min-width: 640px) {
@@ -88,8 +88,6 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
-                padding-top: 0;
-                padding-bottom: 0;
             }
         }
 
@@ -110,57 +108,43 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        /* 背景朦朧層進出場動畫完全對稱 */
+        /* 現代流暢的中央彈跳縮放與淡入 (Scale & Fade-In) 動畫 */
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
         .modal-sheet {
             will-change: transform, opacity;
-            transform: translateY(100%);
+            transform: scale(0.92) translateY(10px);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+            max-height: 82vh;
+            border-radius: 24px !important;
+            width: 100%;
+            max-width: 400px;
         }
 
         .modal-sheet.is-open {
-            transform: translateY(0) !important;
+            transform: scale(1) translateY(0) !important;
             opacity: 1 !important;
         }
 
         .modal-sheet.is-closing {
-            transform: translateY(100%) !important;
+            transform: scale(0.92) translateY(10px) !important;
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
-        #notif-drawer .modal-sheet {
-            transform: translateX(100%);
-            opacity: 0;
-            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        #notif-drawer .modal-sheet.is-open {
-            transform: translateX(0) !important;
-            opacity: 1 !important;
-        }
-
-        #notif-drawer .modal-sheet.is-closing {
-            transform: translateX(100%) !important;
-            opacity: 0 !important;
-        }
-
-        /* 明顯的點擊互動彈跳與縮放微動畫 */
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+            will-change: transform;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.90) translateY(1px) !important;
+            transform: scale(0.93) translateY(1px) !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -191,8 +175,8 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
-        <!-- App Main Header Bar -->
-        <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
+        <!-- App Main Header Bar (Fixed / Non-scrollable) -->
+        <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -215,8 +199,15 @@
             </div>
         </header>
 
-        <!-- MAIN VIEW CONTAINER -->
-        <main class="flex-1 overflow-y-scroll p-4 space-y-4 pb-28 relative w-full touch-pan-y" id="main-content"></main>
+        <!-- MAIN VIEW CONTAINER WITH TOUCH SWIPE TRACK -->
+        <main class="flex-1 overflow-hidden relative w-full" id="main-container">
+            <div id="tab-track" class="flex w-[300%] h-full transition-transform duration-300 ease-out" style="transform: translateX(0%);">
+                <div class="w-1/3 h-full overflow-y-scroll p-4 space-y-4 pb-28 touch-pan-y" id="panel-home"></div>
+                <div class="w-1/3 h-full overflow-y-scroll p-4 space-y-4 pb-28 touch-pan-y" id="panel-details"></div>
+                <div class="w-1/3 h-full overflow-y-scroll p-4 space-y-4 pb-28 touch-pan-y" id="panel-stock-stats"></div>
+            </div>
+            <div id="panel-settings" class="absolute inset-0 bg-app-bg overflow-y-scroll p-4 space-y-4 pb-28 hidden z-10"></div>
+        </main>
 
         <!-- Floating Action Button -->
         <div class="absolute bottom-20 right-5 z-20">
@@ -225,8 +216,8 @@
             </button>
         </div>
 
-        <!-- Navigation Bar (3 Main Tabs) -->
-        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
+        <!-- Navigation Bar (Fixed / Non-scrollable) -->
+        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0" style="touch-action: none;">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-90 hover:scale-110">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
@@ -260,9 +251,8 @@
         </div>
 
         <!-- Notification Drawer Modal -->
-        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
-            <div class="modal-sheet w-[88%] max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
-                <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
+        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full bg-app-surface shadow-2xl p-5 flex flex-col border border-app-line max-w-sm rounded-3xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <div class="flex items-center gap-2.5">
                         <div class="w-9 h-9 rounded-2xl bg-brand-gold/15 text-brand-gold flex items-center justify-center shadow-2xs">
@@ -277,7 +267,7 @@
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <div id="notif-list" class="flex-1 overflow-y-auto my-3 space-y-2.5 pr-0.5"></div>
+                <div id="notif-list" class="flex-1 overflow-y-auto my-3 space-y-2.5 pr-0.5 max-h-[50vh]"></div>
                 <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-3 border-t border-app-line active:scale-95 font-medium flex items-center justify-center gap-1.5 bg-app-card/50 rounded-xl">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 清空所有紀錄
                 </button>
@@ -286,7 +276,7 @@
 
         <!-- Add Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-bold text-brand-gold flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> 新增帳務交易
@@ -343,14 +333,14 @@
                             <div>
                                 <label class="block text-app-muted mb-1">交易股數</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-stock-shares" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold placeholder:text-app-muted/30 font-mono">
+                                    <input type="number" id="input-stock-shares" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold placeholder:text-app-muted/30 font-mono text-xs">
                                     <button type="button" onclick="clearInput('input-stock-shares', 'calculateStockTotal')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-app-muted mb-1">每股成交價</label>
                                 <div class="relative flex items-center">
-                                    <input type="number" id="input-stock-price" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold placeholder:text-app-muted/30 font-mono">
+                                    <input type="number" id="input-stock-price" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold placeholder:text-app-muted/30 font-mono text-xs">
                                     <button type="button" onclick="clearInput('input-stock-price', 'calculateStockTotal')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                 </div>
                             </div>
@@ -358,7 +348,7 @@
                         <div>
                             <label class="block text-app-muted mb-1">手續費金額</label>
                             <div class="relative flex items-center">
-                                <input type="number" id="input-stock-fee" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold placeholder:text-app-muted/30 font-mono">
+                                <input type="number" id="input-stock-fee" step="any" placeholder="0" oninput="toggleClearBtn(this); calculateStockTotal();" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold placeholder:text-app-muted/30 font-mono text-xs">
                                 <button type="button" onclick="clearInput('input-stock-fee', 'calculateStockTotal')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                             </div>
                         </div>
@@ -376,7 +366,7 @@
                     <div>
                         <label class="block text-app-muted mb-1">金額 <span id="auto-calc-notice" class="text-brand-gold text-[10px] font-normal hidden">(自動計算總額)</span></label>
                         <div class="relative flex items-center">
-                            <input type="number" id="input-amount" step="any" required placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main font-mono outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                            <input type="number" id="input-amount" step="any" required placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main font-mono outline-none focus:border-brand-gold placeholder:text-app-muted/30 text-xs">
                             <button type="button" onclick="clearInput('input-amount')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                         </div>
                     </div>
@@ -396,13 +386,13 @@
                         <div>
                             <label class="block text-app-muted mb-1">備註說明</label>
                             <div class="relative flex items-center">
-                                <input type="text" id="input-note" placeholder="可選填..." oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none">
+                                <input type="text" id="input-note" placeholder="可選填..." oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none text-xs">
                                 <button type="button" onclick="clearInput('input-note')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-4 hover:opacity-90 active:scale-95 transition-all shadow-md text-sm">
+                    <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-4 hover:opacity-90 active:scale-95 transition-all shadow-md text-xs">
                         確認儲存交易
                     </button>
                 </form>
@@ -424,8 +414,8 @@
         </div>
 
         <!-- Confirm Reset Modal -->
-        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
                         <i data-lucide="alert-triangle" class="w-4 h-4"></i> 確認初始化重置？
@@ -456,7 +446,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="pt-2 pb-4 flex gap-2">
+                <div class="pt-2 pb-2 flex gap-2">
                     <button type="button" onclick="closeModal('confirm-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold active:scale-95">取消</button>
                     <button type="button" onclick="executeResetData()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow active:scale-95">確定執行重置</button>
                 </div>
@@ -464,8 +454,8 @@
         </div>
 
         <!-- Confirm Delete Transaction Modal -->
-        <div id="confirm-delete-modal" onclick="closeModal('confirm-delete-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="confirm-delete-modal" onclick="closeModal('confirm-delete-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[80] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> 確認刪除交易紀錄？
@@ -481,7 +471,7 @@
                     <p class="text-xs text-app-main font-bold">您確定要刪除這筆帳務紀錄嗎？</p>
                     <p class="text-[11px] text-app-muted leading-relaxed">刪除後系統將會自動反向扣除或還原該筆交易對應的帳戶資產餘額，此操作無法復原。</p>
                 </div>
-                <div class="pt-2 pb-4 flex gap-2">
+                <div class="pt-2 pb-2 flex gap-2">
                     <button type="button" onclick="closeModal('confirm-delete-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold active:scale-95">取消</button>
                     <button type="button" onclick="confirmExecuteDeleteTx()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow active:scale-95">確定刪除</button>
                 </div>
@@ -489,8 +479,8 @@
         </div>
 
         <!-- Custom Option Picker Modal -->
-        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="option-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="list" class="w-4 h-4"></i> 選擇選項
@@ -500,7 +490,7 @@
                     </button>
                 </div>
                 <div id="option-modal-list" class="space-y-1.5 max-h-[45vh] overflow-y-auto py-1 pr-0.5"></div>
-                <div id="custom-category-add-box" class="hidden pt-2 pb-4 border-t border-app-line space-y-2">
+                <div id="custom-category-add-box" class="hidden pt-2 pb-2 border-t border-app-line space-y-2">
                     <label class="text-[10px] text-app-muted block font-medium">+ 新增自訂分類</label>
                     <div class="flex gap-1.5">
                         <input type="text" id="new-category-input" placeholder="輸入新分類名稱..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
@@ -526,8 +516,8 @@
         </div>
 
         <!-- Custom Date Picker Modal -->
-        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> 選擇日期
@@ -541,8 +531,8 @@
         </div>
 
         <!-- Stock History Modal -->
-        <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 id="stock-modal-symbol" class="font-bold text-brand-blue text-sm flex items-center gap-1.5">股票交易歷史</h3>
                     <button type="button" onclick="closeModal('stock-history-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
@@ -555,13 +545,13 @@
         </div>
 
         <!-- Recurring Rule Modal -->
-        <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="repeat" class="w-4 h-4"></i> 新增固定支出/存入規則</h3>
                     <button type="button" onclick="closeModal('recurring-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <form id="recurring-form" onsubmit="handleRecurringSubmit(event)" class="space-y-3 text-xs">
+                <form id="recurring-form" onsubmit="handleRecurringSubmit(event)" class="space-y-3 text-xs pb-2">
                     <div>
                         <label class="block text-app-muted mb-1">規則名稱</label>
                         <input type="text" id="rec-name" required placeholder="例：房租、訂閱費、月薪" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main outline-none focus:border-brand-gold text-xs">
@@ -596,13 +586,13 @@
         </div>
 
         <!-- Installment Modal -->
-        <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="credit-card" class="w-4 h-4"></i> 新增分期付款項目</h3>
                     <button type="button" onclick="closeModal('installment-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <form id="installment-form" onsubmit="handleInstallmentSubmit(event)" class="space-y-3 text-xs">
+                <form id="installment-form" onsubmit="handleInstallmentSubmit(event)" class="space-y-3 text-xs pb-2">
                     <div>
                         <label class="block text-app-muted mb-1">分期項目名稱</label>
                         <input type="text" id="inst-name" required placeholder="例：最新智慧型手機分期" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main outline-none focus:border-brand-gold text-xs">
@@ -631,13 +621,13 @@
         </div>
 
         <!-- Export JPG Modal -->
-        <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-end justify-center p-0">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-t-3xl p-5 border-t border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-gold text-xs flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4"></i> 匯出資產報表 (JPG)</h3>
                     <button type="button" onclick="closeModal('export-jpg-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
-                <div class="space-y-3">
+                <div class="space-y-3 pb-2">
                     <div>
                         <label class="block text-app-muted mb-1">選擇匯出資產範圍</label>
                         <select id="export-jpg-asset-select" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main font-medium">
@@ -724,7 +714,6 @@
         let exportJpgEndDate = getLocalDateStr();
         let exportJpgMonthDate = getLocalMonthStr();
 
-        let tabScrollPositions = { home: 0, details: 0, 'stock-stats': 0, settings: 0 };
         let datePickerTarget = null;
         let currentOptionTarget = null;
         let pendingDeleteTxId = null;
@@ -922,6 +911,7 @@
             applyTheme();
             lucide.createIcons();
             initPWA();
+            initTouchSwipeTrack();
             const todayStr = getLocalDateStr();
             const inputDateElem = document.getElementById('input-date');
             if (inputDateElem) inputDateElem.value = todayStr;
@@ -957,26 +947,70 @@
             }, 900);
         };
 
-        function switchTab(tab) {
-            if (tab === currentTab) {
-                if (tab === 'details') {
-                    filterAsset = 'ALL';
-                    filterRange = 'RECENT30';
-                    filterType = 'ALL';
-                    filterCategoryName = 'ALL';
-                    filterSearchQuery = '';
-                } else if (tab === 'stock-stats') {
-                    stockSubFilter = 'ALL';
-                } else if (tab === 'settings') {
-                    resetSettingsAccordions();
+        // Real-time touch swipe track logic with high precision threshold
+        let touchStartX = 0;
+        let touchCurrentX = 0;
+        let isSwiping = false;
+        const tabList = ['home', 'details', 'stock-stats'];
+
+        function initTouchSwipeTrack() {
+            const container = document.getElementById('main-container');
+            if (!container) return;
+
+            container.addEventListener('touchstart', (e) => {
+                if (currentTab === 'settings') return;
+                touchStartX = e.touches[0].clientX;
+                touchCurrentX = touchStartX;
+                isSwiping = true;
+                const track = document.getElementById('tab-track');
+                if (track) track.style.transition = 'none';
+            }, { passive: true });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isSwiping || currentTab === 'settings') return;
+                touchCurrentX = e.touches[0].clientX;
+                const diff = touchCurrentX - touchStartX;
+                const currentIndex = tabList.indexOf(currentTab);
+                const track = document.getElementById('tab-track');
+                if (track) {
+                    const basePercent = -currentIndex * (100 / 3);
+                    const containerWidth = container.offsetWidth;
+                    const percentOffset = (diff / containerWidth) * (100 / 3);
+                    track.style.transform = `translateX(${basePercent + percentOffset}%)`;
                 }
-                renderCurrentView();
-                return;
+            }, { passive: true });
+
+            container.addEventListener('touchend', (e) => {
+                if (!isSwiping || currentTab === 'settings') return;
+                isSwiping = false;
+                const diff = touchCurrentX - touchStartX;
+                const currentIndex = tabList.indexOf(currentTab);
+                const track = document.getElementById('tab-track');
+                if (track) track.style.transition = 'transform 0.3s ease-out';
+
+                const threshold = 75;
+                if (diff < -threshold && currentIndex < tabList.length - 1) {
+                    switchTab(tabList[currentIndex + 1]);
+                } else if (diff > threshold && currentIndex > 0) {
+                    switchTab(tabList[currentIndex - 1]);
+                } else {
+                    updateTrackPosition(currentIndex);
+                }
+            }, { passive: true });
+        }
+
+        function updateTrackPosition(index) {
+            const track = document.getElementById('tab-track');
+            if (track) {
+                const basePercent = -index * (100 / 3);
+                track.style.transform = `translateX(${basePercent}%)`;
             }
-            if (tab !== 'settings') {
-                resetSettingsAccordions();
-            }
+        }
+
+        function switchTab(tab, expandBudget = false) {
+            const wasSettings = (currentTab === 'settings');
             currentTab = tab;
+
             ['home', 'details', 'stock-stats'].forEach(t => {
                 const navBtn = document.getElementById(`nav-${t}`);
                 if (navBtn) {
@@ -990,6 +1024,29 @@
                 } else {
                     headerSettingsBtn.classList.remove('ring-2', 'ring-brand-gold');
                 }
+            }
+
+            const track = document.getElementById('tab-track');
+            const settingsPanel = document.getElementById('panel-settings');
+
+            if (tab === 'settings') {
+                resetSettingsAccordions();
+                if (expandBudget) {
+                    isBudgetManageOpen = true;
+                }
+                if (track) track.classList.add('hidden');
+                if (settingsPanel) {
+                    settingsPanel.classList.remove('hidden');
+                    renderSettingsView(settingsPanel);
+                }
+            } else {
+                if (wasSettings) {
+                    resetSettingsAccordions();
+                }
+                if (settingsPanel) settingsPanel.classList.add('hidden');
+                if (track) track.classList.remove('hidden');
+                const idx = tabList.indexOf(tab);
+                updateTrackPosition(idx);
             }
             renderCurrentView();
         }
@@ -1013,18 +1070,19 @@
         }
 
         function navigateToSettingsBudget() {
-            isBudgetManageOpen = true;
-            switchTab('settings');
+            switchTab('settings', true);
         }
 
         function renderCurrentView() {
-            const main = document.getElementById('main-content');
-            if (!main) return;
-            main.innerHTML = '';
-            if (currentTab === 'home') renderHomeView(main);
-            else if (currentTab === 'details') renderDetailsView(main);
-            else if (currentTab === 'stock-stats') renderStockStatsView(main);
-            else if (currentTab === 'settings') renderSettingsView(main);
+            if (currentTab === 'home') {
+                renderHomeView(document.getElementById('panel-home'));
+            } else if (currentTab === 'details') {
+                renderDetailsView(document.getElementById('panel-details'));
+            } else if (currentTab === 'stock-stats') {
+                renderStockStatsView(document.getElementById('panel-stock-stats'));
+            } else if (currentTab === 'settings') {
+                renderSettingsView(document.getElementById('panel-settings'));
+            }
             if (window.lucide) lucide.createIcons();
             updateNotificationBadge();
         }
@@ -1812,9 +1870,9 @@
                             <button onclick="setFilterRange('MONTHLY')" class="py-1.5 rounded-lg font-medium ${filterRange === 'MONTHLY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">月度總覽</button>
                             <button onclick="setFilterRange('CUSTOM')" class="py-1.5 rounded-lg font-medium ${filterRange === 'CUSTOM' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">自訂區間</button>
                         </div>
-                        ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                        ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
-                        ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
+                        ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
+                        ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
+                        ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
                             <button onclick="setFilterType('ALL')" class="flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}">全部種類</button>
                             <button onclick="setFilterType('支出')" class="flex-1 py-1 rounded-md text-center ${filterType === '支出' ? 'text-brand-red font-bold bg-app-surface' : 'text-app-muted'}">支出明細</button>
