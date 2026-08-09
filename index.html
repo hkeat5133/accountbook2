@@ -950,7 +950,7 @@
                 const currentIndex = tabOrder.indexOf(currentTab);
 
                 if ((currentIndex === 0 && diff > 0) || (currentIndex === tabOrder.length - 1 && diff < 0)) {
-                    mainContainer.style.transform = `translateX(${diff * 0.3}px)`;
+                    mainContainer.style.transform = `translateX(${diff * 0.25}px)`;
                     return;
                 }
 
@@ -962,9 +962,9 @@
                 isDragging = false;
                 const touchEndX = e.changedTouches[0].clientX;
                 const diff = touchEndX - touchStartX;
-                const threshold = 75;
+                const threshold = Math.max(85, window.innerWidth * 0.25);
 
-                mainContainer.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
+                mainContainer.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
 
                 const tabOrder = ['home', 'details', 'stock-stats'];
                 const currentIndex = tabOrder.indexOf(currentTab);
@@ -974,7 +974,7 @@
                     setTimeout(() => {
                         mainContainer.style.transform = 'none';
                         switchTabWithAnimation('home', 'right', false);
-                    }, 250);
+                    }, 300);
                     return;
                 }
 
@@ -983,13 +983,13 @@
                     setTimeout(() => {
                         mainContainer.style.transform = 'none';
                         switchTabWithAnimation(tabOrder[currentIndex - 1], 'right', false);
-                    }, 250);
+                    }, 300);
                 } else if (diff < -threshold && currentIndex < tabOrder.length - 1 && currentIndex !== -1) {
                     mainContainer.style.transform = `translateX(-100%)`;
                     setTimeout(() => {
                         mainContainer.style.transform = 'none';
                         switchTabWithAnimation(tabOrder[currentIndex + 1], 'left', false);
-                    }, 250);
+                    }, 300);
                 } else {
                     mainContainer.style.transform = `translateX(0)`;
                 }
