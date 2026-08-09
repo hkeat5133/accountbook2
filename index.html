@@ -153,27 +153,6 @@
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用 */
-        #notif-drawer .modal-sheet {
-            transform: scale(0.92) translateY(10px);
-            opacity: 0;
-            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            max-height: 82vh;
-            border-radius: 24px !important;
-            width: 100%;
-            max-width: 380px;
-        }
-
-        #notif-drawer .modal-sheet.is-open {
-            transform: scale(1) translateY(0) !important;
-            opacity: 1 !important;
-        }
-
-        #notif-drawer .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(10px) !important;
-            opacity: 0 !important;
-        }
-
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
@@ -209,7 +188,6 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
-        <!-- App Main Header Bar -->
         <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
@@ -975,18 +953,16 @@
                 const diff = touchEndX - touchStartX;
                 const swipeThreshold = 55;
 
+                if (currentTab === 'settings') return;
+
                 if (isEdgeSwipe && diff > swipeThreshold) {
-                    if (currentTab === 'settings' || currentTab === 'stock-stats' || currentTab === 'details') {
+                    if (currentTab === 'stock-stats' || currentTab === 'details') {
                         switchTabWithAnimation('home', 'right', false);
                         return;
                     }
                 }
 
                 if (Math.abs(diff) >= swipeThreshold) {
-                    if (currentTab === 'settings') {
-                        if (diff > 0) switchTabWithAnimation('home', 'right', false);
-                        return;
-                    }
                     const tabOrder = ['home', 'details', 'stock-stats'];
                     const currentIndex = tabOrder.indexOf(currentTab);
                     if (currentIndex !== -1) {
@@ -1014,6 +990,9 @@
                 } else if (tab === 'stock-stats') {
                     stockSubFilter = 'ALL';
                 }
+                if (tab === 'settings') {
+                    isAccountManageOpen = false;
+                }
                 renderCurrentView();
                 return;
             }
@@ -1026,8 +1005,13 @@
                 tabScrollPositions[currentTab] = main.scrollTop;
             }
 
+            if (currentTab === 'settings' && tab !== 'settings') {
+                isAccountManageOpen = false;
+            }
+
             if (tab === 'settings') {
                 tabScrollPositions['settings'] = 0;
+                isAccountManageOpen = false;
             }
 
             if (resetFilters && tab !== currentTab) {
@@ -2091,46 +2075,47 @@
                                 <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
                             </div>
                         </div>
-                        <div class="space-y-3 pt-1 border-t border-app-line">
-                            <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-3.5 h-3.5 text-brand-gold"></i> 本月預算設定</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <div class="flex justify-between items-center mb-1">
-                                        <label class="text-xs text-app-muted">${catFoodLabel}</label>
-                                        <button onclick="resetBudgetFoodSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
-                                    </div>
-                                    <div class="flex gap-1 mb-1.5">
-                                        <button type="button" onclick="triggerBudgetCurrencyPicker('food')" id="btn-budget-food-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
-                                            <span>幣別: ${appData.budgetFoodCurrency || 'TWD'}</span>
-                                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
-                                        </button>
-                                    </div>
-                                    <div class="flex gap-1">
-                                        <div class="relative flex-1 flex items-center">
-                                            <input type="number" id="setting-budget-food" value="${appData.budgetFood === 0 ? '' : appData.budgetFood}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
-                                            <button type="button" onclick="clearInput('setting-budget-food', function(){ saveBudgetFoodExplicitly(0); })" class="clear-btn ${appData.budgetFood === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                        </div>
-                                        <button onclick="saveBudgetFoodFromInput()" title="確認設定餐飲預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
-                                    </div>
+                    </div>
+
+                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
+                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算設定</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-app-muted">${catFoodLabel}</label>
+                                    <button onclick="resetBudgetFoodSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
                                 </div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-1">
-                                        <label class="text-xs text-app-muted">${catShopLabel}</label>
-                                        <button onclick="resetBudgetShoppingSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
+                                <div class="flex gap-1 mb-1.5">
+                                    <button type="button" onclick="triggerBudgetCurrencyPicker('food')" id="btn-budget-food-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
+                                        <span>幣別: ${appData.budgetFoodCurrency || 'TWD'}</span>
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
+                                    </button>
+                                </div>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="setting-budget-food" value="${appData.budgetFood === 0 ? '' : appData.budgetFood}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('setting-budget-food', function(){ saveBudgetFoodExplicitly(0); })" class="clear-btn ${appData.budgetFood === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                     </div>
-                                    <div class="flex gap-1 mb-1.5">
-                                        <button type="button" onclick="triggerBudgetCurrencyPicker('shopping')" id="btn-budget-shopping-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
-                                            <span>幣別: ${appData.budgetShoppingCurrency || 'TWD'}</span>
-                                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
-                                        </button>
+                                    <button onclick="saveBudgetFoodFromInput()" title="確認設定餐飲預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-app-muted">${catShopLabel}</label>
+                                    <button onclick="resetBudgetShoppingSetting()" class="text-[10px] text-brand-gold font-mono flex items-center gap-0.5 hover:underline active:scale-95" title="預算歸零"><i data-lucide="rotate-ccw" class="w-2.5 h-2.5"></i> 歸零</button>
+                                </div>
+                                <div class="flex gap-1 mb-1.5">
+                                    <button type="button" onclick="triggerBudgetCurrencyPicker('shopping')" id="btn-budget-shopping-curr" class="bg-app-input text-xs font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 w-full font-mono shadow-2xs flex justify-between items-center">
+                                        <span>幣別: ${appData.budgetShoppingCurrency || 'TWD'}</span>
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
+                                    </button>
+                                </div>
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="number" id="setting-budget-shopping" value="${appData.budgetShopping === 0 ? '' : appData.budgetShopping}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                        <button type="button" onclick="clearInput('setting-budget-shopping', function(){ saveBudgetShoppingExplicitly(0); })" class="clear-btn ${appData.budgetShopping === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                     </div>
-                                    <div class="flex gap-1">
-                                        <div class="relative flex-1 flex items-center">
-                                            <input type="number" id="setting-budget-shopping" value="${appData.budgetShopping === 0 ? '' : appData.budgetShopping}" placeholder="0" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
-                                            <button type="button" onclick="clearInput('setting-budget-shopping', function(){ saveBudgetShoppingExplicitly(0); })" class="clear-btn ${appData.budgetShopping === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                        </div>
-                                        <button onclick="saveBudgetShoppingFromInput()" title="確認設定購物預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
-                                    </div>
+                                    <button onclick="saveBudgetShoppingFromInput()" title="確認設定購物預算" class="bg-brand-gold text-white px-2.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1 shrink-0 active:scale-95"><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
                                 </div>
                             </div>
                         </div>
