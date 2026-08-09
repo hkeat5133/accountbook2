@@ -130,13 +130,16 @@
             transform: scale(0.92) translateY(10px) !important;
             opacity: 0 !important;
         }
+
         /* 最佳化按鈕點擊極速流暢回饋動畫 */
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.06s ease-out, opacity 0.06s ease-out, background-color 0.12s ease, box-shadow 0.12s ease;
             will-change: transform;
+            -webkit-tap-highlight-color: transparent;
         }
         button:active, label[class*="cursor-pointer"]:active {
             transform: scale(0.97) !important;
+            transition-duration: 0.01s !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
