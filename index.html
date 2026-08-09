@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -79,6 +79,8 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
             touch-action: none;
             overscroll-behavior: none;
         }
@@ -90,6 +92,8 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                padding-top: 0;
+                padding-bottom: 0;
             }
         }
 
@@ -113,9 +117,9 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .animate-fade { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-left { animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-right { animation: slideRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-left { animation: slideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-slide-right { animation: slideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
@@ -132,46 +136,40 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 中央彈跳縮放與淡入 (Scale & Fade-In) 卡片彈窗動畫 */
+        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
         .modal-sheet {
             will-change: transform, opacity;
-            transform: scale(0.92) translateY(10px);
+            transform: translateY(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            max-height: 82vh;
-            border-radius: 24px !important;
-            width: 100%;
-            max-width: 400px;
+            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
         }
 
         .modal-sheet.is-open {
-            transform: scale(1) translateY(0) !important;
+            transform: translateY(0) !important;
             opacity: 1 !important;
         }
 
         .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(10px) !important;
+            transform: translateY(100%) !important;
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（中央彈跳縮放與淡入） */
+        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
         #notif-drawer .modal-sheet {
-            transform: scale(0.92) translateY(10px);
+            transform: translateX(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            max-height: 82vh;
-            border-radius: 24px !important;
-            width: 100%;
-            max-width: 380px;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #notif-drawer .modal-sheet.is-open {
-            transform: scale(1) translateY(0) !important;
+            transform: translateX(0) !important;
             opacity: 1 !important;
         }
 
         #notif-drawer .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(10px) !important;
+            transform: translateX(100%) !important;
             opacity: 0 !important;
         }
 
@@ -1160,7 +1158,6 @@
         }
 
         function renderCurrentView() {
-            // Preserve settings scroll position if settings panel is active
             const settingsPanel = document.getElementById('panel-settings');
             const settingsScrollTop = settingsPanel ? settingsPanel.scrollTop : 0;
 
@@ -1940,7 +1937,7 @@
                             </span>
                             <div class="flex items-center gap-2">
                                 ${filterSearchQuery.trim() !== '' ? `<button onclick="clearDetailsSearch()" class="text-[10px] text-brand-blue hover:underline font-bold">清除搜尋 ✕</button>` : ''}
-                                ${filterCategoryName && filterCategoryName !== 'ALL' ? `<button onclick="filterCategoryName='ALL'; renderCurrentView();" class="text-[10px] text-brand-blue hover:underline font-bold">清除分類篩選 (${filterCategoryName}) ✕</button>` : ''}
+                                ${filterCategoryName && filterCategoryName !== 'ALL' ? `<button onclick="filterCategoryName='ALL'; renderDetailsDynamic();" class="text-[10px] text-brand-blue hover:underline font-bold">清除分類篩選 (${filterCategoryName}) ✕</button>` : ''}
                             </div>
                         </div>
 
@@ -1951,23 +1948,25 @@
                             <button type="button" id="details-search-clear-btn" onclick="clearDetailsSearch()" class="${filterSearchQuery ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                         </div>
 
-                        <div class="flex gap-1 overflow-x-auto pb-1 text-xs">
+                        <div class="flex gap-1 overflow-x-auto pb-1 text-xs" id="details-asset-buttons">
                             ${availableAssets.map(a => `
                                 <button onclick="setFilterAsset('${a}')" class="px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all ${filterAsset === a ? 'bg-brand-gold text-white font-bold' : 'bg-app-surface text-app-muted hover:text-app-main'}">
                                     ${a === 'ALL' ? '全部資產' : a === 'TW_STOCK' ? '台股' : a === 'US_STOCK' ? '美股' : a}
                                 </button>
                             `).join('')}
                         </div>
-                        <div class="grid grid-cols-4 gap-1 text-[11px]">
+                        <div class="grid grid-cols-4 gap-1 text-[11px]" id="details-range-buttons">
                             <button onclick="setFilterRange('RECENT30')" class="py-1.5 rounded-lg font-medium ${filterRange === 'RECENT30' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">最近30筆</button>
                             <button onclick="setFilterRange('SINGLE_DAY')" class="py-1.5 rounded-lg font-medium ${filterRange === 'SINGLE_DAY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">單日明細</button>
                             <button onclick="setFilterRange('MONTHLY')" class="py-1.5 rounded-lg font-medium ${filterRange === 'MONTHLY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">月度總覽</button>
                             <button onclick="setFilterRange('CUSTOM')" class="py-1.5 rounded-lg font-medium ${filterRange === 'CUSTOM' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">自訂區間</button>
                         </div>
-                        ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                        ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
-                        ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
-                        <div class="flex gap-2 text-xs border-t border-app-line pt-2">
+                        <div id="details-range-extra">
+                            ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
+                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
+                            ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
+                        </div>
+                        <div class="flex gap-2 text-xs border-t border-app-line pt-2" id="details-type-buttons">
                             <button onclick="setFilterType('ALL')" class="flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}">全部種類</button>
                             <button onclick="setFilterType('支出')" class="flex-1 py-1 rounded-md text-center ${filterType === '支出' ? 'text-brand-red font-bold bg-app-surface' : 'text-app-muted'}">支出明細</button>
                             <button onclick="setFilterType('存入')" class="flex-1 py-1 rounded-md text-center ${filterType === '存入' ? 'text-brand-green font-bold bg-app-surface' : 'text-app-muted'}">存入明細</button>
@@ -1981,10 +1980,41 @@
             `;
         }
 
-        function setFilterAsset(asset) { filterAsset = asset; renderCurrentView(); }
-        function setFilterRange(range) { filterRange = range; renderCurrentView(); }
-        function setFilterType(type) { filterType = type; renderCurrentView(); }
-        function setStockSubFilter(val) { stockSubFilter = val; renderCurrentView(); }
+        function renderDetailsDynamic() {
+            if (currentTab !== 'details') return;
+            const container = document.getElementById('panel-details');
+            if (!container) return;
+            
+            // Preserve search focus if any
+            const searchInput = document.getElementById('details-search-input');
+            const searchVal = searchInput ? searchInput.value : filterSearchQuery;
+            filterSearchQuery = searchVal;
+
+            renderDetailsView(container);
+            if (window.lucide) lucide.createIcons();
+            
+            // Restore focus
+            if (searchVal) {
+                const newSearchInput = document.getElementById('details-search-input');
+                if (newSearchInput) {
+                    newSearchInput.focus();
+                    newSearchInput.setSelectionRange(newSearchInput.value.length, newSearchInput.value.length);
+                }
+            }
+        }
+
+        function setFilterAsset(asset) { filterAsset = asset; renderDetailsDynamic(); }
+        function setFilterRange(range) { filterRange = range; renderDetailsDynamic(); }
+        function setFilterType(type) { filterType = type; renderDetailsDynamic(); }
+        function setStockSubFilter(val) { 
+            stockSubFilter = val; 
+            if (currentTab === 'stock-stats') {
+                const container = document.getElementById('panel-stock-stats');
+                if (container) {
+                    renderStockStatsView(container);
+                }
+            }
+        }
 
         function renderStockStatsView(container) {
             if (!container) return;
@@ -2637,18 +2667,21 @@
 
         function confirmCustomDate() {
             const selectedDate = `${document.getElementById('dp-year').value}-${document.getElementById('dp-month').value}-${document.getElementById('dp-day').value}`;
-            if (datePickerTarget === 'SINGLE_DAY') filterCustomDate = selectedDate;
-            else if (datePickerTarget === 'CUSTOM_START') {
+            if (datePickerTarget === 'SINGLE_DAY') {
+                filterCustomDate = selectedDate;
+                renderDetailsDynamic();
+            } else if (datePickerTarget === 'CUSTOM_START') {
                 filterStartDate = selectedDate;
                 if (filterStartDate > filterEndDate) {
                     filterEndDate = filterStartDate;
                 }
-            }
-            else if (datePickerTarget === 'CUSTOM_END') {
+                renderDetailsDynamic();
+            } else if (datePickerTarget === 'CUSTOM_END') {
                 filterEndDate = selectedDate;
                 if (filterEndDate < filterStartDate) {
                     filterStartDate = filterEndDate;
                 }
+                renderDetailsDynamic();
             }
             else if (datePickerTarget === 'TX_INPUT') { document.getElementById('input-date').value = selectedDate; document.getElementById('input-date-display').innerText = selectedDate; }
             else if (datePickerTarget === 'REC_DATE') { document.getElementById('rec-date-val').value = selectedDate; document.getElementById('rec-date-btn-txt').innerText = selectedDate; }
@@ -2669,15 +2702,16 @@
                 updateExportJpgRangeUI();
             }
             closeModal('custom-date-modal');
-            renderCurrentView();
         }
 
         function confirmCustomMonth() {
             const mStr = `${document.getElementById('dp-m-year').value}-${document.getElementById('dp-m-month').value}`;
             if (datePickerTarget === 'EXPORT_JPG_MONTH') { exportJpgMonthDate = mStr; updateExportJpgRangeUI(); }
-            else filterMonthDate = mStr;
+            else {
+                filterMonthDate = mStr;
+                renderDetailsDynamic();
+            }
             closeModal('custom-date-modal');
-            renderCurrentView();
         }
 
         function updateExportJpgRangeUI() {
