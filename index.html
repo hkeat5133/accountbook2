@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -82,8 +82,8 @@
             overflow: hidden;
             overscroll-behavior: none;
             border-color: var(--phone-border);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+            padding-top: 0;
+            padding-bottom: 0;
         }
 
         @media (min-width: 640px) {
@@ -138,6 +138,10 @@
             opacity: 0 !important;
         }
 
+        #notif-drawer .modal-sheet {
+            max-width: 380px;
+        }
+
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
@@ -177,6 +181,7 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container">
 
+        <!-- Header -->
         <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
@@ -200,6 +205,7 @@
             </div>
         </header>
 
+        <!-- Main Swipeable Track -->
         <main class="flex-1 relative overflow-hidden w-full bg-app-bg" id="main-track-wrapper">
             <div id="main-track" class="absolute inset-0 flex w-[300%] h-full transition-transform duration-300 ease-out" style="transform: translateX(0%);">
                 <!-- Tab 0: Home -->
@@ -218,6 +224,7 @@
             </button>
         </div>
 
+        <!-- Bottom Navigation Bar -->
         <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
             <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-90 hover:scale-110">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
@@ -720,10 +727,14 @@
         let currentOptionTarget = null;
         let pendingDeleteTxId = null;
         let pendingDeleteSymbol = null;
+
+        // Settings accordions state
         let isAccountManageOpen = false;
         let isBudgetManageOpen = false;
         let isRecurringManageOpen = false;
         let isInstallmentManageOpen = false;
+        let isBackupManageOpen = false;
+        let isBasicParamsOpen = false;
 
         function toggleAccountManageAccordion() {
             isAccountManageOpen = !isAccountManageOpen;
@@ -742,6 +753,16 @@
 
         function toggleInstallmentManageAccordion() {
             isInstallmentManageOpen = !isInstallmentManageOpen;
+            renderCurrentView();
+        }
+
+        function toggleBackupManageAccordion() {
+            isBackupManageOpen = !isBackupManageOpen;
+            renderCurrentView();
+        }
+
+        function toggleBasicParamsAccordion() {
+            isBasicParamsOpen = !isBasicParamsOpen;
             renderCurrentView();
         }
 
@@ -1041,21 +1062,24 @@
                 } else if (tab === 'stock-stats') {
                     stockSubFilter = 'ALL';
                 } else if (tab === 'settings') {
-                    isAccountManageOpen = false;
-                    isBudgetManageOpen = false;
-                    isRecurringManageOpen = false;
-                    isInstallmentManageOpen = false;
+                    resetSettingsAccordions();
                 }
                 renderCurrentView();
                 return;
             }
             if (tab !== 'settings') {
-                isAccountManageOpen = false;
-                isBudgetManageOpen = false;
-                isRecurringManageOpen = false;
-                isInstallmentManageOpen = false;
+                resetSettingsAccordions();
             }
             switchTabWithAnimation(tab, 'fade', false);
+        }
+
+        function resetSettingsAccordions() {
+            isAccountManageOpen = false;
+            isBudgetManageOpen = false;
+            isRecurringManageOpen = false;
+            isInstallmentManageOpen = false;
+            isBackupManageOpen = false;
+            isBasicParamsOpen = false;
         }
 
         function switchTabWithAnimation(tab, direction = 'fade', resetFilters = false) {
@@ -1065,18 +1089,12 @@
             }
 
             if (currentTab === 'settings' && tab !== 'settings') {
-                isAccountManageOpen = false;
-                isBudgetManageOpen = false;
-                isRecurringManageOpen = false;
-                isInstallmentManageOpen = false;
+                resetSettingsAccordions();
             }
 
             if (tab === 'settings') {
                 tabScrollPositions['settings'] = 0;
-                isAccountManageOpen = false;
-                isBudgetManageOpen = false;
-                isRecurringManageOpen = false;
-                isInstallmentManageOpen = false;
+                resetSettingsAccordions();
             }
 
             if (resetFilters && tab !== currentTab) {
@@ -2052,8 +2070,8 @@
         function renderSettingsView(container) {
             const activeBudgets = appData.budgets || {};
             const activeBudgetKeys = Object.keys(activeBudgets);
-            const recurringCount = appData.recurringRules.length;
-            const installmentCount = appData.installments.length;
+            const recurringRules = appData.recurringRules || [];
+            const installments = appData.installments || [];
 
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
@@ -2062,13 +2080,13 @@
                         <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">‹ 返回首頁</button>
                     </div>
 
-                    <!-- 帳戶與幣別開關管理區塊 (收合/展開) -->
+                    <!-- 帳戶與幣別開關管理 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleAccountManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
-                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
-                                <i data-lucide="coins" class="w-4 h-4"></i> 帳戶與幣別開關管理
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> 帳戶與幣別開關管理
                             </h3>
-                            <i data-lucide="${isAccountManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-brand-gold"></i>
+                            <i data-lucide="${isAccountManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-app-muted"></i>
                         </button>
                         ${isAccountManageOpen ? `
                             <div class="px-4 pb-4 space-y-2 animate-fade border-t border-app-line pt-3">
@@ -2084,7 +2102,7 @@
                                 </div>
                                 <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
                                     <div>
-                                        <span class="font-bold text-app-main block text-xs">🇹🇼 台股市值帳戶 (TW Stock)</span>
+                                        <span class="font-bold text-app-main block text-xs">🇹🇼 台股證券帳戶 (TW Stock)</span>
                                         <span class="text-[10px] text-app-muted block">顯示台股持股、交易與市值統計</span>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -2104,7 +2122,7 @@
                                 </div>
                                 <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
                                     <div>
-                                        <span class="font-bold text-app-main block text-xs">🇺🇸 美股市值帳戶 (US Stock)</span>
+                                        <span class="font-bold text-app-main block text-xs">🇺🇸 美股證券帳戶 (US Stock)</span>
                                         <span class="text-[10px] text-app-muted block">顯示美股持股、交易與市值統計</span>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -2126,18 +2144,18 @@
                         ` : ''}
                     </div>
 
-                    <!-- 本月預算設定區塊 (收合/展開) -->
+                    <!-- 本月預算設定 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBudgetManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
-                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
-                                <i data-lucide="pie-chart" class="w-4 h-4"></i> 本月預算設定 (${activeBudgetKeys.length} 追蹤中)
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算設定 (${activeBudgetKeys.length} 追蹤中)
                             </h3>
-                            <i data-lucide="${isBudgetManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-brand-gold"></i>
+                            <i data-lucide="${isBudgetManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-app-muted"></i>
                         </button>
                         ${isBudgetManageOpen ? `
                             <div class="px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
                                 <p class="text-[11px] text-app-muted">點擊下方「+」按鈕可自行加入現有或新增的分類來追蹤本月預算：</p>
-                                <div class="space-y-2.5 ${activeBudgetKeys.length > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''}">
+                                <div class="${activeBudgetKeys.length > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''} space-y-2.5">
                                     ${activeBudgetKeys.length === 0 ? `
                                         <div class="text-center py-6 text-xs text-app-muted bg-app-surface rounded-2xl border border-app-line">
                                             目前尚無設定任何預算分類
@@ -2173,23 +2191,19 @@
                         ` : ''}
                     </div>
 
-                    <!-- 每月固定支出/存入區塊 (收合/展開) -->
+                    <!-- 每月固定支出/存入設定 (Accordion with max 5 items scroll) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleRecurringManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
-                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
-                                <i data-lucide="repeat" class="w-4 h-4"></i> 每月固定支出/存入 (${recurringCount} 筆)
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> 每月固定支出/存入 (${recurringRules.length})
                             </h3>
-                            <i data-lucide="${isRecurringManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-brand-gold"></i>
+                            <i data-lucide="${isRecurringManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-app-muted"></i>
                         </button>
                         ${isRecurringManageOpen ? `
-                            <div class="px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[11px] text-app-muted">自動執行週期性收支規則</span>
-                                    <button onclick="openModal('recurring-modal')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">+ 新增規則</button>
-                                </div>
-                                <div class="space-y-2 text-xs ${recurringCount > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''}">
-                                    ${recurringCount === 0 ? '<div class="text-app-muted text-center py-4">尚未設定自動扣款規則</div>' : appData.recurringRules.map(r => `
-                                        <div class="bg-app-surface p-2.5 rounded-xl border border-app-line flex justify-between items-center">
+                            <div class="px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
+                                <div class="${recurringRules.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
+                                    ${recurringRules.length === 0 ? '<div class="text-app-muted text-center py-4 text-xs">尚未設定自動扣款規則</div>' : recurringRules.map(r => `
+                                        <div class="bg-app-surface p-2.5 rounded-xl border border-app-line flex justify-between items-center text-xs">
                                             <div>
                                                 <div class="font-bold text-app-main">${r.name}</div>
                                                 <div class="text-[10px] text-app-muted font-mono">日期: ${r.startDate || '每月 '+r.day+' 號'} (每月 ${r.day} 號 自動${r.type} $${r.amount} ${r.asset})</div>
@@ -2198,71 +2212,90 @@
                                         </div>
                                     `).join('')}
                                 </div>
+                                <button type="button" onclick="openModal('recurring-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
+                                    <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> 新增固定規則 (+)
+                                </button>
                             </div>
                         ` : ''}
                     </div>
 
-                    <!-- 分期付款設定區塊 (收合/展開) -->
+                    <!-- 分期付款設定 (Accordion with max 5 items scroll) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleInstallmentManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
-                            <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5">
-                                <i data-lucide="credit-card" class="w-4 h-4"></i> 分期付款設定 (${installmentCount} 筆)
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> 分期付款設定 (${installments.length})
                             </h3>
-                            <i data-lucide="${isInstallmentManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-brand-gold"></i>
+                            <i data-lucide="${isInstallmentManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-app-muted"></i>
                         </button>
                         ${isInstallmentManageOpen ? `
-                            <div class="px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[11px] text-app-muted">追蹤分期付款每月自動扣款進度</span>
-                                    <button onclick="openModal('installment-modal')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">+ 新增分期</button>
-                                </div>
-                                <div class="space-y-2 text-xs ${installmentCount > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''}">
-                                    ${installmentCount === 0 ? '<div class="text-app-muted text-center py-4">尚未設定分期付款</div>' : appData.installments.map(i => `
-                                        <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1">
+                            <div class="px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
+                                <div class="${installments.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
+                                    ${installments.length === 0 ? '<div class="text-app-muted text-center py-4 text-xs">尚未設定分期付款</div>' : installments.map(i => `
+                                        <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1 text-xs">
                                             <div class="flex justify-between items-center"><span class="font-bold text-app-main">${i.name}</span><button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
                                             <div class="flex justify-between text-[11px] text-app-muted font-mono"><span>總額: $${i.totalAmount.toLocaleString()} (每期: $${i.monthlyAmount.toLocaleString()})</span><span>${i.paidMonths}/${i.totalMonths} 期 (起始日: ${i.startDate || '1號'})</span></div>
                                         </div>
                                     `).join('')}
                                 </div>
+                                <button type="button" onclick="openModal('installment-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
+                                    <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> 新增分期項目 (+)
+                                </button>
                             </div>
                         ` : ''}
                     </div>
 
-                    <!-- 備份與維護區塊 -->
-                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-3 w-full">
-                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="database" class="w-4 h-4"></i> 備份與維護</h3>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出備份 (JSON)</button>
-                            <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
-                        </div>
-                        <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
-                            <span class="inline-flex items-center gap-1.5 text-app-main"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</span>
+                    <!-- 備份與重置 (Accordion) -->
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
+                        <button type="button" onclick="toggleBackupManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> 備份與重置
+                            </h3>
+                            <i data-lucide="${isBackupManageOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-app-muted"></i>
                         </button>
-                        <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
+                        ${isBackupManageOpen ? `
+                            <div class="px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出備份 (JSON)</button>
+                                    <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> 還原備份<input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
+                                </div>
+                                <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
+                                    <span class="inline-flex items-center gap-1.5 text-app-main"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> 匯出資產報表 (JPG 圖片)</span>
+                                </button>
+                                <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> 初始化重置所有資料</button>
+                            </div>
+                        ` : ''}
                     </div>
 
-                    <!-- 基本參數設定與色彩主題合併區塊 (移至最下方) -->
-                    <div class="bg-app-card p-4 rounded-2xl border border-app-line space-y-4 w-full">
-                        <h3 class="text-xs font-bold text-brand-gold uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4"></i> 基本參數設定</h3>
-                        <div>
-                            <label class="block text-xs text-app-muted mb-1">自訂 App 標題名稱</label>
-                            <div class="flex gap-2">
-                                <div class="relative flex-1 flex items-center">
-                                    <input type="text" id="setting-title" value="${appData.appTitle || ''}" placeholder="智慧帳本" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
-                                    <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                    <!-- 基本參數設定與色彩主題 (Accordion, moved to bottom) -->
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
+                        <button type="button" onclick="toggleBasicParamsAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> 基本參數設定
+                            </h3>
+                            <i data-lucide="${isBasicParamsOpen ? 'chevron-up' : 'chevron-down'}" class="w-4 h-4 text-app-muted"></i>
+                        </button>
+                        ${isBasicParamsOpen ? `
+                            <div class="px-4 pb-4 space-y-4 animate-fade border-t border-app-line pt-3">
+                                <div>
+                                    <label class="block text-xs text-app-muted mb-1">自訂 App 標題名稱</label>
+                                    <div class="flex gap-2">
+                                        <div class="relative flex-1 flex items-center">
+                                            <input type="text" id="setting-title" value="${appData.appTitle || ''}" placeholder="智慧帳本" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
+                                            <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                        </div>
+                                        <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
+                                    </div>
                                 </div>
-                                <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95">儲存</button>
-                            </div>
-                        </div>
 
-                        <!-- 介面色彩主題合併在最下方 -->
-                        <div class="pt-3 border-t border-app-line space-y-2">
-                            <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> 介面色彩主題</label>
-                            <div class="grid grid-cols-2 gap-2 text-xs">
-                                <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> 淺色模式 Light</button>
-                                <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> 深色模式 Dark</button>
+                                <div class="pt-3 border-t border-app-line space-y-2">
+                                    <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> 介面色彩主題</label>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> 淺色模式 Light</button>
+                                        <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> 深色模式 Dark</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        ` : ''}
                     </div>
                 </div>
             `;
