@@ -144,6 +144,22 @@
             transition-duration: 0.01s !important;
         }
 
+        /* 系統設定卡片按鈕專用高質感微亮點擊動畫 */
+        .accordion-header-btn {
+            transition: background-color 0.15s ease, opacity 0.12s ease, transform 0.12s cubic-bezier(0.2, 0, 0, 1);
+            will-change: background-color, transform, opacity;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .accordion-header-btn:hover {
+            background-color: rgba(200, 155, 60, 0.06);
+        }
+        .accordion-header-btn:active {
+            transform: scale(0.988) translateY(1px) !important;
+            background-color: rgba(200, 155, 60, 0.14) !important;
+            opacity: 0.92 !important;
+            transition-duration: 0.03s !important;
+        }
+
         .pulse-gold { animation: pulseGold 2.5s infinite; }
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
@@ -2152,12 +2168,12 @@
                 <div class="animate-fade space-y-4 w-full">
                     <div class="flex justify-between items-center bg-app-card px-4 py-3 rounded-2xl border border-app-line">
                         <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="settings" class="w-4 h-4 text-brand-gold"></i> 系統設定面板</span>
-                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:opacity-70">‹ 返回首頁</button>
+                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">‹ 返回首頁</button>
                     </div>
 
                     <!-- 帳戶與幣別開關管理 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleAccountManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
+                        <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> 帳戶與幣別開關管理
                             </h3>
@@ -2215,7 +2231,7 @@
 
                     <!-- 本月預算設定 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBudgetManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
+                        <button type="button" onclick="toggleBudgetManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算設定 (${activeBudgetKeys.length} 追蹤中)
                             </h3>
@@ -2260,7 +2276,7 @@
 
                     <!-- 每月固定支出/存入設定 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleRecurringManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
+                        <button type="button" onclick="toggleRecurringManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> 每月固定支出/存入 (${recurringRules.length})
                             </h3>
@@ -2286,7 +2302,7 @@
 
                     <!-- 分期付款設定 (Accordion with (每期:$xxxx) and (起始日) moved to Row 2) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleInstallmentManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
+                        <button type="button" onclick="toggleInstallmentManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> 分期付款設定 (${installments.length})
                             </h3>
@@ -2318,7 +2334,7 @@
 
                     <!-- 備份與重置 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBackupManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
+                        <button type="button" onclick="toggleBackupManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> 備份與重置
                             </h3>
@@ -2338,7 +2354,7 @@
 
                     <!-- 基本參數設定與色彩主題 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBasicParamsAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
+                        <button type="button" onclick="toggleBasicParamsAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> 基本參數設定
                             </h3>
