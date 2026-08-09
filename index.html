@@ -130,13 +130,13 @@
             transform: scale(0.92) translateY(10px) !important;
             opacity: 0 !important;
         }
-
+        /* 最佳化按鈕點擊極速流暢回饋動畫 */
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+            transition: transform 0.06s ease-out, opacity 0.06s ease-out, background-color 0.12s ease, box-shadow 0.12s ease;
             will-change: transform;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.93) translateY(1px) !important;
+            transform: scale(0.97) !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -174,7 +174,7 @@
         <!-- Header Bar (Locked) -->
         <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
-                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="系統設定">
+                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
@@ -185,10 +185,10 @@
                 <p class="text-[11px] text-app-muted" id="header-date">2026 年 8 月 9 日</p>
             </div>
             <div class="flex items-center gap-1.5">
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-90 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> 安裝
                 </button>
-                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-90 border border-app-line hover:scale-105" title="通知紀錄">
+                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="通知紀錄">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
                 </button>
@@ -216,15 +216,15 @@
         </div>
 
         <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0" style="touch-action: none; overscroll-behavior: none;">
-            <button onclick="switchTab('home', true)" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-90 hover:scale-110">
+            <button onclick="switchTab('home', true)" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-95">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">首頁資產</span>
             </button>
-            <button onclick="switchTab('details', true)" id="nav-details" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-90 hover:scale-110">
+            <button onclick="switchTab('details', true)" id="nav-details" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-95">
                 <i data-lucide="receipt" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">資產明細</span>
             </button>
-            <button onclick="switchTab('stock-stats', true)" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-90 hover:scale-110">
+            <button onclick="switchTab('stock-stats', true)" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-95">
                 <i data-lucide="trending-up" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium">持股統計</span>
             </button>
@@ -1242,7 +1242,7 @@
                 container.innerHTML = `
                     <div class="text-center py-20 text-app-muted space-y-3">
                         <div class="w-16 h-16 rounded-3xl bg-app-card mx-auto flex items-center justify-center text-brand-gold/40 border border-app-line shadow-xs">
-                            <i data-lucide="bell" class="w-8 h-8"></i>
+                            <i data-lucide="bell-off" class="w-8 h-8"></i>
                         </div>
                         <div class="space-y-1">
                             <p class="text-xs font-bold text-app-main">目前尚無動態通知</p>
@@ -2129,12 +2129,12 @@
                 <div class="animate-fade space-y-4 w-full">
                     <div class="flex justify-between items-center bg-app-card px-4 py-3 rounded-2xl border border-app-line">
                         <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="settings" class="w-4 h-4 text-brand-gold"></i> 系統設定面板</span>
-                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:scale-95">‹ 返回首頁</button>
+                        <button onclick="switchTab('home')" class="text-xs text-brand-blue hover:underline font-bold active:opacity-70">‹ 返回首頁</button>
                     </div>
 
                     <!-- 帳戶與幣別開關管理 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleAccountManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                        <button type="button" onclick="toggleAccountManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> 帳戶與幣別開關管理
                             </h3>
@@ -2192,7 +2192,7 @@
 
                     <!-- 本月預算設定 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBudgetManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                        <button type="button" onclick="toggleBudgetManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> 本月預算設定 (${activeBudgetKeys.length} 追蹤中)
                             </h3>
@@ -2237,7 +2237,7 @@
 
                     <!-- 每月固定支出/存入設定 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleRecurringManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                        <button type="button" onclick="toggleRecurringManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> 每月固定支出/存入 (${recurringRules.length})
                             </h3>
@@ -2263,7 +2263,7 @@
 
                     <!-- 分期付款設定 (Accordion with (每期:$xxxx) and (起始日) moved to Row 2) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleInstallmentManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                        <button type="button" onclick="toggleInstallmentManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> 分期付款設定 (${installments.length})
                             </h3>
@@ -2295,7 +2295,7 @@
 
                     <!-- 備份與重置 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBackupManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                        <button type="button" onclick="toggleBackupManageAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> 備份與重置
                             </h3>
@@ -2315,7 +2315,7 @@
 
                     <!-- 基本參數設定與色彩主題 (Accordion) -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBasicParamsAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-80 active:scale-98 transition-all">
+                        <button type="button" onclick="toggleBasicParamsAccordion()" class="w-full p-4 flex justify-between items-center text-left hover:opacity-90 active:opacity-75 transition-opacity">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> 基本參數設定
                             </h3>
