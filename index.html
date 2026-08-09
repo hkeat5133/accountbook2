@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -77,6 +77,8 @@
             flex-direction: column;
             overflow: hidden;
             border-color: var(--phone-border);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @media (min-width: 640px) {
@@ -86,6 +88,8 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                padding-top: 0;
+                padding-bottom: 0;
             }
         }
 
@@ -99,19 +103,7 @@
             to { opacity: 0; }
         }
 
-        @keyframes slideLeft {
-            from { opacity: 0; transform: translateX(25px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes slideRight {
-            from { opacity: 0; transform: translateX(-25px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
         .animate-fade { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-left { animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .animate-slide-right { animation: slideRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
@@ -126,56 +118,49 @@
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 彈出視窗採用由中心縮放與淡入動畫，極速流暢 */
+        /* 標準彈出視窗（由底部升起/降下，速度與進出場完全對稱） */
         .modal-sheet {
             will-change: transform, opacity;
-            transform: scale(0.92) translateY(10px);
+            transform: translateY(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            max-height: 82vh;
-            border-radius: 24px !important;
-            width: 100%;
-            max-width: 400px;
+            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
         }
 
         .modal-sheet.is-open {
-            transform: scale(1) translateY(0) !important;
+            transform: translateY(0) !important;
             opacity: 1 !important;
         }
 
         .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(10px) !important;
+            transform: translateY(100%) !important;
             opacity: 0 !important;
         }
 
-        /* 通知抽屜專用（由中心縮放與淡入動畫） */
+        /* 通知抽屜專用（由右側滑出/收回，速度與進出場完全對稱） */
         #notif-drawer .modal-sheet {
-            transform: scale(0.92) translateY(10px);
+            transform: translateX(100%);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
-            max-height: 82vh;
-            border-radius: 24px !important;
-            width: 100%;
-            max-width: 380px;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         #notif-drawer .modal-sheet.is-open {
-            transform: scale(1) translateY(0) !important;
+            transform: translateX(0) !important;
             opacity: 1 !important;
         }
 
         #notif-drawer .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(10px) !important;
+            transform: translateX(100%) !important;
             opacity: 0 !important;
         }
 
-        /* 最佳化按鈕點擊極速流暢回饋動畫 */
+        /* 明顯的點擊互動彈跳與縮放微動畫 */
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
-            will-change: transform;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.4), opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.93) translateY(1px) !important;
+            transform: scale(0.90) translateY(1px) !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
@@ -275,8 +260,9 @@
         </div>
 
         <!-- Notification Drawer Modal -->
-        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full bg-app-surface shadow-2xl p-5 flex flex-col border border-app-line max-w-sm rounded-3xl" onclick="event.stopPropagation()">
+        <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-xs z-40 hidden flex justify-end">
+            <div class="modal-sheet w-[88%] max-w-sm bg-app-surface shadow-2xl p-5 flex flex-col h-full border-l border-app-line pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]" onclick="event.stopPropagation()">
+                <div class="w-10 h-1 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mb-3 cursor-pointer"></div>
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
                     <div class="flex items-center gap-2.5">
                         <div class="w-9 h-9 rounded-2xl bg-brand-gold/15 text-brand-gold flex items-center justify-center shadow-2xs">
@@ -291,7 +277,7 @@
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <div id="notif-list" class="flex-1 overflow-y-auto my-3 space-y-2.5 pr-0.5 max-h-[50vh]"></div>
+                <div id="notif-list" class="flex-1 overflow-y-auto my-3 space-y-2.5 pr-0.5"></div>
                 <button onclick="clearNotifications()" class="text-xs text-app-muted hover:text-brand-red text-center py-3 border-t border-app-line active:scale-95 font-medium flex items-center justify-center gap-1.5 bg-app-card/50 rounded-xl">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 清空所有紀錄
                 </button>
@@ -1826,9 +1812,9 @@
                             <button onclick="setFilterRange('MONTHLY')" class="py-1.5 rounded-lg font-medium ${filterRange === 'MONTHLY' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">月度總覽</button>
                             <button onclick="setFilterRange('CUSTOM')" class="py-1.5 rounded-lg font-medium ${filterRange === 'CUSTOM' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}">自訂區間</button>
                         </div>
-                        ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                        ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
-                        ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
+                        ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇日期:</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
+                        ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>選擇月份:</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
+                        ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>區間:</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>至</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 inline-flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
                             <button onclick="setFilterType('ALL')" class="flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}">全部種類</button>
                             <button onclick="setFilterType('支出')" class="flex-1 py-1 rounded-md text-center ${filterType === '支出' ? 'text-brand-red font-bold bg-app-surface' : 'text-app-muted'}">支出明細</button>
@@ -2379,7 +2365,6 @@
             const currentMonthStr = getLocalMonthStr(today);
             let triggeredCount = 0;
 
-            // 清除超過7天的舊通知
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
             const sevenDaysAgoStr = getLocalDateStr(sevenDaysAgo);
