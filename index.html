@@ -56,6 +56,8 @@
             transition: background-color 0.35s ease, color 0.35s ease;
             overflow: hidden;
             overscroll-behavior: none;
+            padding-bottom: 0 !important;
+            margin-bottom: 0 !important;
         }
 
         body.modal-open {
@@ -80,6 +82,7 @@
             border-color: var(--phone-border);
             touch-action: none;
             overscroll-behavior: none;
+            padding-bottom: 0 !important;
         }
 
         @media (min-width: 640px) {
@@ -204,12 +207,12 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen theme-light" style="touch-action: none; overscroll-behavior: none;">
+<body class="flex items-center justify-center min-h-screen theme-light pb-0 mb-0" style="touch-action: none; overscroll-behavior: none;">
 
-    <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
+    <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <!-- Header Bar with Dynamic Island / Notch Safe Area Padding -->
-        <header class="px-5 pt-10 pb-2.5 sm:pt-2 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
+        <!-- Header Bar with Robust Safe Area Padding Against Notch/Dynamic Island -->
+        <header class="px-5 pt-[max(2.75rem,env(safe-area-inset-top))] pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -250,7 +253,7 @@
             </button>
         </div>
 
-        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0">
+        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0 pb-2">
             <button onclick="switchTab('home', true)" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-95">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium" data-i18n="nav_home">Dashboard</span>
@@ -1714,15 +1717,6 @@
             switchTabWithAnimation('details', 'none', false);
         }
 
-        function navigateToCategoryDetails(catName, assetCurr = 'ALL') {
-            filterAsset = assetCurr;
-            filterRange = 'RECENT30';
-            filterType = '支出';
-            filterCategoryName = catName;
-            filterSearchQuery = '';
-            switchTabWithAnimation('details', 'none', false);
-        }
-
         function navigateToSettingsBudget() {
             resetSettingsAccordions();
             isBudgetManageOpen = true;
@@ -1838,7 +1832,7 @@
                 document.getElementById('rec-date-val').value = todayStr;
                 document.getElementById('rec-date-btn-txt').innerText = todayStr;
                 document.getElementById('rec-asset-val').value = 'TWD';
-                document.getElementById('rec-asset-btn-txt').innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
+                document.getElementById('rec-asset-btn-txt').innerText = lang === 'en' ? 'TWD Account' : '台幣 (TWD)';
                 document.querySelectorAll('#recurring-modal .clear-btn').forEach(b => b.classList.add('hidden'));
             } else if (modalId === 'installment-modal') {
                 const form = document.getElementById('installment-form');
@@ -2708,7 +2702,7 @@
                         </div>
                         <div id="details-range-picker-box" class="${filterRange === 'RECENT30' ? 'hidden' : ''}">
                             ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Date:':'選擇日期:'}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
+                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${filterMonthDate}</span></button></div>` : ''}
                             ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Range:':'選擇區間:'}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${appData.language==='en'?'to':'至'}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
                         </div>
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
@@ -3308,16 +3302,7 @@
 
         function triggerRecTypePicker() {
             const lang = appData ? appData.language : 'en';
-            const currentVal = document.getElementById('rec-type-val').value;
-            const opts = [
-                { label: lang === 'en' ? 'Expense' : '支出', value: '支出' },
-                { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }
-            ];
-            const activeOpt = opts.find(o => o.value === currentVal) || opts[0];
-            const recTypeBtn = document.getElementById('rec-type-btn-txt');
-            if (recTypeBtn) recTypeBtn.innerText = activeOpt.label;
-
-            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', opts, currentVal);
+            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', [{ label: lang === 'en' ? 'Expense' : '支出', value: '支出' }, { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }], document.getElementById('rec-type-val').value);
         }
         function triggerRecAssetPicker() {
             const lang = appData ? appData.language : 'en';
@@ -3326,31 +3311,7 @@
             if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
             if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
             if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-            
-            const currentVal = document.getElementById('rec-asset-val').value;
-            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
-            if (targetOpt) {
-                document.getElementById('rec-asset-val').value = targetOpt.value;
-                const recAssetBtn = document.getElementById('rec-asset-btn-txt');
-                if (recAssetBtn) recAssetBtn.innerText = targetOpt.label;
-            }
-            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, targetOpt.value);
-        }
-        function triggerRecAssetPicker() {
-            const lang = appData ? appData.language : 'en';
-            const opts = [];
-            if (appData.enableTWD) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-            if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
-            if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
-            if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-            
-            const currentVal = document.getElementById('rec-asset-val').value;
-            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
-            if (targetOpt) {
-                document.getElementById('rec-asset-val').value = targetOpt.value;
-                document.getElementById('rec-asset-btn-txt').innerText = targetOpt.label;
-            }
-            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, currentVal);
+            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, document.getElementById('rec-asset-val').value);
         }
         function triggerTxAssetPicker() {
             const lang = appData ? appData.language : 'en';
@@ -3518,6 +3479,7 @@
                 localStorage.removeItem('wealth_app_data_v30_final');
                 appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
                 saveData(false);
+                switchTab('home', true);
                 const splash = document.getElementById('splash-screen');
                 if (splash) {
                     splash.style.opacity = '1';
@@ -3537,6 +3499,7 @@
                 appData.hasUnreadNotifications = false;
                 appData.budgets = {};
                 saveData(true);
+                switchTab('home', true);
                 updateHeaderDate();
                 showToast("Data Reset Complete", "All assets, transactions, and budgets cleared. Settings preserved.");
             }
