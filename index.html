@@ -105,12 +105,12 @@
         /* 專屬朦朧毛玻璃背景遮罩 */
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(44, 46, 43, 0.45);
+            background-color: rgba(44, 46, 43, 0.55);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(18, 19, 17, 0.65);
+            background-color: rgba(18, 19, 17, 0.72);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -547,7 +547,7 @@
                             <input type="radio" name="resetMode" value="all" class="mt-0.5 accent-brand-red">
                             <div>
                                 <span class="font-bold text-brand-red block text-xs" data-i18n="reset_opt2_title">重置所有資料與所有設定 (完全出廠預設)</span>
-                                <span class="text-[10px] text-app-red block leading-relaxed">徹底清空所有資產、交易紀錄、自訂分類、預算、主題及所有系統設定。</span>
+                                <span class="text-[10px] text-brand-red block leading-relaxed">徹底清空所有資產、交易紀錄、自訂分類、預算、主題及所有系統設定。</span>
                             </div>
                         </label>
                     </div>
@@ -1708,6 +1708,9 @@
             } else if (modalId === 'custom-option-modal') {
                 const newCatInput = document.getElementById('new-category-input');
                 if (newCatInput) newCatInput.value = '';
+            } else if (modalId === 'confirm-modal') {
+                const radioDataOnly = document.querySelector('input[name="resetMode"][value="dataOnly"]');
+                if (radioDataOnly) radioDataOnly.checked = true;
             }
         }
 
@@ -2212,6 +2215,9 @@
                 return `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ ${targetSym}${convertedAmt.toLocaleString('zh-TW', {maximumFractionDigits:2})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 ${assetKey.includes('STOCK') ? 'text-brand-blue' : 'text-brand-gold'}"></i></div>`;
             };
 
+            const showUsdToTwd = appData.enableUSD && appData.enableTWD;
+            const showUsdToMyr = appData.enableUSD && appData.enableMYR;
+
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
                     <div class="bg-app-card border border-brand-gold/40 rounded-2xl p-4 shadow-md relative overflow-hidden w-full">
@@ -2242,7 +2248,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">TWD</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()}</div>
-                                ${getAssetSubConversionText('TWD', appData.assets.TWD)}
+                                ${baseCurr === 'TWD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">台幣帳戶</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>` : getAssetSubConversionText('TWD', appData.assets.TWD)}
                             </div>
                         ` : ''}
                         ${appData.enableTWStock ? `
@@ -2252,7 +2258,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">TW Stock</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
-                                ${getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK)}
+                                ${baseCurr === 'TWD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">台股證券</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>` : getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK)}
                             </div>
                         ` : ''}
                         ${appData.enableUSD ? `
@@ -2262,7 +2268,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">USD</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()} USD</div>
-                                ${getAssetSubConversionText('USD', appData.assets.USD)}
+                                ${baseCurr === 'USD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">美金帳戶</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>` : getAssetSubConversionText('USD', appData.assets.USD)}
                             </div>
                         ` : ''}
                         ${appData.enableUSStock ? `
@@ -2272,7 +2278,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">US Stock</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()} USD</div>
-                                ${getAssetSubConversionText('US_STOCK', appData.assets.US_STOCK)}
+                                ${baseCurr === 'USD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">美股證券</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>` : getAssetSubConversionText('US_STOCK', appData.assets.US_STOCK)}
                             </div>
                         ` : ''}
                         ${appData.enableMYR ? `
@@ -2282,7 +2288,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">MYR</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
-                                ${getAssetSubConversionText('MYR', appData.assets.MYR || 0)}
+                                ${baseCurr === 'MYR' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">馬幣帳戶</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>` : getAssetSubConversionText('MYR', appData.assets.MYR || 0)}
                             </div>
                         ` : ''}
                     </div>
@@ -3293,26 +3299,15 @@
         async function executeResetData() {
             closeModal('confirm-modal');
             const resetMode = document.querySelector('input[name="resetMode"]:checked')?.value || 'dataOnly';
+            localStorage.removeItem('wealth_app_data_v22_final');
             if (resetMode === 'all') {
-                appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                saveData(true);
-                await updateExchangeRateAuto(false);
-                updateHeaderDate();
-                showToast("完全重置完成", "系統所有資料與所有設定已恢復為出廠預設狀態！");
-                openModal('welcome-setup-modal');
+                showToast("重置完成", "已恢復出廠預設狀態，即將重新載入...");
             } else {
-                appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
-                appData.transactions = [];
-                appData.recurringRules = [];
-                appData.installments = [];
-                appData.notifications = [];
-                appData.hasUnreadNotifications = false;
-                appData.budgets = {};
-                saveData(true);
-                updateHeaderDate();
-                showToast("資料重置完成", "所有資產、交易與預算資料已清空，設定已保留。");
-                openModal('welcome-setup-modal');
+                showToast("資料重置完成", "所有資料已清空，即將重新載入...");
             }
+            setTimeout(() => {
+                location.reload();
+            }, 500);
         }
     </script>
 </body>
