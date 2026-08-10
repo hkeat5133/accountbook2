@@ -208,8 +208,8 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <!-- Header Bar with Reduced Top Whitespace -->
-        <header class="px-5 pt-3 pb-2.5 sm:pt-2 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
+        <!-- Header Bar with Dynamic Island / Notch Safe Area Padding -->
+        <header class="px-5 pt-10 pb-2.5 sm:pt-2 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -1281,9 +1281,29 @@
                 appData.budgets = newBudgets;
             }
 
+            const recTypeVal = document.getElementById('rec-type-val')?.value || '支出';
+            const recTypeBtn = document.getElementById('rec-type-btn-txt');
+            if (recTypeBtn) {
+                if (recTypeVal === '支出') {
+                    recTypeBtn.innerText = lang === 'en' ? 'Expense' : '支出';
+                } else {
+                    recTypeBtn.innerText = lang === 'en' ? 'Deposit' : '存入';
+                }
+            }
+            const recAssetVal = document.getElementById('rec-asset-val')?.value || 'TWD';
+            const recAssetBtn = document.getElementById('rec-asset-btn-txt');
+            if (recAssetBtn) {
+                if (recAssetVal === 'TWD') {
+                    recAssetBtn.innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
+                } else if (recAssetVal === 'USD') {
+                    recAssetBtn.innerText = lang === 'en' ? 'USD Account' : '美金帳戶 (USD)';
+                } else if (recAssetVal === 'MYR') {
+                    recAssetBtn.innerText = lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)';
+                }
+            }
+
             saveData(false);
 
-            // Reopen app simulation effect
             const splash = document.getElementById('splash-screen');
             if (splash) {
                 splash.classList.remove('hidden');
@@ -1694,6 +1714,15 @@
             switchTabWithAnimation('details', 'none', false);
         }
 
+        function navigateToCategoryDetails(catName, assetCurr = 'ALL') {
+            filterAsset = assetCurr;
+            filterRange = 'RECENT30';
+            filterType = '支出';
+            filterCategoryName = catName;
+            filterSearchQuery = '';
+            switchTabWithAnimation('details', 'none', false);
+        }
+
         function navigateToSettingsBudget() {
             resetSettingsAccordions();
             isBudgetManageOpen = true;
@@ -1809,7 +1838,7 @@
                 document.getElementById('rec-date-val').value = todayStr;
                 document.getElementById('rec-date-btn-txt').innerText = todayStr;
                 document.getElementById('rec-asset-val').value = 'TWD';
-                document.getElementById('rec-asset-btn-txt').innerText = lang === 'en' ? 'TWD Account' : '台幣 (TWD)';
+                document.getElementById('rec-asset-btn-txt').innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
                 document.querySelectorAll('#recurring-modal .clear-btn').forEach(b => b.classList.add('hidden'));
             } else if (modalId === 'installment-modal') {
                 const form = document.getElementById('installment-form');
@@ -3279,7 +3308,16 @@
 
         function triggerRecTypePicker() {
             const lang = appData ? appData.language : 'en';
-            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', [{ label: lang === 'en' ? 'Expense' : '支出', value: '支出' }, { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }], document.getElementById('rec-type-val').value);
+            const currentVal = document.getElementById('rec-type-val').value;
+            const opts = [
+                { label: lang === 'en' ? 'Expense' : '支出', value: '支出' },
+                { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }
+            ];
+            const activeOpt = opts.find(o => o.value === currentVal) || opts[0];
+            const recTypeBtn = document.getElementById('rec-type-btn-txt');
+            if (recTypeBtn) recTypeBtn.innerText = activeOpt.label;
+
+            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', opts, currentVal);
         }
         function triggerRecAssetPicker() {
             const lang = appData ? appData.language : 'en';
@@ -3288,7 +3326,31 @@
             if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
             if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
             if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, document.getElementById('rec-asset-val').value);
+            
+            const currentVal = document.getElementById('rec-asset-val').value;
+            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
+            if (targetOpt) {
+                document.getElementById('rec-asset-val').value = targetOpt.value;
+                const recAssetBtn = document.getElementById('rec-asset-btn-txt');
+                if (recAssetBtn) recAssetBtn.innerText = targetOpt.label;
+            }
+            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, targetOpt.value);
+        }
+        function triggerRecAssetPicker() {
+            const lang = appData ? appData.language : 'en';
+            const opts = [];
+            if (appData.enableTWD) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
+            if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
+            if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
+            if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
+            
+            const currentVal = document.getElementById('rec-asset-val').value;
+            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
+            if (targetOpt) {
+                document.getElementById('rec-asset-val').value = targetOpt.value;
+                document.getElementById('rec-asset-btn-txt').innerText = targetOpt.label;
+            }
+            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, currentVal);
         }
         function triggerTxAssetPicker() {
             const lang = appData ? appData.language : 'en';
