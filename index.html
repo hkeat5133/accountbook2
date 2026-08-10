@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="app-html-title">Wealth Ledger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title id="app-html-title">智慧帳本</title>
 
     <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#c89b3c">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Wealth Ledger">
+    <meta name="apple-mobile-web-app-title" content="智慧帳本">
     <link rel="apple-touch-icon" href="./icon.png">
     <link rel="manifest" id="manifest-link">
 
@@ -208,8 +208,8 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <!-- Header Bar with Safe Dynamic Island / Notch Padding -->
-        <header class="px-5 pt-8 pb-3.5 sm:pt-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
+        <!-- Header Bar with Reduced Top Whitespace -->
+        <header class="px-5 pt-3 pb-2.5 sm:pt-2 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -265,7 +265,7 @@
             </button>
         </nav>
 
-        <!-- Splash Screen (Opening Screen) -->
+        <!-- Splash Screen -->
         <div id="splash-screen" class="absolute inset-0 bg-app-bg z-50 flex flex-col items-center justify-center transition-opacity duration-700">
             <div class="relative flex flex-col items-center animate-pop">
                 <div class="w-24 h-24 rounded-3xl bg-app-surface p-1 shadow-xl flex items-center justify-center mb-5 border border-brand-gold/40">
@@ -424,7 +424,7 @@
                         <div>
                             <label class="block text-app-muted mb-1" data-i18n="tx_stock_symbol">Stock Symbol / Name</label>
                             <div class="relative flex items-center">
-                                <input type="text" id="input-stock-symbol" placeholder="e.g., 2330 TSMC or AAPL" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
+                                <input type="text" id="input-stock-symbol" placeholder="e.g., 2330 TSMC or AAPL" data-i18n-placeholder="ph_stock_symbol" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none focus:border-brand-gold">
                                 <button type="button" onclick="clearInput('input-stock-symbol')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                             </div>
                         </div>
@@ -485,7 +485,7 @@
                         <div>
                             <label class="block text-app-muted mb-1" data-i18n="tx_note_label">Note</label>
                             <div class="relative flex items-center">
-                                <input type="text" id="input-note" placeholder="Optional..." oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none text-xs">
+                                <input type="text" id="input-note" placeholder="Optional..." data-i18n-placeholder="ph_note" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-app-main outline-none text-xs">
                                 <button type="button" onclick="clearInput('input-note')" class="clear-btn hidden absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                             </div>
                         </div>
@@ -592,7 +592,7 @@
                 <div id="custom-category-add-box" class="hidden pt-2 pb-2 border-t border-app-line space-y-2">
                     <label class="text-[10px] text-app-muted block font-medium" data-i18n="cat_add_label">+ Add Custom Category</label>
                     <div class="flex gap-1.5">
-                        <input type="text" id="new-category-input" placeholder="Enter new category name..." class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
+                        <input type="text" id="new-category-input" placeholder="Enter new category name..." data-i18n-placeholder="ph_new_cat" class="flex-1 bg-app-input border border-app-line rounded-xl px-2.5 py-1.5 text-xs text-app-main outline-none focus:border-brand-gold">
                         <button type="button" onclick="addNewCustomCategory()" class="bg-brand-gold text-white font-bold px-3 py-1.5 rounded-xl text-xs shrink-0 active:scale-95" data-i18n="btn_add">Add</button>
                     </div>
                 </div>
@@ -606,7 +606,7 @@
                     <i data-lucide="edit-3" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="cat_edit_title">Edit Category Name</span>
                 </h3>
                 <input type="hidden" id="edit-category-old-name">
-                <input type="text" id="edit-category-new-name" placeholder="Enter new category name..." class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-xs text-app-main outline-none focus:border-brand-gold">
+                <input type="text" id="edit-category-new-name" placeholder="Enter new category name..." data-i18n-placeholder="ph_new_cat" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2 text-xs text-app-main outline-none focus:border-brand-gold">
                 <div class="pt-2 flex gap-2">
                     <button type="button" onclick="closeModal('category-edit-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2 rounded-xl text-xs active:scale-95" data-i18n="btn_cancel">Cancel</button>
                     <button type="button" onclick="confirmEditCategory()" class="flex-1 bg-brand-gold text-white py-2 rounded-xl text-xs font-bold active:scale-95" data-i18n="btn_confirm">Confirm</button>
@@ -653,7 +653,7 @@
                 <form id="recurring-form" onsubmit="handleRecurringSubmit(event)" class="space-y-3 text-xs pb-2">
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="rec_name_label">Rule Name</label>
-                        <input type="text" id="rec-name" required placeholder="e.g., Rent, Subscription, Salary" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main outline-none focus:border-brand-gold text-xs">
+                        <input type="text" id="rec-name" required placeholder="e.g., Rent, Subscription, Salary" data-i18n-placeholder="ph_rec_name" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main outline-none focus:border-brand-gold text-xs">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -694,7 +694,7 @@
                 <form id="installment-form" onsubmit="handleInstallmentSubmit(event)" class="space-y-3 text-xs pb-2">
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="inst_name_label">Project Name</label>
-                        <input type="text" id="inst-name" required placeholder="e.g., MacBook Pro" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main outline-none focus:border-brand-gold text-xs">
+                        <input type="text" id="inst-name" required placeholder="e.g., MacBook Pro" data-i18n-placeholder="ph_inst_name" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main outline-none focus:border-brand-gold text-xs">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -779,6 +779,12 @@
                 clear_search: "清除搜尋 ✕",
                 clear_cat: "清除分類篩選",
                 search_placeholder: "搜尋股票代碼、備註、分類或金額...",
+                ph_search: "搜尋股票代碼、備註、分類或金額...",
+                ph_stock_symbol: "例：2330 台積電 或 AAPL",
+                ph_note: "可選填...",
+                ph_rec_name: "例：房租、訂閱費、月薪",
+                ph_inst_name: "例：MacBook Pro",
+                ph_new_cat: "輸入新分類名稱...",
                 asset_all: "全部資產 (All)",
                 asset_cash_group: "💵 現金帳戶",
                 asset_stock_group: "📈 股票證券帳戶",
@@ -786,7 +792,7 @@
                 usd_cash: "🇺🇸 美金現金",
                 myr_cash: "🇲🇾 馬幣現金",
                 tw_stock_lbl: "🇹🇼 台股證券",
-                us_stock_lbl: "🇺🇸 美股證券",
+                us_stock_lbl: "🇹🇼 美股證券",
                 r_30: "最近30筆",
                 r_day: "單日明細",
                 r_month: "月度總覽",
@@ -795,9 +801,6 @@
                 type_out: "支出明細",
                 type_in: "存入明細",
                 stock_portfolio_val: "股票組合估計總值",
-                stock_all_tab: "全部",
-                stock_tw_tab: "台股",
-                stock_us_tab: "美股",
                 settings_title: "系統設定",
                 back_home: "‹ 返回首頁",
                 acc_manage: "帳戶與幣別開關管理",
@@ -909,6 +912,12 @@
                 clear_search: "Clear ✕",
                 clear_cat: "Clear Category",
                 search_placeholder: "Search symbol, note, category...",
+                ph_search: "Search symbol, note, category...",
+                ph_stock_symbol: "e.g., 2330 TSMC or AAPL",
+                ph_note: "Optional...",
+                ph_rec_name: "e.g., Rent, Subscription, Salary",
+                ph_inst_name: "e.g., MacBook Pro",
+                ph_new_cat: "Enter new category name...",
                 asset_all: "All Assets",
                 asset_cash_group: "💵 Cash Accounts",
                 asset_stock_group: "📈 Stock Brokerages",
@@ -916,7 +925,7 @@
                 usd_cash: "🇺🇸 USD Cash",
                 myr_cash: "🇲🇾 MYR Cash",
                 tw_stock_lbl: "🇹🇼 TW Stocks",
-                us_stock_lbl: "🇺🇸 US Stocks",
+                us_stock_lbl: "🇹🇼 US Stocks",
                 r_30: "Last 30",
                 r_day: "Single Day",
                 r_month: "Monthly",
@@ -925,9 +934,6 @@
                 type_out: "Expenses",
                 type_in: "Deposits",
                 stock_portfolio_val: "Stock Portfolio Value",
-                stock_all_tab: "All",
-                stock_tw_tab: "TW Stocks",
-                stock_us_tab: "US Stocks",
                 settings_title: "SYSTEM SETTINGS",
                 back_home: "‹ Dashboard",
                 acc_manage: "Accounts & Currencies",
@@ -1126,7 +1132,7 @@
         }
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v28_final');
+            const saved = localStorage.getItem('wealth_app_data_v30_final');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -1202,7 +1208,7 @@
         }
 
         function saveData(shouldRender = true) {
-            localStorage.setItem('wealth_app_data_v28_final', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v30_final', JSON.stringify(appData));
             applyTheme();
             if (shouldRender) renderCurrentView();
         }
@@ -1276,10 +1282,25 @@
             }
 
             saveData(false);
-            updateHeaderDate();
-            applyTranslations();
-            renderAllPanels();
-            initPWAManifest();
+
+            // Reopen app simulation effect
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.remove('hidden');
+                void splash.offsetWidth;
+                splash.style.opacity = '1';
+            }
+
+            setTimeout(() => {
+                updateHeaderDate();
+                applyTranslations();
+                renderAllPanels();
+                initPWAManifest();
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.classList.add('hidden'), 700);
+                }
+            }, 600);
         }
 
         function setBaseCurrency(curr) {
@@ -1293,6 +1314,13 @@
                 if (key) {
                     const text = t(key);
                     if (text && text !== key) el.innerText = text;
+                }
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (key) {
+                    const text = t(key);
+                    if (text && text !== key) el.placeholder = text;
                 }
             });
             const searchInput = document.getElementById('details-search-input');
@@ -1404,7 +1432,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v28';
+                    const CACHE = 'wealth-ledger-v30';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -1461,7 +1489,7 @@
                     splash.style.opacity = '0';
                     setTimeout(() => splash.classList.add('hidden'), 700);
                 }
-            }, 1800); // 1.8s splash screen
+            }, 1800);
         };
 
         function completeWelcomeSetup() {
@@ -2348,7 +2376,6 @@
                             <div onclick="navigateToDetails('TWD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="twd_cash">${t('twd_cash')}</span></span>
-                                    <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">TWD</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()}</div>
                                 ${getAssetSubConversionText('TWD', appData.assets.TWD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TWD Account' : '台幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
@@ -2358,7 +2385,6 @@
                             <div onclick="navigateToDetails('TW_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="tw_stock_lbl">${t('tw_stock_lbl')}</span></span>
-                                    <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">TW Stock</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
                                 ${getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TW Stocks' : '台股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
@@ -2368,7 +2394,6 @@
                             <div onclick="navigateToDetails('USD')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="usd_cash">${t('usd_cash')}</span></span>
-                                    <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">USD</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()} USD</div>
                                 ${getAssetSubConversionText('USD', appData.assets.USD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'USD Account' : '美金帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
@@ -2378,7 +2403,6 @@
                             <div onclick="navigateToDetails('US_STOCK')" class="bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95">
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="us_stock_lbl">${t('us_stock_lbl')}</span></span>
-                                    <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">US Stock</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()} USD</div>
                                 ${getAssetSubConversionText('US_STOCK', appData.assets.US_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'US Stocks' : '美股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
@@ -2388,7 +2412,6 @@
                             <div onclick="navigateToDetails('MYR')" class="bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95">
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="myr_cash">${t('myr_cash')}</span></span>
-                                    <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">MYR</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
                                 ${getAssetSubConversionText('MYR', appData.assets.MYR || 0) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'MYR Account' : '馬幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
@@ -2608,7 +2631,7 @@
 
                         <div class="relative flex items-center">
                             <i data-lucide="search" class="w-3.5 h-3.5 text-app-muted absolute left-3 pointer-events-none"></i>
-                            <input type="text" id="details-search-input" value="${filterSearchQuery}" placeholder="${t('search_placeholder')}" oninput="handleDetailsSearch(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-8 pr-8 py-2 text-xs text-app-main outline-none focus:border-brand-gold transition-all">
+                            <input type="text" id="details-search-input" value="${filterSearchQuery}" placeholder="${t('search_placeholder')}" data-i18n-placeholder="ph_search" oninput="handleDetailsSearch(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-8 pr-8 py-2 text-xs text-app-main outline-none focus:border-brand-gold transition-all">
                             <button type="button" id="details-search-clear-btn" onclick="clearDetailsSearch()" class="${filterSearchQuery ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                         </div>
 
@@ -2656,7 +2679,7 @@
                         </div>
                         <div id="details-range-picker-box" class="${filterRange === 'RECENT30' ? 'hidden' : ''}">
                             ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Date:':'選擇日期:'}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${filterMonthDate}</span></button></div>` : ''}
+                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
                             ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Range:':'選擇區間:'}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${appData.language==='en'?'to':'至'}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
                         </div>
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
@@ -2723,7 +2746,6 @@
                                 <div class="min-w-0">
                                     <div class="font-bold text-xs text-app-main flex items-center gap-1.5 truncate">
                                         <span class="truncate">${h.symbol}</span>
-                                        <span class="text-[9px] px-1.5 py-0.2 rounded font-mono shrink-0 border ${isTW ? 'bg-app-surface text-brand-blue border-brand-blue/30' : 'bg-app-surface text-brand-gold border-brand-gold/30'}">${isTW ? (appData.language==='en'?'TW':'台股') : (appData.language==='en'?'US':'美股')}</span>
                                     </div>
                                     <div class="text-[10px] text-app-muted mt-0.5 font-mono truncate">${h.totalShares.toLocaleString()} ${appData.language==='en'?'shrs':'股'} • ${appData.language==='en'?'Avg':'均價'} ${currencySymbol}${Number(avgCost).toLocaleString()}</div>
                                 </div>
@@ -2828,7 +2850,7 @@
                 <div class="animate-fade space-y-4 w-full">
                     <div class="bg-app-card border border-brand-blue/40 rounded-2xl p-4 shadow-md relative overflow-hidden w-full">
                         <div class="flex justify-between items-center mb-1">
-                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1"><span data-i18n="stock_portfolio_val">${t('stock_portfolio_val')}</span> <span class="font-mono text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-bold">(${baseCurr})</span></h3>
+                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1.5"><span data-i18n="stock_portfolio_val">${t('stock_portfolio_val')}</span> <span class="font-mono text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-bold">(${baseCurr})</span></h3>
                             <span class="bg-app-surface text-brand-blue px-2.5 py-0.5 rounded-full text-[10px] border border-brand-blue/30 font-mono">${holdingsList.length} ${appData.language==='en'?'symbols':'檔標的'}</span>
                         </div>
                         <div class="text-3xl font-extrabold text-brand-blue tracking-tight font-mono">${baseCurrSymbol} ${totalStockVal.toLocaleString('zh-TW', {maximumFractionDigits: 2})}</div>
@@ -3431,8 +3453,19 @@
             closeModal('confirm-modal');
             const resetMode = document.querySelector('input[name="resetMode"]:checked')?.value || 'dataOnly';
             if (resetMode === 'all') {
-                localStorage.removeItem('wealth_app_data_v28_final');
-                location.reload();
+                localStorage.removeItem('wealth_app_data_v30_final');
+                appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                saveData(false);
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.style.opacity = '1';
+                    splash.classList.remove('hidden');
+                    setTimeout(() => {
+                        splash.style.opacity = '0';
+                        setTimeout(() => splash.classList.add('hidden'), 700);
+                    }, 1800);
+                }
+                openModal('welcome-setup-modal');
             } else {
                 appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
                 appData.transactions = [];
