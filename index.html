@@ -102,15 +102,15 @@
             to { opacity: 0; }
         }
 
-        /* 改為柔和不透明/磨砂淺色背景，取代原本的黑色背景 */
+        /* 專屬朦朧毛玻璃背景遮罩 */
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(246, 244, 238, 0.88);
+            background-color: rgba(44, 46, 43, 0.55);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(28, 29, 27, 0.88);
+            background-color: rgba(18, 19, 17, 0.72);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -2156,6 +2156,18 @@
                 return valInUSD;
             };
 
+            const convertAssetToTargetCurr = (amount, fromAssetKey, targetCurr) => {
+                let valInUSD = 0;
+                if (fromAssetKey === 'TWD' || fromAssetKey === 'TW_STOCK') valInUSD = amount / usdRate;
+                else if (fromAssetKey === 'USD' || fromAssetKey === 'US_STOCK') valInUSD = amount;
+                else if (fromAssetKey === 'MYR') valInUSD = amount * myrToUsd;
+
+                if (targetCurr === 'USD') return valInUSD;
+                if (targetCurr === 'TWD') return valInUSD * usdRate;
+                if (targetCurr === 'MYR') return valInUSD / myrToUsd;
+                return valInUSD;
+            };
+
             const twdVal = appData.enableTWD ? convertToAssetCurr(appData.assets.TWD, 'TWD') : 0;
             const twStockVal = appData.enableTWStock ? convertToAssetCurr(appData.assets.TW_STOCK, 'TW_STOCK') : 0;
             const usdCashVal = appData.enableUSD ? convertToAssetCurr(appData.assets.USD, 'USD') : 0;
@@ -2164,6 +2176,7 @@
 
             const grandTotal = twdVal + twStockVal + usdCashVal + usStockVal + myrVal;
             const baseCurrSymbol = baseCurr === 'USD' ? 'USD $' : (baseCurr === 'MYR' ? 'RM ' : 'NT$');
+            const baseCurrShort = baseCurr === 'USD' ? 'USD' : (baseCurr === 'MYR' ? 'MYR' : 'NTD');
             
             const currentMonthStr = getLocalMonthStr();
             const monthTxs = appData.transactions.filter(tx => tx.type === '支出' && tx.date.startsWith(currentMonthStr));
@@ -2187,12 +2200,24 @@
                 });
             }
 
+            const getAssetSubConversionText = (assetKey, assetAmount) => {
+                let assetCurrCode = 'TWD';
+                if (assetKey === 'USD' || assetKey === 'US_STOCK') assetCurrCode = 'USD';
+                else if (assetKey === 'MYR') assetCurrCode = 'MYR';
+
+                if (assetCurrCode === baseCurr) return '';
+
+                const convertedAmt = convertAssetToTargetCurr(assetAmount, assetKey, baseCurr);
+                let targetSym = baseCurr === 'USD' ? 'USD $' : (baseCurr === 'MYR' ? 'RM ' : 'NT$ ');
+                return `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ ${targetSym}${convertedAmt.toLocaleString('zh-TW', {maximumFractionDigits:2})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 ${assetKey.includes('STOCK') ? 'text-brand-blue' : 'text-brand-gold'}"></i></div>`;
+            };
+
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
                     <div class="bg-app-card border border-brand-gold/40 rounded-2xl p-4 shadow-md relative overflow-hidden w-full">
                         <div class="flex justify-between items-start mb-1">
                             <span onclick="navigateToDetails('ALL')" class="text-xs text-app-muted flex items-center gap-1 font-medium cursor-pointer hover:text-brand-gold" data-i18n="net_asset">
-                                淨資產總額估算 (${baseCurr}) <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i>
+                                淨資產總額估算 (${baseCurrShort}) <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i>
                             </span>
                             <button onclick="updateExchangeRateAuto(true)" title="即時刷新匯率" class="bg-app-surface text-brand-gold p-1.5 rounded-xl border border-brand-gold/30 active:scale-90 hover:scale-110 shadow-2xs">
                                 <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
@@ -2217,7 +2242,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">TWD</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()}</div>
-                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ ${baseCurrSymbol} ${convertToAssetCurr(appData.assets.TWD, 'TWD').toLocaleString('zh-TW', {maximumFractionDigits:2})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
+                                ${baseCurr === 'TWD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">台幣帳戶</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>` : getAssetSubConversionText('TWD', appData.assets.TWD)}
                             </div>
                         ` : ''}
                         ${appData.enableTWStock ? `
@@ -2227,7 +2252,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">TW Stock</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
-                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ ${baseCurrSymbol} ${convertToAssetCurr(appData.assets.TW_STOCK, 'TW_STOCK').toLocaleString('zh-TW', {maximumFractionDigits:2})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>
+                                ${baseCurr === 'TWD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">台股證券</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>` : getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK)}
                             </div>
                         ` : ''}
                         ${appData.enableUSD ? `
@@ -2237,7 +2262,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">USD</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()} USD</div>
-                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ ${baseCurrSymbol} ${convertToAssetCurr(appData.assets.USD, 'USD').toLocaleString('zh-TW', {maximumFractionDigits:2})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
+                                ${baseCurr === 'USD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">美金帳戶</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>` : getAssetSubConversionText('USD', appData.assets.USD)}
                             </div>
                         ` : ''}
                         ${appData.enableUSStock ? `
@@ -2247,7 +2272,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-blue px-1.5 py-0.5 rounded border border-brand-blue/30 font-mono">US Stock</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()} USD</div>
-                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ ${baseCurrSymbol} ${convertToAssetCurr(appData.assets.US_STOCK, 'US_STOCK').toLocaleString('zh-TW', {maximumFractionDigits:2})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>
+                                ${baseCurr === 'USD' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">美股證券</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>` : getAssetSubConversionText('US_STOCK', appData.assets.US_STOCK)}
                             </div>
                         ` : ''}
                         ${appData.enableMYR ? `
@@ -2257,7 +2282,7 @@
                                     <span class="text-[10px] bg-app-surface text-brand-gold px-1.5 py-0.5 rounded border border-brand-gold/30 font-mono">MYR</span>
                                 </div>
                                 <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
-                                <div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">≈ ${baseCurrSymbol} ${convertToAssetCurr(appData.assets.MYR || 0, 'MYR').toLocaleString('zh-TW', {maximumFractionDigits:2})}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>
+                                ${baseCurr === 'MYR' ? `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">馬幣帳戶</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>` : getAssetSubConversionText('MYR', appData.assets.MYR || 0)}
                             </div>
                         ` : ''}
                     </div>
@@ -2532,7 +2557,7 @@
                         </div>
                         <div id="details-range-picker-box" class="${filterRange === 'RECENT30' ? 'hidden' : ''}">
                             ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Date:':'選擇日期:'}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
+                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${filterMonthDate}</span></button></div>` : ''}
                             ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Range:':'選擇區間:'}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${appData.language==='en'?'to':'至'}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
                         </div>
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
