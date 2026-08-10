@@ -2,15 +2,15 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Wealth Ledger - Personal Finance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="app-html-title">智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#c89b3c">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Wealth Ledger">
+    <meta name="apple-mobile-web-app-title" content="智慧帳本">
     <link rel="apple-touch-icon" href="./icon.png">
     <link rel="manifest" id="manifest-link">
 
@@ -49,7 +49,7 @@
         body {
             background-color: var(--bg-app);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
@@ -102,7 +102,6 @@
             to { opacity: 0; }
         }
 
-        /* 專屬朦朧毛玻璃背景遮罩 */
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             background-color: rgba(246, 244, 238, 0.72);
@@ -266,7 +265,7 @@
             </button>
         </nav>
 
-        <!-- Splash Screen -->
+        <!-- Splash Screen (Opening Screen) -->
         <div id="splash-screen" class="absolute inset-0 bg-app-bg z-50 flex flex-col items-center justify-center transition-opacity duration-700">
             <div class="relative flex flex-col items-center animate-pop">
                 <div class="w-24 h-24 rounded-3xl bg-app-surface p-1 shadow-xl flex items-center justify-center mb-5 border border-brand-gold/40">
@@ -291,13 +290,13 @@
                     <div class="w-12 h-12 rounded-2xl bg-brand-gold/20 text-brand-gold flex items-center justify-center mx-auto mb-2">
                         <i data-lucide="globe" class="w-6 h-6"></i>
                     </div>
-                    <h2 class="font-bold text-lg text-brand-gold" data-i18n="setup_title">Welcome to Wealth Ledger</h2>
-                    <p class="text-xs text-app-muted leading-relaxed" data-i18n="setup_subtitle">Choose language, base net worth currency, and enable your accounts</p>
+                    <h2 class="font-bold text-lg text-brand-gold" id="setup-title-el" data-i18n="setup_title">Welcome to Wealth Ledger</h2>
+                    <p class="text-xs text-app-muted leading-relaxed" id="setup-subtitle-el" data-i18n="setup_subtitle">Choose language, base net worth currency, and enable your accounts</p>
                 </div>
 
                 <div class="space-y-3 text-xs overflow-y-auto pr-1 flex-1 min-h-0">
                     <div>
-                        <label class="block text-app-muted mb-1 font-medium" data-i18n="setup_lang_label">Language / 語言選擇</label>
+                        <label class="block text-app-muted mb-1 font-medium" id="setup-lang-lbl-el" data-i18n="setup_lang_label">Language / 語言選擇</label>
                         <input type="hidden" id="setup-lang-val" value="en">
                         <button type="button" onclick="triggerWelcomeLangPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium active:scale-98">
                             <span id="setup-lang-btn-txt">English (英文)</span>
@@ -306,7 +305,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-app-muted mb-1 font-medium" data-i18n="setup_base_currency">Base Currency / 淨資產總額估算幣別</label>
+                        <label class="block text-app-muted mb-1 font-medium" id="setup-base-curr-lbl-el" data-i18n="setup_base_currency">Base Currency / 淨資產總額估算幣別</label>
                         <input type="hidden" id="setup-base-currency-val" value="USD">
                         <button type="button" onclick="triggerWelcomeBaseCurrencyPicker()" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main flex justify-between items-center font-medium active:scale-98">
                             <span id="setup-base-currency-btn-txt">USD ($)</span>
@@ -315,32 +314,32 @@
                     </div>
 
                     <div class="space-y-2 pt-1">
-                        <label class="block text-brand-gold font-bold text-xs" data-i18n="setup_accounts_label">Enable Accounts (Multi-select)</label>
+                        <label class="block text-brand-gold font-bold text-xs" id="setup-acc-lbl-el" data-i18n="setup_accounts_label">Enable Accounts (Multi-select)</label>
                         
                         <div class="space-y-1.5">
-                            <span class="text-[10px] text-app-muted font-bold block uppercase" data-i18n="asset_cash_group">💵 Cash Accounts</span>
+                            <span class="text-[10px] text-app-muted font-bold block uppercase" id="setup-cash-grp-el" data-i18n="asset_cash_group">💵 Cash Accounts</span>
                             <label class="flex justify-between items-center bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold transition-all">
-                                <span class="font-bold text-app-main text-xs" data-i18n="twd_cash">🇹🇼 TWD Cash</span>
+                                <span class="font-bold text-app-main text-xs" id="setup-twd-lbl-el" data-i18n="twd_cash">🇹🇼 TWD Cash</span>
                                 <input type="checkbox" id="setup-chk-twd" checked class="w-4 h-4 accent-brand-gold rounded">
                             </label>
                             <label class="flex justify-between items-center bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold transition-all">
-                                <span class="font-bold text-app-main text-xs" data-i18n="usd_cash">🇺🇸 USD Cash</span>
+                                <span class="font-bold text-app-main text-xs" id="setup-usd-lbl-el" data-i18n="usd_cash">🇺🇸 USD Cash</span>
                                 <input type="checkbox" id="setup-chk-usd" checked class="w-4 h-4 accent-brand-gold rounded">
                             </label>
                             <label class="flex justify-between items-center bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold transition-all">
-                                <span class="font-bold text-app-main text-xs" data-i18n="myr_cash">🇲🇾 MYR Cash</span>
+                                <span class="font-bold text-app-main text-xs" id="setup-myr-lbl-el" data-i18n="myr_cash">🇲🇾 MYR Cash</span>
                                 <input type="checkbox" id="setup-chk-myr" class="w-4 h-4 accent-brand-gold rounded">
                             </label>
                         </div>
 
                         <div class="space-y-1.5 pt-1">
-                            <span class="text-[10px] text-brand-blue font-bold block uppercase" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                            <span class="text-[10px] text-brand-blue font-bold block uppercase" id="setup-stock-grp-el" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
                             <label class="flex justify-between items-center bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-blue transition-all">
-                                <span class="font-bold text-app-main text-xs" data-i18n="tw_stock_lbl">🇹🇼 TW Stock</span>
+                                <span class="font-bold text-app-main text-xs" id="setup-twstock-lbl-el" data-i18n="tw_stock_lbl">🇹🇼 TW Stock</span>
                                 <input type="checkbox" id="setup-chk-twstock" checked class="w-4 h-4 accent-brand-blue rounded">
                             </label>
                             <label class="flex justify-between items-center bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-blue transition-all">
-                                <span class="font-bold text-app-main text-xs" data-i18n="us_stock_lbl">🇺🇸 US Stock</span>
+                                <span class="font-bold text-app-main text-xs" id="setup-usstock-lbl-el" data-i18n="us_stock_lbl">🇺🇸 US Stock</span>
                                 <input type="checkbox" id="setup-chk-usstock" checked class="w-4 h-4 accent-brand-blue rounded">
                             </label>
                         </div>
@@ -349,7 +348,7 @@
 
                 <div class="pt-3 shrink-0 border-t border-app-line mt-2">
                     <button type="button" onclick="completeWelcomeSetup()" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl active:scale-95 shadow-md text-xs flex items-center justify-center gap-1.5">
-                        <span data-i18n="setup_start_btn">Get Started</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <span id="setup-btn-el" data-i18n="setup_start_btn">Get Started</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
@@ -1132,7 +1131,7 @@
         }
 
         function loadAppData() {
-            const saved = localStorage.getItem('wealth_app_data_v26_final');
+            const saved = localStorage.getItem('wealth_app_data_v27_final');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -1208,7 +1207,7 @@
         }
 
         function saveData(shouldRender = true) {
-            localStorage.setItem('wealth_app_data_v26_final', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_data_v27_final', JSON.stringify(appData));
             applyTheme();
             if (shouldRender) renderCurrentView();
         }
@@ -1410,7 +1409,7 @@
         function registerInlineServiceWorker() {
             if ('serviceWorker' in navigator) {
                 const swScript = `
-                    const CACHE = 'wealth-ledger-v26';
+                    const CACHE = 'wealth-ledger-v27';
                     self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
                     self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
                     self.addEventListener('fetch', e => {
@@ -3220,6 +3219,33 @@
                     appData.language = val;
                 }
                 applyTranslations();
+                const setupTitleEl = document.getElementById('setup-title-el');
+                const setupSubEl = document.getElementById('setup-subtitle-el');
+                const setupLangLbl = document.getElementById('setup-lang-lbl-el');
+                const setupBaseCurrLbl = document.getElementById('setup-base-curr-lbl-el');
+                const setupAccLbl = document.getElementById('setup-acc-lbl-el');
+                const setupCashGrp = document.getElementById('setup-cash-grp-el');
+                const setupTwdLbl = document.getElementById('setup-twd-lbl-el');
+                const setupUsdLbl = document.getElementById('setup-usd-lbl-el');
+                const setupMyrLbl = document.getElementById('setup-myr-lbl-el');
+                const setupStockGrp = document.getElementById('setup-stock-grp-el');
+                const setupTwStockLbl = document.getElementById('setup-twstock-lbl-el');
+                const setupUsStockLbl = document.getElementById('setup-usstock-lbl-el');
+                const setupBtnEl = document.getElementById('setup-btn-el');
+
+                if (setupTitleEl) setupTitleEl.innerText = t('setup_title');
+                if (setupSubEl) setupSubEl.innerText = t('setup_subtitle');
+                if (setupLangLbl) setupLangLbl.innerText = t('setup_lang_label');
+                if (setupBaseCurrLbl) setupBaseCurrLbl.innerText = t('setup_base_currency');
+                if (setupAccLbl) setupAccLbl.innerText = t('setup_accounts_label');
+                if (setupCashGrp) setupCashGrp.innerText = t('asset_cash_group');
+                if (setupTwdLbl) setupTwdLbl.innerText = t('twd_cash');
+                if (setupUsdLbl) setupUsdLbl.innerText = t('usd_cash');
+                if (setupMyrLbl) setupMyrLbl.innerText = t('myr_cash');
+                if (setupStockGrp) setupStockGrp.innerText = t('asset_stock_group');
+                if (setupTwStockLbl) setupTwStockLbl.innerText = t('tw_stock_lbl');
+                if (setupUsStockLbl) setupUsStockLbl.innerText = t('us_stock_lbl');
+                if (setupBtnEl) setupBtnEl.innerText = t('setup_start_btn');
             } else if (currentOptionTarget === 'WELCOME_BASE_CURRENCY') {
                 document.getElementById('setup-base-currency-val').value = val;
                 document.getElementById('setup-base-currency-btn-txt').innerText = label;
@@ -3410,9 +3436,19 @@
             closeModal('confirm-modal');
             const resetMode = document.querySelector('input[name="resetMode"]:checked')?.value || 'dataOnly';
             if (resetMode === 'all') {
-                localStorage.removeItem('wealth_app_data_v26_final');
-                showToast("Factory Reset", "All data and settings cleared. Restarting...");
-                setTimeout(() => location.reload(), 400);
+                localStorage.removeItem('wealth_app_data_v27_final');
+                appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                saveData(true);
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.style.opacity = '1';
+                    splash.classList.remove('hidden');
+                    setTimeout(() => {
+                        splash.style.opacity = '0';
+                        setTimeout(() => splash.classList.add('hidden'), 700);
+                    }, 900);
+                }
+                openModal('welcome-setup-modal');
             } else {
                 appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
                 appData.transactions = [];
@@ -3424,7 +3460,6 @@
                 saveData(true);
                 updateHeaderDate();
                 showToast("Data Reset Complete", "All assets, transactions, and budgets cleared. Settings preserved.");
-                setTimeout(() => location.reload(), 400);
             }
         }
     </script>
