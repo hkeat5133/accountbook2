@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>智慧帳本 - 理財</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -192,13 +192,26 @@
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--border-line); border-radius: 4px; }
+
+        /* 超滑順 GPU 硬體加速切換軌道 */
+        #swipe-track-container {
+            touch-action: pan-y;
+            contain: content;
+        }
+
+        #swipe-slider {
+            backface-visibility: hidden;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen theme-light" style="touch-action: none; overscroll-behavior: none;">
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <header class="px-5 pb-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="padding-top: max(0.875rem, env(safe-area-inset-top)); touch-action: none; overscroll-behavior: none;">
+        <header class="px-5 py-3.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="系統設定">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -1003,6 +1016,7 @@
         let swipeCurrentX = 0;
         let isHorizontalSwiping = false;
         let isVerticalScrolling = false;
+        let rAFId = null;
         const tabIndexes = { 'home': 0, 'details': 1, 'stock-stats': 2 };
 
         function initRealtimeSwipe() {
@@ -1018,7 +1032,7 @@
                 isHorizontalSwiping = false;
                 isVerticalScrolling = false;
                 slider.style.transition = 'none';
-                slider.style.willChange = 'transform';
+                if (rAFId) cancelAnimationFrame(rAFId);
             }, { passive: true });
 
             trackContainer.addEventListener('touchmove', (e) => {
@@ -1029,9 +1043,9 @@
                 const deltaY = currentY - swipeStartY;
 
                 if (!isHorizontalSwiping && !isVerticalScrolling) {
-                    if (Math.abs(deltaY) > Math.abs(deltaX) * 0.8) {
+                    if (Math.abs(deltaY) > Math.abs(deltaX) * 0.75) {
                         isVerticalScrolling = true;
-                    } else if (Math.abs(deltaX) > 10) {
+                    } else if (Math.abs(deltaX) > 8) {
                         isHorizontalSwiping = true;
                     }
                 }
@@ -1039,23 +1053,30 @@
                 if (isHorizontalSwiping) {
                     if (e.cancelable) e.preventDefault();
                     swipeCurrentX = currentX;
-                    const containerWidth = trackContainer.offsetWidth || 380;
-                    const currentIdx = tabIndexes[currentTab] || 0;
-                    let effectiveDeltaX = deltaX;
-                    if ((currentIdx === 0 && deltaX > 0) || (currentIdx === 2 && deltaX < 0)) {
-                        effectiveDeltaX = deltaX * 0.3;
-                    }
-                    const offsetPct = - (currentIdx * (100 / 3)) + (effectiveDeltaX / containerWidth * (100 / 3));
-                    slider.style.transform = `translate3d(${offsetPct}%, 0, 0)`;
+                    
+                    if (rAFId) cancelAnimationFrame(rAFId);
+                    rAFId = requestAnimationFrame(() => {
+                        const containerWidth = trackContainer.offsetWidth || 380;
+                        const currentIdx = tabIndexes[currentTab] || 0;
+                        let effectiveDeltaX = deltaX;
+                        if ((currentIdx === 0 && deltaX > 0) || (currentIdx === 2 && deltaX < 0)) {
+                            effectiveDeltaX = deltaX * 0.25;
+                        }
+                        const offsetPct = - (currentIdx * (100 / 3)) + (effectiveDeltaX / containerWidth * (100 / 3));
+                        slider.style.transform = `translate3d(${offsetPct.toFixed(3)}%, 0, 0)`;
+                    });
                 }
             }, { passive: false });
 
             trackContainer.addEventListener('touchend', (e) => {
                 if (currentTab === 'settings') return;
-                slider.style.transition = 'transform 0.24s cubic-bezier(0.16, 1, 0.3, 1)';
+                if (rAFId) cancelAnimationFrame(rAFId);
+
+                // 使用自然順暢之 iOS 擬真順滑彈跳貝茲曲線
+                slider.style.transition = 'transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)';
                 if (isHorizontalSwiping) {
                     const deltaX = swipeCurrentX - swipeStartX;
-                    const threshold = 50;
+                    const threshold = 45;
                     const currentIdx = tabIndexes[currentTab] || 0;
 
                     if (deltaX < -threshold && currentIdx < 2) {
