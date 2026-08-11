@@ -211,7 +211,7 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <!-- Header Bar with Reduced Top Whitespace -->
+        <!-- Header Bar with Compact Top Padding -->
         <header class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
@@ -268,7 +268,6 @@
             </button>
         </nav>
 
-        <!-- Splash Screen -->
         <div id="splash-screen" class="absolute inset-0 bg-app-bg z-50 flex flex-col items-center justify-center transition-opacity duration-700">
             <div class="relative flex flex-col items-center animate-pop">
                 <div class="w-24 h-24 rounded-3xl bg-app-surface p-1 shadow-xl flex items-center justify-center mb-5 border border-brand-gold/40">
@@ -286,7 +285,6 @@
             </div>
         </div>
 
-        <!-- Welcome Setup Wizard Modal -->
         <div id="welcome-setup-modal" class="modal-backdrop absolute inset-0 z-[120] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface shadow-2xl p-6 flex flex-col border border-app-line max-w-sm rounded-3xl max-h-[88vh]" onclick="event.stopPropagation()">
                 <div class="text-center space-y-1 shrink-0 mb-3">
@@ -357,7 +355,6 @@
             </div>
         </div>
 
-        <!-- Notification Drawer -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 z-40 hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface shadow-2xl p-5 flex flex-col border border-app-line max-w-sm rounded-3xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
@@ -376,7 +373,6 @@
             </div>
         </div>
 
-        <!-- Add Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 z-40 hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center mb-4">
@@ -501,7 +497,6 @@
             </div>
         </div>
 
-        <!-- Toast Modal -->
         <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 z-50 hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
@@ -515,7 +510,6 @@
             </div>
         </div>
 
-        <!-- Confirm Reset Modal -->
         <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 z-[70] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -555,7 +549,6 @@
             </div>
         </div>
 
-        <!-- Confirm Delete Transaction Modal -->
         <div id="confirm-delete-modal" onclick="closeModal('confirm-delete-modal')" class="modal-backdrop absolute inset-0 z-[80] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -580,7 +573,6 @@
             </div>
         </div>
 
-        <!-- Custom Option Picker Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 z-[130] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -602,7 +594,6 @@
             </div>
         </div>
 
-        <!-- Category Edit Modal -->
         <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop absolute inset-0 z-[140] hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full space-y-3" onclick="event.stopPropagation()">
                 <h3 class="font-bold text-sm text-app-main flex items-center gap-1.5">
@@ -617,7 +608,6 @@
             </div>
         </div>
 
-        <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 z-[130] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -632,7 +622,6 @@
             </div>
         </div>
 
-        <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -646,7 +635,6 @@
             </div>
         </div>
 
-        <!-- Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -687,7 +675,6 @@
             </div>
         </div>
 
-        <!-- Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -722,7 +709,6 @@
             </div>
         </div>
 
-        <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -795,7 +781,7 @@
                 usd_cash: "🇺🇸 美金現金",
                 myr_cash: "🇲🇾 馬幣現金",
                 tw_stock_lbl: "🇹🇼 台股證券",
-                us_stock_lbl: "🇹🇼 美股證券",
+                us_stock_lbl: "🇺🇸 美股證券",
                 r_30: "最近30筆",
                 r_day: "單日明細",
                 r_month: "月度總覽",
@@ -928,7 +914,7 @@
                 usd_cash: "🇺🇸 USD Cash",
                 myr_cash: "🇲🇾 MYR Cash",
                 tw_stock_lbl: "🇹🇼 TW Stocks",
-                us_stock_lbl: "🇹🇼 US Stocks",
+                us_stock_lbl: "🇺🇸 US Stocks",
                 r_30: "Last 30",
                 r_day: "Single Day",
                 r_month: "Monthly",
@@ -2711,7 +2697,7 @@
                         </div>
                         <div id="details-range-picker-box" class="${filterRange === 'RECENT30' ? 'hidden' : ''}">
                             ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Date:':'選擇日期:'}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button></div>` : ''}
+                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${filterMonthDate}</span></button></div>` : ''}
                             ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Range:':'選擇區間:'}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${appData.language==='en'?'to':'至'}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
                         </div>
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
@@ -3311,19 +3297,8 @@
 
         function triggerRecTypePicker() {
             const lang = appData ? appData.language : 'en';
-            const currentVal = document.getElementById('rec-type-val').value;
-            const opts = [
-                { label: lang === 'en' ? 'Expense' : '支出', value: '支出' }, 
-                { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }
-            ];
-            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
-            if (targetOpt) {
-                document.getElementById('rec-type-val').value = targetOpt.value;
-                document.getElementById('rec-type-btn-txt').innerText = targetOpt.label;
-            }
-            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', opts, currentVal);
+            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', [{ label: lang === 'en' ? 'Expense' : '支出', value: '支出' }, { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }], document.getElementById('rec-type-val').value);
         }
-
         function triggerRecAssetPicker() {
             const lang = appData ? appData.language : 'en';
             const opts = [];
@@ -3331,16 +3306,8 @@
             if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
             if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
             if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-
-            const currentVal = document.getElementById('rec-asset-val').value;
-            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
-            if (targetOpt) {
-                document.getElementById('rec-asset-val').value = targetOpt.value;
-                document.getElementById('rec-asset-btn-txt').innerText = targetOpt.label;
-            }
-            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, currentVal);
+            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, document.getElementById('rec-asset-val').value);
         }
-
         function triggerTxAssetPicker() {
             const lang = appData ? appData.language : 'en';
             const opts = [];
@@ -3348,16 +3315,8 @@
             if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
             if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
             if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-
-            const currentVal = document.getElementById('input-asset-type').value;
-            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
-            if (targetOpt) {
-                document.getElementById('input-asset-type').value = targetOpt.value;
-                document.getElementById('tx-asset-btn-txt').innerText = targetOpt.label;
-            }
-            openOptionModal('TX_ASSET', lang === 'en' ? 'Select Account' : '選擇資產帳戶', opts, currentVal);
+            openOptionModal('TX_ASSET', lang === 'en' ? 'Select Account' : '選擇資產帳戶', opts, document.getElementById('input-asset-type').value);
         }
-
         function triggerTxMarketPicker() {
             const lang = appData ? appData.language : 'en';
             const opts = [];
@@ -3367,16 +3326,8 @@
                 showToast("Notice", lang === 'en' ? "No stock accounts enabled. Enable them in settings." : "目前沒有開啟任何股票帳戶，請至系統設定中開啟。");
                 return;
             }
-
-            const currentVal = document.getElementById('input-stock-market').value;
-            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
-            if (targetOpt) {
-                document.getElementById('input-stock-market').value = targetOpt.value;
-                document.getElementById('tx-market-btn-txt').innerText = targetOpt.label;
-            }
-            openOptionModal('TW_STOCK', lang === 'en' ? 'Select Stock Market' : '選擇股票市場', opts, currentVal);
+            openOptionModal('TW_STOCK', lang === 'en' ? 'Select Stock Market' : '選擇股票市場', opts, document.getElementById('input-stock-market').value);
         }
-
         function triggerTxCategoryPicker() {
             const txType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
             const lang = appData ? appData.language : 'en';
