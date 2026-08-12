@@ -211,7 +211,7 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <!-- Header Bar with Compact Top Padding -->
+        <!-- Header Bar -->
         <header class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
@@ -222,7 +222,7 @@
                 <h1 id="app-title-display" class="font-bold text-lg text-brand-gold tracking-wide flex items-center justify-center gap-2">
                     Wealth Ledger
                 </h1>
-                <p class="text-[11px] text-app-muted" id="header-date">August 10, 2026</p>
+                <p class="text-[11px] text-app-muted" id="header-date">August 12, 2026</p>
             </div>
             <div class="flex items-center gap-1.5">
                 <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
@@ -268,6 +268,7 @@
             </button>
         </nav>
 
+        <!-- Splash Screen -->
         <div id="splash-screen" class="absolute inset-0 bg-app-bg z-50 flex flex-col items-center justify-center transition-opacity duration-700">
             <div class="relative flex flex-col items-center animate-pop">
                 <div class="w-24 h-24 rounded-3xl bg-app-surface p-1 shadow-xl flex items-center justify-center mb-5 border border-brand-gold/40">
@@ -285,6 +286,7 @@
             </div>
         </div>
 
+        <!-- Welcome Setup Wizard Modal -->
         <div id="welcome-setup-modal" class="modal-backdrop absolute inset-0 z-[120] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface shadow-2xl p-6 flex flex-col border border-app-line max-w-sm rounded-3xl max-h-[88vh]" onclick="event.stopPropagation()">
                 <div class="text-center space-y-1 shrink-0 mb-3">
@@ -355,6 +357,7 @@
             </div>
         </div>
 
+        <!-- Notification Drawer -->
         <div id="notif-drawer" onclick="closeModal('notif-drawer')" class="modal-backdrop absolute inset-0 z-40 hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface shadow-2xl p-5 flex flex-col border border-app-line max-w-sm rounded-3xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-3 border-b border-app-line">
@@ -373,6 +376,7 @@
             </div>
         </div>
 
+        <!-- Add Transaction Modal -->
         <div id="transaction-modal" onclick="closeModal('transaction-modal')" class="modal-backdrop absolute inset-0 z-40 hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface p-5 border border-app-line overflow-y-auto shadow-2xl rounded-3xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center mb-4">
@@ -472,14 +476,7 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-app-muted mb-1" data-i18n="tx_date_label">Date</label>
-                            <button type="button" onclick="openCustomDatePicker('TX_INPUT')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2.5 text-app-main text-left flex items-center justify-between active:scale-98">
-                                <span class="flex items-center gap-1.5 font-mono text-xs">
-                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
-                                    <span id="input-date-display">2026-08-10</span>
-                                </span>
-                                <input type="hidden" id="input-date" value="2026-08-10">
-                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted shrink-0"></i>
-                            </button>
+                            <input type="date" id="input-date" required class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main font-mono text-xs outline-none focus:border-brand-gold">
                         </div>
                         <div>
                             <label class="block text-app-muted mb-1" data-i18n="tx_note_label">Note</label>
@@ -497,6 +494,7 @@
             </div>
         </div>
 
+        <!-- Toast Modal -->
         <div id="toast-modal" onclick="closeModal('toast-modal')" class="modal-backdrop absolute inset-0 z-50 hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-3" onclick="event.stopPropagation()">
                 <div class="w-10 h-10 rounded-full mx-auto flex items-center justify-center bg-brand-gold/20 text-brand-gold">
@@ -510,6 +508,7 @@
             </div>
         </div>
 
+        <!-- Confirm Reset Modal -->
         <div id="confirm-modal" onclick="closeModal('confirm-modal')" class="modal-backdrop absolute inset-0 z-[70] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -549,6 +548,7 @@
             </div>
         </div>
 
+        <!-- Confirm Delete Transaction Modal -->
         <div id="confirm-delete-modal" onclick="closeModal('confirm-delete-modal')" class="modal-backdrop absolute inset-0 z-[80] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -573,6 +573,7 @@
             </div>
         </div>
 
+        <!-- Custom Option Picker Modal -->
         <div id="custom-option-modal" onclick="closeModal('custom-option-modal')" class="modal-backdrop absolute inset-0 z-[130] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -594,6 +595,7 @@
             </div>
         </div>
 
+        <!-- Category Edit Modal -->
         <div id="category-edit-modal" onclick="closeModal('category-edit-modal')" class="modal-backdrop absolute inset-0 z-[140] hidden flex items-center justify-center p-6">
             <div class="modal-sheet bg-app-surface border border-app-line p-5 rounded-3xl shadow-2xl max-w-xs w-full space-y-3" onclick="event.stopPropagation()">
                 <h3 class="font-bold text-sm text-app-main flex items-center gap-1.5">
@@ -608,20 +610,7 @@
             </div>
         </div>
 
-        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 z-[130] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
-                    <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
-                        <i data-lucide="calendar" class="w-4 h-4"></i> Select Date
-                    </h3>
-                    <button type="button" onclick="closeModal('custom-date-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-                <div id="date-picker-content" class="py-1"></div>
-            </div>
-        </div>
-
+        <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -635,6 +624,7 @@
             </div>
         </div>
 
+        <!-- Recurring Rule Modal -->
         <div id="recurring-modal" onclick="closeModal('recurring-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -660,11 +650,7 @@
                     </div>
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="rec_date_label">Start Date (Monthly)</label>
-                        <button type="button" onclick="openCustomDatePicker('REC_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt">2026-08-10</span></span>
-                            <input type="hidden" id="rec-date-val" value="2026-08-10">
-                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
-                        </button>
+                        <input type="date" id="rec-date-val" required class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main font-mono text-xs outline-none focus:border-brand-gold">
                     </div>
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="rec_amount_label">Amount</label>
@@ -675,6 +661,7 @@
             </div>
         </div>
 
+        <!-- Installment Modal -->
         <div id="installment-modal" onclick="closeModal('installment-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -698,17 +685,14 @@
                     </div>
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="inst_date_label">Start Date (Monthly)</label>
-                        <button type="button" onclick="openCustomDatePicker('INST_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt">2026-08-10</span></span>
-                            <input type="hidden" id="inst-date-val" value="2026-08-10">
-                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
-                        </button>
+                        <input type="date" id="inst-date-val" required class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main font-mono text-xs outline-none focus:border-brand-gold">
                     </div>
                     <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-2 active:scale-95 shadow-sm text-xs" data-i18n="inst_submit_btn">Add Installment</button>
                 </form>
             </div>
         </div>
 
+        <!-- Export JPG Modal -->
         <div id="export-jpg-modal" onclick="closeModal('export-jpg-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
@@ -781,7 +765,7 @@
                 usd_cash: "🇺🇸 美金現金",
                 myr_cash: "🇲🇾 馬幣現金",
                 tw_stock_lbl: "🇹🇼 台股證券",
-                us_stock_lbl: "🇺🇸 美股證券",
+                us_stock_lbl: "🇹🇼 美股證券",
                 r_30: "最近30筆",
                 r_day: "單日明細",
                 r_month: "月度總覽",
@@ -914,7 +898,7 @@
                 usd_cash: "🇺🇸 USD Cash",
                 myr_cash: "🇲🇾 MYR Cash",
                 tw_stock_lbl: "🇹🇼 TW Stocks",
-                us_stock_lbl: "🇺🇸 US Stocks",
+                us_stock_lbl: "🇹🇼 US Stocks",
                 r_30: "Last 30",
                 r_day: "Single Day",
                 r_month: "Monthly",
@@ -1054,11 +1038,6 @@
         let filterMonthDate = getLocalMonthStr();
         let filterCategoryName = 'ALL';
         let filterSearchQuery = '';
-
-        let exportJpgCustomDate = getLocalDateStr();
-        let exportJpgStartDate = getLocalDateStr();
-        let exportJpgEndDate = getLocalDateStr();
-        let exportJpgMonthDate = getLocalMonthStr();
 
         let datePickerTarget = null;
         let currentOptionTarget = null;
@@ -1462,18 +1441,12 @@
             const todayStr = getLocalDateStr();
             const inputDateElem = document.getElementById('input-date');
             if (inputDateElem) inputDateElem.value = todayStr;
-            const inputDateDisplay = document.getElementById('input-date-display');
-            if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
 
             const recDateVal = document.getElementById('rec-date-val');
             if (recDateVal) recDateVal.value = todayStr;
-            const recDateBtn = document.getElementById('rec-date-btn-txt');
-            if (recDateBtn) recDateBtn.innerText = todayStr;
 
             const instDateVal = document.getElementById('inst-date-val');
             if (instDateVal) instDateVal.value = todayStr;
-            const instDateBtn = document.getElementById('inst-date-btn-txt');
-            if (instDateBtn) instDateBtn.innerText = todayStr;
 
             filterCustomDate = todayStr;
             filterStartDate = todayStr;
@@ -1802,7 +1775,6 @@
                     if (el) el.value = '';
                 });
                 document.getElementById('input-date').value = todayStr;
-                document.getElementById('input-date-display').innerText = todayStr;
                 document.querySelectorAll('#transaction-modal .clear-btn').forEach(b => b.classList.add('hidden'));
 
                 const defaultAssetTxt = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
@@ -1825,7 +1797,6 @@
                 document.getElementById('rec-type-val').value = '支出';
                 document.getElementById('rec-type-btn-txt').innerText = lang === 'en' ? 'Expense' : '支出';
                 document.getElementById('rec-date-val').value = todayStr;
-                document.getElementById('rec-date-btn-txt').innerText = todayStr;
                 document.getElementById('rec-asset-val').value = 'TWD';
                 document.getElementById('rec-asset-btn-txt').innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
                 document.querySelectorAll('#recurring-modal .clear-btn').forEach(b => b.classList.add('hidden'));
@@ -1833,7 +1804,6 @@
                 const form = document.getElementById('installment-form');
                 if (form) form.reset();
                 document.getElementById('inst-date-val').value = todayStr;
-                document.getElementById('inst-date-btn-txt').innerText = todayStr;
                 document.getElementById('inst-months').value = '12';
                 document.querySelectorAll('#installment-modal .clear-btn').forEach(b => b.classList.add('hidden'));
             } else if (modalId === 'export-jpg-modal') {
@@ -1849,6 +1819,209 @@
                 const defaultRadio = document.getElementById('reset-mode-data-only');
                 if (defaultRadio) defaultRadio.checked = true;
             }
+        }
+
+        function handleNativeDateChange(val, targetType) {
+            if (!val) return;
+            if (targetType === 'SINGLE_DAY') {
+                filterCustomDate = val;
+            } else if (targetType === 'MONTHLY') {
+                filterMonthDate = val.substring(0, 7);
+            } else if (targetType === 'CUSTOM_START') {
+                filterStartDate = val;
+            } else if (targetType === 'CUSTOM_END') {
+                filterEndDate = val;
+            }
+            updateDetailsViewDOM();
+        }
+
+        let currentPickerTarget = null;
+        let pickerCurrentViewDate = new Date();
+        
+        function openCustomDatePicker(target) {
+            currentPickerTarget = target;
+            const lang = appData ? appData.language : 'en';
+            let title = lang === 'en' ? 'Select Date' : '選擇日期';
+            if (target === 'MONTHLY' || target === 'EXP_MONTHLY') title = lang === 'en' ? 'Select Month' : '選擇月份';
+            const titleEl = document.getElementById('date-modal-title');
+            if (titleEl) titleEl.innerHTML = `<i data-lucide="calendar" class="w-4 h-4"></i> ${title}`;
+            
+            let initialDateStr = getLocalDateStr();
+            if (target === 'TX_INPUT') initialDateStr = document.getElementById('input-date')?.value || initialDateStr;
+            else if (target === 'REC_DATE') initialDateStr = document.getElementById('rec-date-val')?.value || initialDateStr;
+            else if (target === 'INST_DATE') initialDateStr = document.getElementById('inst-date-val')?.value || initialDateStr;
+            else if (target === 'SINGLE_DAY') initialDateStr = filterCustomDate;
+            else if (target === 'MONTHLY') initialDateStr = filterMonthDate + '-01';
+            else if (target === 'CUSTOM_START') initialDateStr = filterStartDate;
+            else if (target === 'CUSTOM_END') initialDateStr = filterEndDate;
+            else if (target === 'EXP_SINGLE_DAY') initialDateStr = exportJpgCustomDate;
+            else if (target === 'EXP_MONTHLY') initialDateStr = exportJpgMonthDate + '-01';
+            else if (target === 'EXP_CUSTOM_START') initialDateStr = exportJpgStartDate;
+            else if (target === 'EXP_CUSTOM_END') initialDateStr = exportJpgEndDate;
+
+            pickerCurrentViewDate = new Date(initialDateStr);
+            if (isNaN(pickerCurrentViewDate.getTime())) pickerCurrentViewDate = new Date();
+            
+            if (target === 'MONTHLY' || target === 'EXP_MONTHLY') {
+                renderMonthPicker(pickerCurrentViewDate.getFullYear());
+            } else {
+                renderCalendar(pickerCurrentViewDate.getFullYear(), pickerCurrentViewDate.getMonth());
+            }
+            
+            openModal('custom-date-modal');
+        }
+
+        function renderCalendar(year, month) {
+            const lang = appData ? appData.language : 'en';
+            
+            let d = new Date(year, month, 1);
+            year = d.getFullYear();
+            month = d.getMonth();
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            
+            const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthNamesTw = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+            const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
+            
+            const daysEn = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+            const daysTw = ["日", "一", "二", "三", "四", "五", "六"];
+            const daysLabels = lang === 'en' ? daysEn : daysTw;
+
+            let html = `
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <button type="button" onclick="renderCalendar(${year}, ${month - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                    <div class="font-bold text-app-main text-sm cursor-pointer hover:text-brand-gold transition-colors" onclick="renderMonthPicker(${year})">${year} ${monthsNames[month]}</div>
+                    <button type="button" onclick="renderCalendar(${year}, ${month + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                    ${daysLabels.map(dayLabel => `<div class="text-[10px] font-bold text-app-muted uppercase">${dayLabel}</div>`).join('')}
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center">
+            `;
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                html += `<div></div>`;
+            }
+
+            const todayStr = getLocalDateStr(new Date());
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const currentDate = new Date(year, month, i);
+                const dateStr = getLocalDateStr(currentDate);
+                const isToday = dateStr === todayStr;
+                html += `
+                    <button type="button" onclick="selectCustomDate('${dateStr}')" class="p-2 rounded-lg text-xs font-medium transition-all active:scale-90 ${isToday ? 'bg-brand-blue/10 text-brand-blue font-bold border border-brand-blue/30' : 'text-app-main hover:bg-app-card border border-transparent'}">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            html += `</div>`;
+            const content = document.getElementById('date-picker-content');
+            if(content) {
+                content.innerHTML = html;
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderMonthPicker(year) {
+            const lang = appData ? appData.language : 'en';
+            const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthNamesTw = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+            const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
+
+            let html = `
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <button type="button" onclick="renderMonthPicker(${year - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                    <div class="font-bold text-app-main text-sm">${year}</div>
+                    <button type="button" onclick="renderMonthPicker(${year + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+            `;
+
+            for (let i = 0; i < 12; i++) {
+                const monthStr = `${year}-${String(i+1).padStart(2, '0')}`;
+                if (currentPickerTarget === 'MONTHLY' || currentPickerTarget === 'EXP_MONTHLY') {
+                    html += `<button type="button" onclick="selectCustomDate('${monthStr}')" class="p-3 bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all">${monthsNames[i]}</button>`;
+                } else {
+                    html += `<button type="button" onclick="renderCalendar(${year}, ${i})" class="p-3 bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all">${monthsNames[i]}</button>`;
+                }
+            }
+            
+            html += `</div>`;
+            const content = document.getElementById('date-picker-content');
+            if(content) {
+                content.innerHTML = html;
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function selectCustomDate(dateStr) {
+            if (currentPickerTarget === 'TX_INPUT') {
+                const el = document.getElementById('input-date');
+                const dis = document.getElementById('input-date-display');
+                if (el) el.value = dateStr;
+                if (dis) dis.innerText = dateStr;
+            } else if (currentPickerTarget === 'REC_DATE') {
+                const el = document.getElementById('rec-date-val');
+                const dis = document.getElementById('rec-date-btn-txt');
+                if (el) el.value = dateStr;
+                if (dis) dis.innerText = dateStr;
+            } else if (currentPickerTarget === 'INST_DATE') {
+                const el = document.getElementById('inst-date-val');
+                const dis = document.getElementById('inst-date-btn-txt');
+                if (el) el.value = dateStr;
+                if (dis) dis.innerText = dateStr;
+            } else if (currentPickerTarget === 'SINGLE_DAY') {
+                handleNativeDateChange(dateStr, 'SINGLE_DAY');
+            } else if (currentPickerTarget === 'MONTHLY') {
+                handleNativeDateChange(dateStr, 'MONTHLY');
+            } else if (currentPickerTarget === 'CUSTOM_START') {
+                handleNativeDateChange(dateStr, 'CUSTOM_START');
+            } else if (currentPickerTarget === 'CUSTOM_END') {
+                handleNativeDateChange(dateStr, 'CUSTOM_END');
+            } else if (currentPickerTarget === 'EXP_SINGLE_DAY') {
+                exportJpgCustomDate = dateStr;
+                updateExportJpgRangeUI();
+            } else if (currentPickerTarget === 'EXP_MONTHLY') {
+                exportJpgMonthDate = dateStr.substring(0, 7);
+                updateExportJpgRangeUI();
+            } else if (currentPickerTarget === 'EXP_CUSTOM_START') {
+                exportJpgStartDate = dateStr;
+                updateExportJpgRangeUI();
+            } else if (currentPickerTarget === 'EXP_CUSTOM_END') {
+                exportJpgEndDate = dateStr;
+                updateExportJpgRangeUI();
+            }
+            closeModal('custom-date-modal');
+        }
+
+        function updateExportJpgRangeUI() {
+            const range = document.getElementById('export-jpg-range-select')?.value;
+            const box = document.getElementById('export-jpg-date-picker-box');
+            if (!box) return;
+            
+            const selRangeTxt = appData.language === 'en' ? 'Select Date:' : '選擇日期:';
+            const selMonthTxt = appData.language === 'en' ? 'Select Month:' : '選擇月份:';
+            const selRangeKw = appData.language === 'en' ? 'Range:' : '選擇區間:';
+            const toTxt = appData.language === 'en' ? 'to' : '至';
+
+            if (range === 'SINGLE_DAY') {
+                box.className = "flex items-center gap-2 text-xs text-app-muted mt-2";
+                box.innerHTML = `<span>${selRangeTxt}</span><button type="button" onclick="openCustomDatePicker('EXP_SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-2 justify-center w-full"><i data-lucide="calendar" class="w-4 h-4 text-brand-gold"></i> <span>${exportJpgCustomDate}</span></button>`;
+            } else if (range === 'MONTHLY') {
+                box.className = "flex items-center gap-2 text-xs text-app-muted mt-2";
+                box.innerHTML = `<span>${selMonthTxt}</span><button type="button" onclick="openCustomDatePicker('EXP_MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-2 justify-center w-full"><i data-lucide="calendar" class="w-4 h-4 text-brand-gold"></i> <span>${exportJpgMonthDate.substring(0,7)}</span></button>`;
+            } else if (range === 'CUSTOM') {
+                box.className = "flex items-center gap-1.5 text-xs text-app-muted mt-2";
+                box.innerHTML = `<button type="button" onclick="openCustomDatePicker('EXP_CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex-1 flex items-center gap-1.5 justify-center"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${exportJpgStartDate}</span></button><span class="shrink-0">${toTxt}</span><button type="button" onclick="openCustomDatePicker('EXP_CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex-1 flex items-center gap-1.5 justify-center"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${exportJpgEndDate}</span></button>`;
+            } else {
+                box.className = "hidden";
+                box.innerHTML = "";
+            }
+            if (window.lucide) lucide.createIcons();
         }
 
         function toggleNotificationDrawer() {
@@ -2600,13 +2773,13 @@
 
                 if (filterRange === 'SINGLE_DAY') {
                     datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selRangeTxt}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button>`;
+                    datePickerBox.innerHTML = `<span>${selRangeTxt}</span><input type="date" onchange="handleNativeDateChange(this.value, 'SINGLE_DAY')" value="${filterCustomDate}" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono outline-none focus:border-brand-gold">`;
                 } else if (filterRange === 'MONTHLY') {
                     datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selMonthTxt}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${filterMonthDate}</span></button>`;
+                    datePickerBox.innerHTML = `<span>${selMonthTxt}</span><input type="month" onchange="handleNativeDateChange(this.value, 'MONTHLY')" value="${filterMonthDate.substring(0,7)}" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono outline-none focus:border-brand-gold">`;
                 } else if (filterRange === 'CUSTOM') {
-                    datePickerBox.className = "flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selRangeKw}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${toTxt}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button>`;
+                    datePickerBox.className = "flex items-center gap-1.5 pt-1 text-xs text-app-muted w-full";
+                    datePickerBox.innerHTML = `<span>${selRangeKw}</span><input type="date" onchange="handleNativeDateChange(this.value, 'CUSTOM_START')" value="${filterStartDate}" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono outline-none focus:border-brand-gold"><span class="shrink-0">${toTxt}</span><input type="date" onchange="handleNativeDateChange(this.value, 'CUSTOM_END')" value="${filterEndDate}" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono outline-none focus:border-brand-gold">`;
                 } else {
                     datePickerBox.className = "hidden";
                     datePickerBox.innerHTML = "";
@@ -2696,9 +2869,9 @@
                             <button onclick="setFilterRange('CUSTOM')" id="btn-range-CUSTOM" class="py-1.5 rounded-lg font-medium ${filterRange === 'CUSTOM' ? 'bg-brand-blue text-white font-bold' : 'bg-app-surface text-app-muted'}" data-i18n="r_custom">${t('r_custom')}</button>
                         </div>
                         <div id="details-range-picker-box" class="${filterRange === 'RECENT30' ? 'hidden' : ''}">
-                            ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Date:':'選擇日期:'}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button></div>` : ''}
-                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span>${filterMonthDate}</span></button></div>` : ''}
-                            ${filterRange === 'CUSTOM' ? `<div class="flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Range:':'選擇區間:'}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${appData.language==='en'?'to':'至'}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button></div>` : ''}
+                            ${filterRange === 'SINGLE_DAY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Date:':'選擇日期:'}</span><input type="date" onchange="handleNativeDateChange(this.value, 'SINGLE_DAY')" value="${filterCustomDate}" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono outline-none focus:border-brand-gold"></div>` : ''}
+                            ${filterRange === 'MONTHLY' ? `<div class="flex items-center gap-2 pt-1 text-xs text-app-muted"><span>${appData.language==='en'?'Select Month:':'選擇月份:'}</span><input type="month" onchange="handleNativeDateChange(this.value, 'MONTHLY')" value="${filterMonthDate.substring(0,7)}" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono outline-none focus:border-brand-gold"></div>` : ''}
+                            ${filterRange === 'CUSTOM' ? `<div class="flex items-center gap-1.5 pt-1 text-xs text-app-muted w-full"><span>${appData.language==='en'?'Range:':'選擇區間:'}</span><input type="date" onchange="handleNativeDateChange(this.value, 'CUSTOM_START')" value="${filterStartDate}" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono outline-none focus:border-brand-gold"><span class="shrink-0">${appData.language==='en'?'to':'至'}</span><input type="date" onchange="handleNativeDateChange(this.value, 'CUSTOM_END')" value="${filterEndDate}" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono outline-none focus:border-brand-gold"></div>` : ''}
                         </div>
                         <div class="flex gap-2 text-xs border-t border-app-line pt-2">
                             <button onclick="setFilterType('ALL')" id="btn-type-ALL" class="flex-1 py-1 rounded-md text-center ${filterType === 'ALL' ? 'text-brand-gold font-bold bg-app-surface' : 'text-app-muted'}" data-i18n="type_all">${t('type_all')}</button>
@@ -3297,8 +3470,19 @@
 
         function triggerRecTypePicker() {
             const lang = appData ? appData.language : 'en';
-            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', [{ label: lang === 'en' ? 'Expense' : '支出', value: '支出' }, { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }], document.getElementById('rec-type-val').value);
+            const currentVal = document.getElementById('rec-type-val').value;
+            const opts = [
+                { label: lang === 'en' ? 'Expense' : '支出', value: '支出' }, 
+                { label: lang === 'en' ? 'Deposit' : '存入', value: '存入' }
+            ];
+            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
+            if (targetOpt) {
+                document.getElementById('rec-type-val').value = targetOpt.value;
+                document.getElementById('rec-type-btn-txt').innerText = targetOpt.label;
+            }
+            openOptionModal('REC_TYPE', lang === 'en' ? 'Select Type' : '選擇交易類型', opts, currentVal);
         }
+
         function triggerRecAssetPicker() {
             const lang = appData ? appData.language : 'en';
             const opts = [];
@@ -3306,8 +3490,16 @@
             if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
             if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
             if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, document.getElementById('rec-asset-val').value);
+
+            const currentVal = document.getElementById('rec-asset-val').value;
+            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
+            if (targetOpt) {
+                document.getElementById('rec-asset-val').value = targetOpt.value;
+                document.getElementById('rec-asset-btn-txt').innerText = targetOpt.label;
+            }
+            openOptionModal('REC_ASSET', lang === 'en' ? 'Select Account' : '選擇扣款帳戶', opts, currentVal);
         }
+
         function triggerTxAssetPicker() {
             const lang = appData ? appData.language : 'en';
             const opts = [];
@@ -3315,8 +3507,16 @@
             if (appData.enableUSD) opts.push({ label: lang === 'en' ? 'USD Account' : '美金帳戶 (USD)', value: 'USD' });
             if (appData.enableMYR) opts.push({ label: lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)', value: 'MYR' });
             if (opts.length === 0) opts.push({ label: lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)', value: 'TWD' });
-            openOptionModal('TX_ASSET', lang === 'en' ? 'Select Account' : '選擇資產帳戶', opts, document.getElementById('input-asset-type').value);
+
+            const currentVal = document.getElementById('input-asset-type').value;
+            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
+            if (targetOpt) {
+                document.getElementById('input-asset-type').value = targetOpt.value;
+                document.getElementById('tx-asset-btn-txt').innerText = targetOpt.label;
+            }
+            openOptionModal('TX_ASSET', lang === 'en' ? 'Select Account' : '選擇資產帳戶', opts, currentVal);
         }
+
         function triggerTxMarketPicker() {
             const lang = appData ? appData.language : 'en';
             const opts = [];
@@ -3326,8 +3526,16 @@
                 showToast("Notice", lang === 'en' ? "No stock accounts enabled. Enable them in settings." : "目前沒有開啟任何股票帳戶，請至系統設定中開啟。");
                 return;
             }
-            openOptionModal('TW_STOCK', lang === 'en' ? 'Select Stock Market' : '選擇股票市場', opts, document.getElementById('input-stock-market').value);
+
+            const currentVal = document.getElementById('input-stock-market').value;
+            const targetOpt = opts.find(o => o.value === currentVal) || opts[0];
+            if (targetOpt) {
+                document.getElementById('input-stock-market').value = targetOpt.value;
+                document.getElementById('tx-market-btn-txt').innerText = targetOpt.label;
+            }
+            openOptionModal('TW_STOCK', lang === 'en' ? 'Select Stock Market' : '選擇股票市場', opts, currentVal);
         }
+
         function triggerTxCategoryPicker() {
             const txType = document.querySelector('input[name="txType"]:checked')?.value || '支出';
             const lang = appData ? appData.language : 'en';
