@@ -3904,6 +3904,7 @@
             appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
             saveData(false);
             
+            // 自動向 API 抓取最新即時美金與馬幣匯率
             await updateExchangeRateAuto();
 
             switchTab('home', true);
@@ -3921,8 +3922,3 @@
     </script>
 </body>
 </html>
-```
-
-### 修改說明：
-- 在 `confirmExecuteFullReset()` 中加入了 `await updateExchangeRateAuto()`。
-- 當使用者執行「抹除所有內容與設定」後，系統清空舊資料的同時，會自動透過即時匯率 API 抓取並更新最新的美金（USD/TWD）與馬幣（USD/MYR）匯率，確保初始化後估算的淨資產即時準確。
