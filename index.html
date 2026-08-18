@@ -476,7 +476,14 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-app-muted mb-1" data-i18n="tx_date_label">Date</label>
-                            <input type="date" id="input-date" required class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main font-mono text-xs outline-none focus:border-brand-gold">
+                            <button type="button" onclick="openCustomDatePicker('TX_INPUT')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2.5 text-app-main text-left flex items-center justify-between active:scale-98">
+                                <span class="flex items-center gap-1.5 font-mono text-xs">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
+                                    <span id="input-date-display">2026-08-18</span>
+                                </span>
+                                <input type="hidden" id="input-date" value="2026-08-18">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted shrink-0"></i>
+                            </button>
                         </div>
                         <div>
                             <label class="block text-app-muted mb-1" data-i18n="tx_note_label">Note</label>
@@ -610,6 +617,21 @@
             </div>
         </div>
 
+        <!-- Custom Date Picker Modal -->
+        <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 z-[130] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                    <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
+                        <i data-lucide="calendar" class="w-4 h-4"></i> Select Date
+                    </h3>
+                    <button type="button" onclick="closeModal('custom-date-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div id="date-picker-content" class="py-1"></div>
+            </div>
+        </div>
+
         <!-- Stock History Modal -->
         <div id="stock-history-modal" onclick="closeModal('stock-history-modal')" class="modal-backdrop absolute inset-0 z-[60] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
@@ -650,7 +672,11 @@
                     </div>
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="rec_date_label">Start Date (Monthly)</label>
-                        <input type="date" id="rec-date-val" required class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main font-mono text-xs outline-none focus:border-brand-gold">
+                        <button type="button" onclick="openCustomDatePicker('REC_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs active:scale-98">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt">2026-08-18</span></span>
+                            <input type="hidden" id="rec-date-val" value="2026-08-18">
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
+                        </button>
                     </div>
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="rec_amount_label">Amount</label>
@@ -685,7 +711,11 @@
                     </div>
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="inst_date_label">Start Date (Monthly)</label>
-                        <input type="date" id="inst-date-val" required class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main font-mono text-xs outline-none focus:border-brand-gold">
+                        <button type="button" onclick="openCustomDatePicker('INST_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs active:scale-98">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt">2026-08-18</span></span>
+                            <input type="hidden" id="inst-date-val" value="2026-08-18">
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
+                        </button>
                     </div>
                     <button type="submit" class="w-full bg-brand-gold text-white font-bold py-3 rounded-xl mt-2 active:scale-95 shadow-sm text-xs" data-i18n="inst_submit_btn">Add Installment</button>
                 </form>
@@ -1038,6 +1068,11 @@
         let filterMonthDate = getLocalMonthStr();
         let filterCategoryName = 'ALL';
         let filterSearchQuery = '';
+
+        let exportJpgCustomDate = getLocalDateStr();
+        let exportJpgStartDate = getLocalDateStr();
+        let exportJpgEndDate = getLocalDateStr();
+        let exportJpgMonthDate = getLocalMonthStr();
 
         let datePickerTarget = null;
         let currentOptionTarget = null;
@@ -1441,12 +1476,18 @@
             const todayStr = getLocalDateStr();
             const inputDateElem = document.getElementById('input-date');
             if (inputDateElem) inputDateElem.value = todayStr;
+            const inputDateDisplay = document.getElementById('input-date-display');
+            if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
 
             const recDateVal = document.getElementById('rec-date-val');
             if (recDateVal) recDateVal.value = todayStr;
+            const recDateBtn = document.getElementById('rec-date-btn-txt');
+            if (recDateBtn) recDateBtn.innerText = todayStr;
 
             const instDateVal = document.getElementById('inst-date-val');
             if (instDateVal) instDateVal.value = todayStr;
+            const instDateBtn = document.getElementById('inst-date-btn-txt');
+            if (instDateBtn) instDateBtn.innerText = todayStr;
 
             filterCustomDate = todayStr;
             filterStartDate = todayStr;
@@ -1775,6 +1816,8 @@
                     if (el) el.value = '';
                 });
                 document.getElementById('input-date').value = todayStr;
+                const inputDateDisplay = document.getElementById('input-date-display');
+                if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
                 document.querySelectorAll('#transaction-modal .clear-btn').forEach(b => b.classList.add('hidden'));
 
                 const defaultAssetTxt = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
@@ -1797,6 +1840,8 @@
                 document.getElementById('rec-type-val').value = '支出';
                 document.getElementById('rec-type-btn-txt').innerText = lang === 'en' ? 'Expense' : '支出';
                 document.getElementById('rec-date-val').value = todayStr;
+                const recDateBtn = document.getElementById('rec-date-btn-txt');
+                if (recDateBtn) recDateBtn.innerText = todayStr;
                 document.getElementById('rec-asset-val').value = 'TWD';
                 document.getElementById('rec-asset-btn-txt').innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
                 document.querySelectorAll('#recurring-modal .clear-btn').forEach(b => b.classList.add('hidden'));
@@ -1804,6 +1849,8 @@
                 const form = document.getElementById('installment-form');
                 if (form) form.reset();
                 document.getElementById('inst-date-val').value = todayStr;
+                const instDateBtn = document.getElementById('inst-date-btn-txt');
+                if (instDateBtn) instDateBtn.innerText = todayStr;
                 document.getElementById('inst-months').value = '12';
                 document.querySelectorAll('#installment-modal .clear-btn').forEach(b => b.classList.add('hidden'));
             } else if (modalId === 'export-jpg-modal') {
@@ -1920,7 +1967,7 @@
 
             html += `</div>`;
             const content = document.getElementById('date-picker-content');
-            if(content) {
+            if (content) {
                 content.innerHTML = html;
             }
             if (window.lucide) lucide.createIcons();
@@ -1952,7 +1999,7 @@
             
             html += `</div>`;
             const content = document.getElementById('date-picker-content');
-            if(content) {
+            if (content) {
                 content.innerHTML = html;
             }
             if (window.lucide) lucide.createIcons();
@@ -2773,13 +2820,13 @@
 
                 if (filterRange === 'SINGLE_DAY') {
                     datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selRangeTxt}</span><input type="date" onchange="handleNativeDateChange(this.value, 'SINGLE_DAY')" value="${filterCustomDate}" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono outline-none focus:border-brand-gold">`;
+                    datePickerBox.innerHTML = `<span>${selRangeTxt}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button>`;
                 } else if (filterRange === 'MONTHLY') {
                     datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selMonthTxt}</span><input type="month" onchange="handleNativeDateChange(this.value, 'MONTHLY')" value="${filterMonthDate.substring(0,7)}" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono outline-none focus:border-brand-gold">`;
+                    datePickerBox.innerHTML = `<span>${selMonthTxt}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button>`;
                 } else if (filterRange === 'CUSTOM') {
-                    datePickerBox.className = "flex items-center gap-1.5 pt-1 text-xs text-app-muted w-full";
-                    datePickerBox.innerHTML = `<span>${selRangeKw}</span><input type="date" onchange="handleNativeDateChange(this.value, 'CUSTOM_START')" value="${filterStartDate}" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono outline-none focus:border-brand-gold"><span class="shrink-0">${toTxt}</span><input type="date" onchange="handleNativeDateChange(this.value, 'CUSTOM_END')" value="${filterEndDate}" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono outline-none focus:border-brand-gold">`;
+                    datePickerBox.className = "flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted";
+                    datePickerBox.innerHTML = `<span>${selRangeKw}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${toTxt}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button>`;
                 } else {
                     datePickerBox.className = "hidden";
                     datePickerBox.innerHTML = "";
