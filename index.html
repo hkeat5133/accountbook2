@@ -320,7 +320,7 @@
                         <label class="block text-brand-gold font-bold text-xs" id="setup-acc-lbl-el" data-i18n="setup_accounts_label">Enable Accounts (Multi-select)</label>
                         
                         <div class="space-y-1.5">
-                            <span class="text-[10px] text-app-muted font-bold block uppercase" id="setup-cash-grp-el" data-i18n="asset_cash_group">💵 Cash Accounts</span>
+                            <span class="text-[10px] text-app-muted font-bold block" id="setup-cash-grp-el" data-i18n="asset_cash_group">💵 Cash Accounts</span>
                             <label class="flex justify-between items-center bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold transition-all">
                                 <span class="font-bold text-app-main text-xs" id="setup-twd-lbl-el" data-i18n="twd_cash">🇹🇼 TWD Cash</span>
                                 <input type="checkbox" id="setup-chk-twd" checked class="w-4 h-4 accent-brand-gold rounded">
@@ -336,7 +336,7 @@
                         </div>
 
                         <div class="space-y-1.5 pt-1">
-                            <span class="text-[10px] text-brand-blue font-bold block uppercase" id="setup-stock-grp-el" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                            <span class="text-[10px] text-brand-blue font-bold block" id="setup-stock-grp-el" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
                             <label class="flex justify-between items-center bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-blue transition-all">
                                 <span class="font-bold text-app-main text-xs" id="setup-twstock-lbl-el" data-i18n="tw_stock_lbl">🇹🇼 TW Stock</span>
                                 <input type="checkbox" id="setup-chk-twstock" checked class="w-4 h-4 accent-brand-blue rounded">
@@ -2946,7 +2946,7 @@
                         
                         ${cashAssets.length > 0 ? `
                             <div class="space-y-1">
-                                <span class="text-[10px] font-bold text-brand-gold uppercase tracking-wider block px-0.5" data-i18n="asset_cash_group">${t('asset_cash_group')}</span>
+                                <span class="text-[10px] font-bold text-brand-gold block px-0.5" data-i18n="asset_cash_group">${t('asset_cash_group')}</span>
                                 <div class="flex gap-1 overflow-x-auto pb-0.5">
                                     ${cashAssets.map(a => `
                                         <button onclick="setFilterAsset('${a}')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-medium transition-all ${filterAsset === a ? 'bg-brand-gold text-white font-bold shadow-xs' : 'bg-app-surface text-app-muted hover:text-app-main border border-app-line'}">
@@ -2959,7 +2959,7 @@
 
                         ${stockAssets.length > 0 ? `
                             <div class="space-y-1">
-                                <span class="text-[10px] font-bold text-brand-blue uppercase tracking-wider block px-0.5" data-i18n="asset_stock_group">${t('asset_stock_group')}</span>
+                                <span class="text-[10px] font-bold text-brand-blue block px-0.5" data-i18n="asset_stock_group">${t('asset_stock_group')}</span>
                                 <div class="flex gap-1 overflow-x-auto pb-0.5">
                                     ${stockAssets.map(a => `
                                         <button onclick="setFilterAsset('${a}')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-medium transition-all ${filterAsset === a ? 'bg-brand-blue text-white font-bold shadow-xs' : 'bg-app-surface text-app-muted hover:text-app-main border border-app-line'}">
@@ -3306,111 +3306,48 @@
                             </div>
 
                             <div>
-                                <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
+                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                        <div class="flex-1 min-w-0 pr-1">
-                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TWD Cash' : '台幣現金'}</span>
-                                            <span class="text-[10px] text-app-muted font-mono">TWD</span>
-                                        </div>
-                                        <div class="flex items-center gap-2.5 shrink-0">
-                                            <div class="flex flex-col items-end">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                <input type="number" id="init-asset-TWD" value="${(appData.initialAssets && appData.initialAssets.TWD) ? appData.initialAssets.TWD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TWD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                            </div>
-                                            <div class="flex flex-col items-center">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                        </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TWD Cash Account (TWD)' : '台幣現金帳戶 (TWD)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
-
-                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                        <div class="flex-1 min-w-0 pr-1">
-                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'USD Cash' : '美金現金'}</span>
-                                            <span class="text-[10px] text-app-muted font-mono">USD</span>
-                                        </div>
-                                        <div class="flex items-center gap-2.5 shrink-0">
-                                            <div class="flex flex-col items-end">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                <input type="number" id="init-asset-USD" value="${(appData.initialAssets && appData.initialAssets.USD) ? appData.initialAssets.USD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('USD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                            </div>
-                                            <div class="flex flex-col items-center">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                        </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'USD Cash Account (USD)' : '美金現金帳戶 (USD)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
-
-                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                        <div class="flex-1 min-w-0 pr-1">
-                                            <span class="font-bold text-app-main text-xs block truncate">🇲🇾 ${appData.language === 'en' ? 'MYR Cash' : '馬幣現金'}</span>
-                                            <span class="text-[10px] text-app-muted font-mono">MYR</span>
-                                        </div>
-                                        <div class="flex items-center gap-2.5 shrink-0">
-                                            <div class="flex flex-col items-end">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                <input type="number" id="init-asset-MYR" value="${(appData.initialAssets && appData.initialAssets.MYR) ? appData.initialAssets.MYR : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('MYR', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                            </div>
-                                            <div class="flex flex-col items-center">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                        </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇲🇾 ${appData.language === 'en' ? 'MYR Cash Account (MYR)' : '馬幣現金帳戶 (MYR)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="pt-2">
-                                <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                        <div class="flex-1 min-w-0 pr-1">
-                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TW Stock' : '台股證券'}</span>
-                                            <span class="text-[10px] text-app-muted font-mono">TW Stock</span>
-                                        </div>
-                                        <div class="flex items-center gap-2.5 shrink-0">
-                                            <div class="flex flex-col items-end">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                <input type="number" id="init-asset-TW_STOCK" value="${(appData.initialAssets && appData.initialAssets.TW_STOCK) ? appData.initialAssets.TW_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TW_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                            </div>
-                                            <div class="flex flex-col items-center">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                        </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TW Stock Account (TW Stock)' : '台股證券帳戶 (TW Stock)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
-
-                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                        <div class="flex-1 min-w-0 pr-1">
-                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'US Stock' : '美股證券'}</span>
-                                            <span class="text-[10px] text-app-muted font-mono">US Stock</span>
-                                        </div>
-                                        <div class="flex items-center gap-2.5 shrink-0">
-                                            <div class="flex flex-col items-end">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                <input type="number" id="init-asset-US_STOCK" value="${(appData.initialAssets && appData.initialAssets.US_STOCK) ? appData.initialAssets.US_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('US_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                            </div>
-                                            <div class="flex flex-col items-center">
-                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                        </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'US Stock Account (US Stock)' : '美股證券帳戶 (US Stock)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
