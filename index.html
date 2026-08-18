@@ -1196,7 +1196,7 @@
         function triggerWelcomeLangPicker() {
             const opts = [
                 { label: 'English', value: 'en' },
-                { label: '繁體中文 (Traditional Chinese)', value: 'zh-TW' }
+                { label: '繁體中文', value: 'zh-TW' }
             ];
             openOptionModal('WELCOME_LANG', appData ? (appData.language === 'zh-TW' ? '選擇語言 / Language' : 'Select Language') : 'Select Language', opts, document.getElementById('setup-lang-val').value);
         }
@@ -1241,7 +1241,22 @@
             if (settingsPanel) settingsPanel.scrollTop = 0;
         }
 
+        function sortTransactions() {
+            if (!appData || !Array.isArray(appData.transactions)) return;
+            appData.transactions.sort((a, b) => {
+                const dateA = a.date || '';
+                const dateB = b.date || '';
+                if (dateB !== dateA) {
+                    return dateB.localeCompare(dateA);
+                }
+                const idA = a.id || '';
+                const idB = b.id || '';
+                return idB.localeCompare(idA);
+            });
+        }
+
         function saveData(shouldRender = true) {
+            sortTransactions();
             localStorage.setItem('wealth_app_data_v30_final', JSON.stringify(appData));
             applyTheme();
             if (shouldRender) renderCurrentView();
@@ -1415,10 +1430,24 @@
             }
 
             // Transaction Modal Category Button
-            const catVal = document.getElementById('input-category')?.value;
+            const catInput = document.getElementById('input-category');
             const catBtn = document.getElementById('tx-category-btn-txt');
-            if (catBtn && catVal) {
-                catBtn.innerText = catVal;
+            if (catInput && catBtn) {
+                let catVal = catInput.value;
+                if (lang === 'zh-TW') {
+                    const idx = DEFAULT_CATEGORIES_EN.indexOf(catVal);
+                    if (idx !== -1) {
+                        catVal = DEFAULT_CATEGORIES_TW[idx];
+                        catInput.value = catVal;
+                    }
+                } else if (lang === 'en') {
+                    const idx = DEFAULT_CATEGORIES_TW.indexOf(catVal);
+                    if (idx !== -1) {
+                        catVal = DEFAULT_CATEGORIES_EN[idx];
+                        catInput.value = catVal;
+                    }
+                }
+                catBtn.innerText = catVal || (lang === 'zh-TW' ? '🍱 餐飲美食' : '🍱 Food & Dining');
             }
 
             // Recurring Rule Modal Type Button
@@ -1562,14 +1591,6 @@
             initPWA();
             initRealtimeSwipe();
 
-            if (window.matchMedia) {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-                    if (appData && appData.theme === 'system') {
-                        applyTheme();
-                    }
-                });
-            }
-
             const todayStr = getLocalDateStr();
             const inputDateElem = document.getElementById('input-date');
             if (inputDateElem) inputDateElem.value = todayStr;
@@ -1591,6 +1612,7 @@
                 openModal('welcome-setup-modal');
             }
 
+            sortTransactions();
             updateHeaderDate();
             applyTranslations();
             checkRecurringTransactions();
@@ -2627,6 +2649,7 @@
 
         function renderHomeView(container) {
             if (!container) return;
+            sortTransactions();
             const baseCurr = appData.baseCurrency || 'USD';
             const usdRate = appData.usdExchangeRate || 32.5;
             const myrToUsd = appData.myrToUsdRate || 0.2222;
@@ -2842,6 +2865,7 @@
         }
 
         function getFilteredDetailsList() {
+            sortTransactions();
             let list = [...appData.transactions];
             if (filterAsset !== 'ALL') list = list.filter(tx => tx.asset === filterAsset);
             if (filterType !== 'ALL') list = list.filter(tx => tx.type === filterType);
