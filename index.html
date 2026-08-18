@@ -520,7 +520,7 @@
             <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center pb-2 border-b border-app-line">
                     <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
-                        <i data-lucide="alert-triangle" class="w-4 h-4"></i> <span data-i18n="reset_modal_title">Confirm Factory Reset?</span>
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i> <span data-i18n="reset_modal_title">Confirm Reset?</span>
                     </h3>
                     <button onclick="closeModal('confirm-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
                         <i data-lucide="x" class="w-5 h-5"></i>
@@ -542,7 +542,7 @@
                         <label class="flex items-start gap-2.5 bg-app-card p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-red transition-all">
                             <input type="radio" name="resetMode" value="all" class="mt-0.5 accent-brand-red">
                             <div>
-                                <span class="font-bold text-brand-red block text-xs" data-i18n="reset_opt2_title">Full Reset (Factory Default)</span>
+                                <span class="font-bold text-brand-red block text-xs" data-i18n="reset_opt2_title">Full Reset</span>
                                 <span class="text-[10px] text-brand-red block leading-relaxed" data-i18n="reset_opt2_desc">Completely wipes all assets, transactions, categories, budgets, and system settings.</span>
                             </div>
                         </label>
@@ -876,8 +876,8 @@
                 reset_modal_desc: "請選擇您要執行的重置範圍：",
                 reset_opt1_title: "重置所有資料",
                 reset_opt1_desc: "清除所有資產餘額、交易紀錄、固定支出與分期項目，但保留 App 標題、自訂分類與主題設定。",
-                reset_opt2_title: "重置所有資料與所有設定 (完全出廠預設)",
-                reset_opt2_desc: "徹底清空所有資產、交易紀錄、自訂分類、預算、主題及所有系統設定。",
+                reset_opt2_title: "抹除所有內容與設定",
+                reset_opt2_desc: "徹底清空所有資產、交易紀錄、自訂分類、預算、主題及所有系統設定，恢復初始狀態。",
                 btn_cancel: "取消",
                 reset_confirm_btn: "確定執行重置",
                 del_modal_title: "確認刪除交易紀錄？",
@@ -1007,11 +1007,11 @@
                 tx_submit_btn: "Confirm & Save",
                 toast_default_title: "System Notice",
                 toast_confirm_btn: "OK",
-                reset_modal_title: "Confirm Factory Reset?",
+                reset_modal_title: "Confirm Reset?",
                 reset_modal_desc: "Please choose your reset scope:",
                 reset_opt1_title: "Reset All Data",
                 reset_opt1_desc: "Clears balances, transactions, recurring rules, and installments. Preserves app title and categories.",
-                reset_opt2_title: "Full Reset (Factory Default)",
+                reset_opt2_title: "Full Reset",
                 reset_opt2_desc: "Completely wipes all assets, transactions, categories, budgets, and system settings.",
                 btn_cancel: "Cancel",
                 reset_confirm_btn: "Execute Reset",
