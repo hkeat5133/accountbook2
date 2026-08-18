@@ -816,6 +816,8 @@
                 theme_dark: "深色模式 Dark",
                 app_title_lbl: "自訂 App 標題名稱",
                 base_currency_lbl: "淨資產總額估算幣別",
+                initial_capital_lbl: "初始本金與帳戶餘額設定",
+                initial_capital_desc: "直接設定或調整目前已開啟帳戶的初始資產餘額：",
                 lang_label: "語言選擇 / Language",
                 save_btn: "儲存",
                 export_json: "匯出備份 (JSON)",
@@ -949,6 +951,8 @@
                 theme_dark: "Dark Mode",
                 app_title_lbl: "Custom App Title",
                 base_currency_lbl: "Base Net Worth Currency",
+                initial_capital_lbl: "Initial Balances & Principal",
+                initial_capital_desc: "Set or adjust current account starting balances:",
                 lang_label: "Language",
                 save_btn: "Save",
                 export_json: "Export Backup (JSON)",
@@ -1046,6 +1050,7 @@
             enableMYR: false,
             budgets: {},
             categories: [...DEFAULT_CATEGORIES_EN],
+            initialAssets: { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 },
             assets: { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 },
             recurringRules: [],
             installments: [],
@@ -1146,6 +1151,8 @@
                         parsed.budgets = {};
                     }
                     if (parsed.assets && parsed.assets.MYR === undefined) parsed.assets.MYR = 0;
+                    if (!parsed.initialAssets) parsed.initialAssets = { ...parsed.assets };
+                    if (parsed.initialAssets && parsed.initialAssets.MYR === undefined) parsed.initialAssets.MYR = 0;
                     if (parsed.enableTWD === undefined) parsed.enableTWD = true;
                     if (parsed.enableTWStock === undefined) parsed.enableTWStock = true;
                     if (parsed.enableUSD === undefined) parsed.enableUSD = true;
@@ -1350,6 +1357,50 @@
             if (searchInput) searchInput.placeholder = t('search_placeholder');
             const settingTitle = document.getElementById('setting-title');
             if (settingTitle) settingTitle.placeholder = appData.language === 'en' ? 'Wealth Ledger' : '智慧帳本';
+
+            updatePickerButtonLabels();
+        }
+
+        function updatePickerButtonLabels() {
+            const lang = (appData && appData.language) ? appData.language : 'en';
+
+            // Transaction Modal Asset Button
+            const txAssetVal = document.getElementById('input-asset-type')?.value || 'TWD';
+            const txAssetBtn = document.getElementById('tx-asset-btn-txt');
+            if (txAssetBtn) {
+                if (txAssetVal === 'TWD') txAssetBtn.innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
+                else if (txAssetVal === 'USD') txAssetBtn.innerText = lang === 'en' ? 'USD Account' : '美金帳戶 (USD)';
+                else if (txAssetVal === 'MYR') txAssetBtn.innerText = lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)';
+                else txAssetBtn.innerText = txAssetVal;
+            }
+
+            // Transaction Modal Market Button
+            const txMarketVal = document.getElementById('input-stock-market')?.value || 'TW_STOCK';
+            const txMarketBtn = document.getElementById('tx-market-btn-txt');
+            if (txMarketBtn) {
+                if (txMarketVal === 'TW_STOCK') txMarketBtn.innerText = lang === 'en' ? 'TW Stock (TWD)' : '台股 (TWD)';
+                else if (txMarketVal === 'US_STOCK') txMarketBtn.innerText = lang === 'en' ? 'US Stock (USD)' : '美股 (USD)';
+                else txMarketBtn.innerText = txMarketVal;
+            }
+
+            // Recurring Rule Modal Type Button
+            const recTypeVal = document.getElementById('rec-type-val')?.value || '支出';
+            const recTypeBtn = document.getElementById('rec-type-btn-txt');
+            if (recTypeBtn) {
+                if (recTypeVal === '支出' || recTypeVal === 'Expense') recTypeBtn.innerText = lang === 'en' ? 'Expense' : '支出';
+                else if (recTypeVal === '存入' || recTypeVal === 'Deposit') recTypeBtn.innerText = lang === 'en' ? 'Deposit' : '存入';
+                else recTypeBtn.innerText = recTypeVal;
+            }
+
+            // Recurring Rule Modal Asset Button
+            const recAssetVal = document.getElementById('rec-asset-val')?.value || 'TWD';
+            const recAssetBtn = document.getElementById('rec-asset-btn-txt');
+            if (recAssetBtn) {
+                if (recAssetVal === 'TWD') recAssetBtn.innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
+                else if (recAssetVal === 'USD') recAssetBtn.innerText = lang === 'en' ? 'USD Account' : '美金帳戶 (USD)';
+                else if (recAssetVal === 'MYR') recAssetBtn.innerText = lang === 'en' ? 'MYR Account' : '馬幣帳戶 (MYR)';
+                else recAssetBtn.innerText = recAssetVal;
+            }
         }
 
         async function updateExchangeRateAuto(isManual = false) {
@@ -1775,6 +1826,7 @@
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (!modal) return;
+            updatePickerButtonLabels();
             document.body.classList.add('modal-open');
             modal.classList.remove('hidden');
             modal.classList.remove('is-closing');
@@ -2391,6 +2443,18 @@
                 updateHeaderDate();
                 showToast(t('toast_default_title'), appData.language === 'en' ? 'App title updated.' : 'App 標題名稱已更新。');
             }
+        }
+
+        function saveSingleInitialAsset(assetKey, val) {
+            if (!appData.initialAssets) appData.initialAssets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
+            const rawVal = val !== undefined && val !== null ? val.toString().trim() : '';
+            const newInit = rawVal === '' ? 0 : (parseFloat(rawVal) || 0);
+            const oldInit = appData.initialAssets[assetKey] || 0;
+            const diff = newInit - oldInit;
+            appData.initialAssets[assetKey] = newInit;
+            appData.assets[assetKey] = (appData.assets[assetKey] || 0) + diff;
+            saveData(true);
+            showToast(t('toast_default_title'), appData.language === 'en' ? `Initial capital updated for ${assetKey}.` : `已更新 ${assetKey} 的初始本金。`);
         }
 
         function removeBudgetCategory(catName) {
@@ -3127,29 +3191,76 @@
                             <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
                         <div id="acc-content-account" class="${isAccountManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                            <div class="pb-2 border-b border-app-line space-y-2">
+                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
+                                <div class="grid grid-cols-3 gap-2 text-xs">
+                                    <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">USD ($)</button>
+                                    <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">TWD (NT$)</button>
+                                    <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">MYR (RM)</button>
+                                </div>
+                            </div>
+
                             <div>
                                 <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TWD Cash Account (TWD)' : '台幣現金帳戶 (TWD)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TWD Cash' : '台幣現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">TWD</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-TWD" value="${(appData.initialAssets && appData.initialAssets.TWD) ? appData.initialAssets.TWD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TWD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'USD Cash Account (USD)' : '美金現金帳戶 (USD)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'USD Cash' : '美金現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">USD</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-USD" value="${(appData.initialAssets && appData.initialAssets.USD) ? appData.initialAssets.USD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('USD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇲🇾 ${appData.language === 'en' ? 'MYR Cash Account (MYR)' : '馬幣現金帳戶 (MYR)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇲🇾 ${appData.language === 'en' ? 'MYR Cash' : '馬幣現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">MYR</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-MYR" value="${(appData.initialAssets && appData.initialAssets.MYR) ? appData.initialAssets.MYR : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('MYR', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -3157,19 +3268,44 @@
                             <div class="pt-2">
                                 <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TW Stock Account (TW Stock)' : '台股證券帳戶 (TW Stock)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TW Stock' : '台股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">TW Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-TW_STOCK" value="${(appData.initialAssets && appData.initialAssets.TW_STOCK) ? appData.initialAssets.TW_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TW_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'US Stock Account (US Stock)' : '美股證券帳戶 (US Stock)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'US Stock' : '美股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">US Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-US_STOCK" value="${(appData.initialAssets && appData.initialAssets.US_STOCK) ? appData.initialAssets.US_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('US_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -3324,15 +3460,6 @@
                                 <div class="grid grid-cols-2 gap-2 text-xs">
                                     <button onclick="setLanguage('en')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'en' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">English</button>
                                     <button onclick="setLanguage('zh-TW')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'zh-TW' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">繁體中文</button>
-                                </div>
-                            </div>
-
-                            <div class="pt-3 border-t border-app-line space-y-2">
-                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
-                                <div class="grid grid-cols-3 gap-2 text-xs">
-                                    <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">USD ($)</button>
-                                    <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">TWD (NT$)</button>
-                                    <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">MYR (RM)</button>
                                 </div>
                             </div>
 
@@ -3741,6 +3868,7 @@
                 }
                 openModal('welcome-setup-modal');
             } else {
+                appData.initialAssets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
                 appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
                 appData.transactions = [];
                 appData.recurringRules = [];
