@@ -1414,6 +1414,13 @@
                 else txMarketBtn.innerText = txMarketVal;
             }
 
+            // Transaction Modal Category Button
+            const catVal = document.getElementById('input-category')?.value;
+            const catBtn = document.getElementById('tx-category-btn-txt');
+            if (catBtn && catVal) {
+                catBtn.innerText = catVal;
+            }
+
             // Recurring Rule Modal Type Button
             const recTypeVal = document.getElementById('rec-type-val')?.value || '支出';
             const recTypeBtn = document.getElementById('rec-type-btn-txt');
@@ -1904,21 +1911,6 @@
                 const inputDateDisplay = document.getElementById('input-date-display');
                 if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
                 document.querySelectorAll('#transaction-modal .clear-btn').forEach(b => b.classList.add('hidden'));
-
-                const defaultAssetTxt = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
-                document.getElementById('input-asset-type').value = 'TWD';
-                document.getElementById('tx-asset-btn-txt').innerText = defaultAssetTxt;
-
-                const defaultMarketTxt = lang === 'en' ? 'TW Stock (TWD)' : '台股 (TWD)';
-                document.getElementById('input-stock-market').value = 'TW_STOCK';
-                document.getElementById('tx-market-btn-txt').innerText = defaultMarketTxt;
-                
-                const defaultCat = (appData && appData.categories && appData.categories[0]) ? appData.categories[0] : (lang === 'en' ? '🍱 Food & Dining' : '🍱 餐飲美食');
-                const catInput = document.getElementById('input-category');
-                const catBtnTxt = document.getElementById('tx-category-btn-txt');
-                if (catInput) catInput.value = defaultCat;
-                if (catBtnTxt) catBtnTxt.innerText = defaultCat;
-
             } else if (modalId === 'recurring-modal') {
                 const form = document.getElementById('recurring-form');
                 if (form) form.reset();
@@ -2276,21 +2268,7 @@
             openModal('transaction-modal');
             setModalMode(currentModalMode);
             setTxType(currentTxType);
-            const lang = appData ? appData.language : 'en';
-            
-            const defaultAssetTxt = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
-            document.getElementById('input-asset-type').value = 'TWD';
-            document.getElementById('tx-asset-btn-txt').innerText = defaultAssetTxt;
-
-            const defaultMarketTxt = lang === 'en' ? 'TW Stock (TWD)' : '台股 (TWD)';
-            document.getElementById('input-stock-market').value = 'TW_STOCK';
-            document.getElementById('tx-market-btn-txt').innerText = defaultMarketTxt;
-
-            const defaultCat = (appData && appData.categories && appData.categories[0]) ? appData.categories[0] : (lang === 'en' ? '🍱 Food & Dining' : '🍱 餐飲美食');
-            const catInput = document.getElementById('input-category');
-            const catBtnTxt = document.getElementById('tx-category-btn-txt');
-            if (catInput) catInput.value = defaultCat;
-            if (catBtnTxt) catBtnTxt.innerText = defaultCat;
+            updatePickerButtonLabels();
         }
 
         function setModalMode(mode) {
