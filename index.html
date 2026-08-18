@@ -3903,6 +3903,9 @@
             localStorage.removeItem('wealth_app_data_v30_final');
             appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
             saveData(false);
+            
+            await updateExchangeRateAuto();
+
             switchTab('home', true);
             const splash = document.getElementById('splash-screen');
             if (splash) {
