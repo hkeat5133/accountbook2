@@ -653,7 +653,7 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div id="date-picker-content" class="py-1"></div>
+                <div id="date-picker-content" class="py-1 min-h-[315px] flex flex-col justify-between"></div>
             </div>
         </div>
 
@@ -2046,6 +2046,13 @@
                 `;
             }
 
+            // Always pad to 42 cells (6 full rows x 7 columns) to maintain fixed height across months
+            const totalSlots = 42;
+            const filledSlots = firstDayIndex + daysInMonth;
+            for (let i = filledSlots; i < totalSlots; i++) {
+                html += `<div class="p-2"></div>`;
+            }
+
             html += `</div>`;
             const content = document.getElementById('date-picker-content');
             if (content) {
@@ -2061,12 +2068,13 @@
             const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
 
             let html = `
-                <div class="flex justify-between items-center mb-4 px-2">
-                    <button type="button" onclick="renderMonthPicker(${year - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                    <div class="font-bold text-app-main text-sm">${year}</div>
-                    <button type="button" onclick="renderMonthPicker(${year + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
+                <div>
+                    <div class="flex justify-between items-center mb-4 px-2">
+                        <button type="button" onclick="renderMonthPicker(${year - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <div class="font-bold text-app-main text-sm">${year}</div>
+                        <button type="button" onclick="renderMonthPicker(${year + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
             `;
 
             for (let i = 0; i < 12; i++) {
@@ -2078,7 +2086,7 @@
                 }
             }
             
-            html += `</div>`;
+            html += `</div></div>`;
             const content = document.getElementById('date-picker-content');
             if (content) {
                 content.innerHTML = html;
