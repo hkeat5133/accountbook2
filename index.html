@@ -555,6 +555,31 @@
             </div>
         </div>
 
+        <!-- Confirm Full Reset Modal -->
+        <div id="confirm-full-reset-modal" onclick="closeModal('confirm-full-reset-modal')" class="modal-backdrop absolute inset-0 z-[75] hidden flex items-center justify-center p-4">
+            <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+                    <h3 class="font-bold text-brand-red text-sm flex items-center gap-1.5">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i> <span data-i18n="reset_full_modal_title">Erase All Content and Settings?</span>
+                    </h3>
+                    <button onclick="closeModal('confirm-full-reset-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="py-3 space-y-2 text-center">
+                    <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center bg-brand-red/20 text-brand-red mb-2">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-xs text-app-main font-bold" data-i18n="reset_full_modal_desc1">Are you sure you want to erase all content and settings?</p>
+                    <p class="text-[11px] text-app-muted leading-relaxed" data-i18n="reset_full_modal_desc">This action will completely wipe all assets, transactions, categories, budgets, theme, and system settings. This action cannot be undone.</p>
+                </div>
+                <div class="pt-2 pb-2 flex gap-2">
+                    <button type="button" onclick="closeModal('confirm-full-reset-modal')" class="flex-1 bg-app-card border border-app-line text-app-main py-2.5 rounded-xl text-xs font-bold active:scale-95" data-i18n="btn_cancel">Cancel</button>
+                    <button type="button" onclick="confirmExecuteFullReset()" class="flex-1 bg-brand-red text-white py-2.5 rounded-xl text-xs font-bold shadow active:scale-95" data-i18n="reset_full_confirm_btn">Erase All Content</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Confirm Delete Transaction Modal -->
         <div id="confirm-delete-modal" onclick="closeModal('confirm-delete-modal')" class="modal-backdrop absolute inset-0 z-[80] hidden flex items-center justify-center p-4">
             <div class="modal-sheet w-full bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
@@ -816,8 +841,6 @@
                 theme_dark: "深色模式 Dark",
                 app_title_lbl: "自訂 App 標題名稱",
                 base_currency_lbl: "淨資產總額估算幣別",
-                initial_capital_lbl: "初始本金與帳戶餘額設定",
-                initial_capital_desc: "直接設定或調整目前已開啟帳戶的初始資產餘額：",
                 lang_label: "語言選擇 / Language",
                 save_btn: "儲存",
                 export_json: "匯出備份 (JSON)",
@@ -851,10 +874,14 @@
                 reset_modal_desc: "請選擇您要執行的重置範圍：",
                 reset_opt1_title: "重置所有資料",
                 reset_opt1_desc: "清除所有資產餘額、交易紀錄、固定支出與分期項目，但保留 App 標題、自訂分類與主題設定。",
-                reset_opt2_title: "重置所有資料與所有設定 (完全出廠預設)",
-                reset_opt2_desc: "徹底清空所有資產、交易紀錄、自訂分類、預算、主題及所有系統設定。",
+                reset_opt2_title: "抹除所有內容與設定",
+                reset_opt2_desc: "徹底清空所有資產、交易紀錄、自訂分類、預算、主題及所有系統設定，恢復初始狀態。",
                 btn_cancel: "取消",
                 reset_confirm_btn: "確定執行重置",
+                reset_full_modal_title: "確認抹除所有內容與設定？",
+                reset_full_modal_desc1: "確定要抹除所有內容與設定嗎？",
+                reset_full_modal_desc: "此操作將會徹底清空所有資產、交易紀錄、自訂分類、預算、主題及所有系統設定。此動作無法復原！",
+                reset_full_confirm_btn: "抹除所有內容與設定",
                 del_modal_title: "確認刪除交易紀錄？",
                 del_modal_desc1: "您確定要刪除這筆帳務紀錄嗎？",
                 del_modal_desc2: "刪除後系統將會自動反向扣除或還原該筆交易對應的帳戶資產餘額，此操作無法復原。",
@@ -951,8 +978,6 @@
                 theme_dark: "Dark Mode",
                 app_title_lbl: "Custom App Title",
                 base_currency_lbl: "Base Net Worth Currency",
-                initial_capital_lbl: "Initial Balances & Principal",
-                initial_capital_desc: "Set or adjust current account starting balances:",
                 lang_label: "Language",
                 save_btn: "Save",
                 export_json: "Export Backup (JSON)",
@@ -986,10 +1011,14 @@
                 reset_modal_desc: "Please choose your reset scope:",
                 reset_opt1_title: "Reset All Data",
                 reset_opt1_desc: "Clears balances, transactions, recurring rules, and installments. Preserves app title and categories.",
-                reset_opt2_title: "Full Reset (Factory Default)",
+                reset_opt2_title: "Erase All Content and Settings",
                 reset_opt2_desc: "Completely wipes all assets, transactions, categories, budgets, and system settings.",
                 btn_cancel: "Cancel",
                 reset_confirm_btn: "Execute Reset",
+                reset_full_modal_title: "Erase All Content and Settings?",
+                reset_full_modal_desc1: "Are you sure you want to erase all content and settings?",
+                reset_full_modal_desc: "This will completely wipe all assets, transactions, categories, budgets, theme, and system settings. This action cannot be undone.",
+                reset_full_confirm_btn: "Erase All Content",
                 del_modal_title: "Confirm Delete Transaction?",
                 del_modal_desc1: "Are you sure you want to delete this record?",
                 del_modal_desc2: "Asset balances will be automatically reversed. This action cannot be undone.",
@@ -3853,22 +3882,8 @@
             closeModal('confirm-modal');
             const resetMode = document.querySelector('input[name="resetMode"]:checked')?.value || 'dataOnly';
             if (resetMode === 'all') {
-                localStorage.removeItem('wealth_app_data_v30_final');
-                appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                saveData(false);
-                switchTab('home', true);
-                const splash = document.getElementById('splash-screen');
-                if (splash) {
-                    splash.style.opacity = '1';
-                    splash.classList.remove('hidden');
-                    setTimeout(() => {
-                        splash.style.opacity = '0';
-                        setTimeout(() => splash.classList.add('hidden'), 700);
-                    }, 1800);
-                }
-                openModal('welcome-setup-modal');
+                openModal('confirm-full-reset-modal');
             } else {
-                appData.initialAssets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
                 appData.assets = { TWD: 0, TW_STOCK: 0, USD: 0, US_STOCK: 0, MYR: 0 };
                 appData.transactions = [];
                 appData.recurringRules = [];
@@ -3879,8 +3894,26 @@
                 saveData(true);
                 switchTab('home', true);
                 updateHeaderDate();
-                showToast("Data Reset Complete", "All assets, transactions, and budgets cleared. Settings preserved.");
+                showToast("Data Reset Complete", appData.language === 'en' ? "All assets, transactions, and budgets cleared. Settings preserved." : "已清除所有資料，設定已保留。");
             }
+        }
+
+        async function confirmExecuteFullReset() {
+            closeModal('confirm-full-reset-modal');
+            localStorage.removeItem('wealth_app_data_v30_final');
+            appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
+            saveData(false);
+            switchTab('home', true);
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '1';
+                splash.classList.remove('hidden');
+                setTimeout(() => {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.classList.add('hidden'), 700);
+                }, 1800);
+            }
+            openModal('welcome-setup-modal');
         }
     </script>
 </body>
