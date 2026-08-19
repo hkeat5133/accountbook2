@@ -20,40 +20,45 @@
     <style>
         :root {
             --color-gold: #c89b3c;
+            --color-gold-glow: rgba(200, 155, 60, 0.35);
             --color-blue: #3a6b88;
             --color-red: #b84a39;
             --color-green: #5b8c5a;
             --color-dark: #2c2e2b;
 
-            --bg-app: #f6f4ee;
-            --bg-surface: #ffffff;
-            --bg-card: #ece8df;
-            --bg-input: #ffffff;
-            --text-main: #2c2e2b;
-            --text-muted: #7a7f78;
-            --border-line: #d8d2c4;
-            --phone-border: #d2cbba;
+            --bg-app: linear-gradient(135deg, #f4ede2 0%, #e8dfd1 50%, #f0ebd9 100%);
+            --bg-surface: rgba(255, 255, 255, 0.72);
+            --bg-card: rgba(255, 255, 255, 0.52);
+            --bg-input: rgba(255, 255, 255, 0.85);
+            --text-main: #222421;
+            --text-muted: #727770;
+            --border-line: rgba(216, 210, 196, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.65);
+            --phone-border: rgba(210, 203, 186, 0.8);
+            --shadow-glass: 0 12px 36px -8px rgba(180, 165, 145, 0.25), 0 4px 16px 0 rgba(0, 0, 0, 0.04);
         }
 
         body.theme-dark {
-            --bg-app: #1c1d1b;
-            --bg-surface: #272825;
-            --bg-card: #333530;
-            --bg-input: #21221f;
-            --text-main: #f0eee6;
-            --text-muted: #939890;
-            --border-line: #454841;
-            --phone-border: #2b2c28;
+            --bg-app: linear-gradient(135deg, #161715 0%, #1f201d 50%, #191a18 100%);
+            --bg-surface: rgba(38, 40, 36, 0.72);
+            --bg-card: rgba(48, 50, 45, 0.52);
+            --bg-input: rgba(30, 31, 28, 0.85);
+            --text-main: #f4f2ea;
+            --text-muted: #9ba097;
+            --border-line: rgba(75, 78, 71, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --phone-border: rgba(45, 47, 42, 0.9);
+            --shadow-glass: 0 12px 36px -8px rgba(0, 0, 0, 0.55), 0 4px 16px 0 rgba(0, 0, 0, 0.3);
         }
 
         body {
-            background-color: var(--bg-app);
+            background: var(--bg-app);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            transition: background-color 0.35s ease, color 0.35s ease;
+            transition: background 0.35s ease, color 0.35s ease;
             overflow: hidden;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
@@ -74,8 +79,8 @@
             max-height: 100vh;
             margin: 0 auto;
             position: relative;
-            background-color: var(--bg-app);
-            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
+            background: var(--bg-app);
+            box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.35);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -90,9 +95,32 @@
                 height: 96vh;
                 max-height: 940px;
                 margin-top: 2vh;
-                border-radius: 40px;
+                border-radius: 44px;
                 border-width: 8px;
             }
+        }
+
+        /* Glassmorphism Effect Utilities */
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-glass);
+        }
+
+        .glass-surface {
+            background: var(--bg-surface);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .glass-input {
+            background: var(--bg-input);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-line);
         }
 
         @keyframes fadeIn {
@@ -107,12 +135,12 @@
 
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(44, 46, 43, 0.55);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(28, 29, 26, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(18, 19, 17, 0.72);
+            background-color: rgba(10, 11, 9, 0.65);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -120,13 +148,18 @@
 
         .modal-sheet {
             will-change: transform, opacity;
-            transform: scale(0.92) translateY(10px);
+            transform: scale(0.92) translateY(12px);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
             max-height: 85vh;
-            border-radius: 24px !important;
+            border-radius: 28px !important;
             width: 100%;
             max-width: 400px;
+            background: var(--bg-surface) !important;
+            backdrop-filter: blur(36px) !important;
+            -webkit-backdrop-filter: blur(36px) !important;
+            border: 1px solid var(--glass-border) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25) !important;
         }
 
         .modal-sheet.is-open {
@@ -135,12 +168,12 @@
         }
 
         .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(10px) !important;
+            transform: scale(0.92) translateY(12px) !important;
             opacity: 0 !important;
         }
 
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.08s cubic-bezier(0, 0, 0.2, 1), opacity 0.08s ease;
+            transition: transform 0.1s cubic-bezier(0, 0, 0.2, 1), opacity 0.1s ease, box-shadow 0.15s ease;
             will-change: transform;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
@@ -157,20 +190,20 @@
             -webkit-tap-highlight-color: transparent;
         }
         .accordion-header-btn:hover {
-            background-color: rgba(200, 155, 60, 0.06);
+            background-color: rgba(200, 155, 60, 0.08);
         }
         .accordion-header-btn:active {
-            background-color: rgba(200, 155, 60, 0.14) !important;
+            background-color: rgba(200, 155, 60, 0.16) !important;
             opacity: 0.92 !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
         @keyframes pulseGold {
-            0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
-            50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
+            0%, 100% { box-shadow: 0 0 16px var(--color-gold-glow); }
+            50% { box-shadow: 0 0 28px rgba(200, 155, 60, 0.65); }
         }
 
-        .bg-app-bg { background-color: var(--bg-app); }
+        .bg-app-bg { background: var(--bg-app); }
         .bg-app-surface { background-color: var(--bg-surface); }
         .bg-app-card { background-color: var(--bg-card); }
         .bg-app-input { background-color: var(--bg-input); }
@@ -209,12 +242,12 @@
 </head>
 <body class="flex items-center justify-center min-h-screen theme-light pb-0 mb-0" style="touch-action: none; overscroll-behavior: none;">
 
-    <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
+    <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300/40 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <!-- Header Bar -->
-        <header class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
+        <!-- Header Bar with Frosted Glass -->
+        <header class="px-5 pt-3 pb-2.5 glass-surface border-b border-app-line/60 flex justify-between items-center z-20 shrink-0 shadow-xs" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
-                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
+                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-2xl glass-panel hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line/80" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
@@ -225,10 +258,10 @@
                 <p class="text-[11px] text-app-muted" id="header-date">August 12, 2026</p>
             </div>
             <div class="flex items-center gap-1.5">
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-2xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> Install
                 </button>
-                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Notifications">
+                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-2xl glass-panel hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line/80" title="Notifications">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
                 </button>
@@ -248,12 +281,13 @@
 
         <!-- Floating Add Button -->
         <div class="absolute bottom-20 right-5 z-20">
-            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
+            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-2xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform backdrop-blur-md border border-white/30">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0 pb-2">
+        <!-- Glassmorphism Bottom Navigation -->
+        <nav class="w-full glass-surface border-t border-app-line/60 px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0 pb-2 shadow-lg">
             <button onclick="switchTab('home', true)" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-95">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium" data-i18n="nav_home">Dashboard</span>
@@ -2649,7 +2683,6 @@
 
         function renderHomeView(container) {
             if (!container) return;
-            sortTransactions();
             const baseCurr = appData.baseCurrency || 'USD';
             const usdRate = appData.usdExchangeRate || 32.5;
             const myrToUsd = appData.myrToUsdRate || 0.2222;
@@ -2727,7 +2760,7 @@
 
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
-                    <div class="group bg-app-card border border-brand-gold/40 rounded-2xl p-4 shadow-md relative overflow-hidden w-full">
+                    <div class="group glass-panel border border-brand-gold/40 rounded-3xl p-4 shadow-lg relative overflow-hidden w-full">
                         <div class="absolute right-4 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
                             <i data-lucide="wallet" class="w-12 h-12 stroke-[1.2]"></i>
                         </div>
@@ -2741,12 +2774,12 @@
                                 <div onclick="navigateToDetails('ALL')" class="text-3xl font-extrabold text-brand-gold tracking-tight font-mono cursor-pointer">
                                     ${baseCurrSymbol} ${grandTotal.toLocaleString('zh-TW', {maximumFractionDigits: 2})}
                                 </div>
-                                <div class="text-[11px] text-app-muted font-mono flex justify-between items-center border-t border-app-line pt-2">
+                                <div class="text-[11px] text-app-muted font-mono flex justify-between items-center border-t border-app-line/60 pt-2">
                                     <div class="flex flex-col gap-0.5">
                                         <span>1 USD = ${usdRate} TWD</span>
                                         ${appData.enableMYR ? `<span>1 USD = ${(1 / (myrToUsd || 0.2222)).toFixed(2)} MYR</span>` : ''}
                                     </div>
-                                    <button onclick="event.stopPropagation(); updateExchangeRateAuto(true);" title="Refresh Exchange Rate" class="bg-app-surface text-brand-gold p-1.5 rounded-xl border border-brand-gold/30 active:scale-90 hover:scale-110 shadow-2xs shrink-0 ml-2">
+                                    <button onclick="event.stopPropagation(); updateExchangeRateAuto(true);" title="Refresh Exchange Rate" class="glass-surface text-brand-gold p-1.5 rounded-2xl border border-brand-gold/30 active:scale-90 hover:scale-110 shadow-2xs shrink-0 ml-2">
                                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                                     </button>
                                 </div>
@@ -2756,80 +2789,55 @@
 
                     <div class="grid grid-cols-2 gap-3 w-full">
                         ${appData.enableTWD ? `
-                            <div onclick="navigateToDetails('TWD')" class="group relative overflow-hidden bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all duration-200">
-                                <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
-                                    <i data-lucide="banknote" class="w-8 h-8 stroke-[1.2]"></i>
+                            <div onclick="navigateToDetails('TWD')" class="glass-panel border border-brand-gold/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="twd_cash">${t('twd_cash')}</span></span>
                                 </div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="twd_cash">${t('twd_cash')}</span></span>
-                                    </div>
-                                    <div class="text-base font-bold text-brand-gold font-mono">NT$ ${appData.assets.TWD.toLocaleString()}</div>
-                                    ${getAssetSubConversionText('TWD', appData.assets.TWD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TWD Account' : '台幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
-                                </div>
+                                <div class="text-base font-bold text-brand-gold font-mono">NT$ ${appData.assets.TWD.toLocaleString()}</div>
+                                ${getAssetSubConversionText('TWD', appData.assets.TWD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TWD Account' : '台幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
                             </div>
                         ` : ''}
                         ${appData.enableTWStock ? `
-                            <div onclick="navigateToDetails('TW_STOCK')" class="group relative overflow-hidden bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all duration-200">
-                                <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:rotate-12 transition-transform duration-300 pointer-events-none z-0">
-                                    <i data-lucide="trending-up" class="w-8 h-8 stroke-[1.2]"></i>
+                            <div onclick="navigateToDetails('TW_STOCK')" class="glass-panel border border-brand-blue/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="tw_stock_lbl">${t('tw_stock_lbl')}</span></span>
                                 </div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="tw_stock_lbl">${t('tw_stock_lbl')}</span></span>
-                                    </div>
-                                    <div class="text-base font-bold text-brand-blue font-mono">NT$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
-                                    ${getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TW Stocks' : '台股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
-                                </div>
+                                <div class="text-base font-bold text-brand-blue font-mono">NT$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
+                                ${getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TW Stocks' : '台股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
                             </div>
                         ` : ''}
                         ${appData.enableUSD ? `
-                            <div onclick="navigateToDetails('USD')" class="group relative overflow-hidden bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all duration-200">
-                                <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
-                                    <i data-lucide="banknote" class="w-8 h-8 stroke-[1.2]"></i>
+                            <div onclick="navigateToDetails('USD')" class="glass-panel border border-brand-gold/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="usd_cash">${t('usd_cash')}</span></span>
                                 </div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="usd_cash">${t('usd_cash')}</span></span>
-                                    </div>
-                                    <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()}</div>
-                                    ${getAssetSubConversionText('USD', appData.assets.USD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'USD Account' : '美金帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
-                                </div>
+                                <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()}</div>
+                                ${getAssetSubConversionText('USD', appData.assets.USD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'USD Account' : '美金帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
                             </div>
                         ` : ''}
                         ${appData.enableUSStock ? `
-                            <div onclick="navigateToDetails('US_STOCK')" class="group relative overflow-hidden bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all duration-200">
-                                <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:rotate-12 transition-transform duration-300 pointer-events-none z-0">
-                                    <i data-lucide="trending-up" class="w-8 h-8 stroke-[1.2]"></i>
+                            <div onclick="navigateToDetails('US_STOCK')" class="glass-panel border border-brand-blue/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="us_stock_lbl">${t('us_stock_lbl')}</span></span>
                                 </div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="us_stock_lbl">${t('us_stock_lbl')}</span></span>
-                                    </div>
-                                    <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()}</div>
-                                    ${getAssetSubConversionText('US_STOCK', appData.assets.US_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'US Stocks' : '美股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
-                                </div>
+                                <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()}</div>
+                                ${getAssetSubConversionText('US_STOCK', appData.assets.US_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'US Stocks' : '美股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
                             </div>
                         ` : ''}
                         ${appData.enableMYR ? `
-                            <div onclick="navigateToDetails('MYR')" class="group relative overflow-hidden bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all duration-200">
-                                <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
-                                    <i data-lucide="banknote" class="w-8 h-8 stroke-[1.2]"></i>
+                            <div onclick="navigateToDetails('MYR')" class="glass-panel border border-brand-gold/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all">
+                                <div class="flex justify-between items-start mb-1.5">
+                                    <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="myr_cash">${t('myr_cash')}</span></span>
                                 </div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="myr_cash">${t('myr_cash')}</span></span>
-                                    </div>
-                                    <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
-                                    ${getAssetSubConversionText('MYR', appData.assets.MYR || 0) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'MYR Account' : '馬幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
-                                </div>
+                                <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
+                                ${getAssetSubConversionText('MYR', appData.assets.MYR || 0) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'MYR Account' : '馬幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
                             </div>
                         ` : ''}
                     </div>
 
                     ${enabledBudgets.length > 0 ? `
-                        <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
-                            <div class="flex justify-between items-center pb-1 border-b border-app-line">
+                        <div class="glass-panel border border-app-line rounded-3xl p-4 shadow-sm space-y-3 w-full">
+                            <div class="flex justify-between items-center pb-1 border-b border-app-line/60">
                                 <div class="text-xs font-bold text-app-main flex items-center gap-1.5">
                                     <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="budget_title">${t('budget_title')}</span> (${enabledBudgets.length})
                                 </div>
@@ -2839,7 +2847,7 @@
                             </div>
                             <div class="space-y-2.5">
                                 ${enabledBudgets.map(b => `
-                                    <div onclick="navigateToCategoryDetails(decodeURIComponent('${encodeURIComponent(b.catName)}'), '${b.curr}')" class="bg-app-surface p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold active:scale-98">
+                                    <div onclick="navigateToCategoryDetails(decodeURIComponent('${encodeURIComponent(b.catName)}'), '${b.curr}')" class="glass-surface p-3 rounded-2xl border border-app-line/80 cursor-pointer hover:border-brand-gold active:scale-98">
                                         <div class="flex justify-between items-center text-xs mb-1.5">
                                             <span class="text-app-main font-medium flex items-center gap-1">${b.catName} <i data-lucide="chevron-right" class="w-3 h-3 text-brand-gold"></i></span>
                                             <span class="${b.percent > 90 ? 'text-brand-red' : 'text-brand-gold'} font-bold font-mono">${b.sym}${Math.round(b.spent).toLocaleString()} / ${b.sym}${b.amount.toLocaleString()} (${b.percent}%)</span>
@@ -2853,10 +2861,10 @@
                         </div>
                     ` : ''}
 
-                    <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
-                        <div class="flex justify-between items-center pb-1 border-b border-app-line">
+                    <div class="glass-panel border border-app-line rounded-3xl p-4 shadow-sm space-y-3 w-full">
+                        <div class="flex justify-between items-center pb-1 border-b border-app-line/60">
                             <h3 class="text-xs font-bold text-app-main tracking-wider uppercase flex items-center gap-1.5"><i data-lucide="history" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recent_tx">${t('recent_tx')}</span></h3>
-                            <button onclick="switchTab('details')" class="text-[11px] text-brand-blue hover:underline" data-i18n="view_all">${t('view_all')}</button>
+                            <button onclick="switchTab('details')" class="text-[11px] text-brand-blue hover:underline font-medium" data-i18n="view_all">${t('view_all')}</button>
                         </div>
                         <div class="space-y-2 w-full">${renderTxList(appData.transactions.slice(0, 5))}</div>
                     </div>
@@ -3290,66 +3298,128 @@
                     </div>
 
                     <!-- Accounts Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
+                    <div class="glass-panel rounded-3xl border border-app-line/80 w-full overflow-hidden transition-all shadow-xs">
                         <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="acc_manage">${t('acc_manage')}</span>
                             </h3>
                             <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-account" class="${isAccountManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
-                            <div class="pb-2 border-b border-app-line space-y-2">
+                        <div id="acc-content-account" class="${isAccountManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line/60 pt-3">
+                            <div class="pb-2 border-b border-app-line/60 space-y-2">
                                 <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
                                 <div class="grid grid-cols-3 gap-2 text-xs">
-                                    <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">USD ($)</button>
-                                    <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">TWD (NT$)</button>
-                                    <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">MYR (RM)</button>
+                                    <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow-xs' : 'glass-surface text-app-muted border-app-line/80'} active:scale-95">USD ($)</button>
+                                    <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow-xs' : 'glass-surface text-app-muted border-app-line/80'} active:scale-95">TWD (NT$)</button>
+                                    <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow-xs' : 'glass-surface text-app-muted border-app-line/80'} active:scale-95">MYR (RM)</button>
                                 </div>
                             </div>
-
                             <div>
                                 <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TWD Cash Account (TWD)' : '台幣現金帳戶 (TWD)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TWD Cash' : '台幣現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">TWD</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-TWD" value="${(appData.initialAssets && appData.initialAssets.TWD) ? appData.initialAssets.TWD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TWD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'USD Cash Account (USD)' : '美金現金帳戶 (USD)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'USD Cash' : '美金現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">USD</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-USD" value="${(appData.initialAssets && appData.initialAssets.USD) ? appData.initialAssets.USD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('USD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇲🇾 ${appData.language === 'en' ? 'MYR Cash Account (MYR)' : '馬幣現金帳戶 (MYR)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇲🇾 ${appData.language === 'en' ? 'MYR Cash' : '馬幣現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">MYR</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-MYR" value="${(appData.initialAssets && appData.initialAssets.MYR) ? appData.initialAssets.MYR : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('MYR', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="pt-2">
-                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                                <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TW Stock Account (TW Stock)' : '台股證券帳戶 (TW Stock)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TW Stock' : '台股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">TW Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-TW_STOCK" value="${(appData.initialAssets && appData.initialAssets.TW_STOCK) ? appData.initialAssets.TW_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TW_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'US Stock Account (US Stock)' : '美股證券帳戶 (US Stock)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'US Stock' : '美股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">US Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-US_STOCK" value="${(appData.initialAssets && appData.initialAssets.US_STOCK) ? appData.initialAssets.US_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('US_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
