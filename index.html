@@ -20,45 +20,40 @@
     <style>
         :root {
             --color-gold: #c89b3c;
-            --color-gold-glow: rgba(200, 155, 60, 0.45);
             --color-blue: #3a6b88;
             --color-red: #b84a39;
             --color-green: #5b8c5a;
             --color-dark: #2c2e2b;
 
-            --bg-app: linear-gradient(145deg, #f7f3eb 0%, #ebe4d8 50%, #f3ece0 100%);
-            --bg-surface: rgba(255, 255, 255, 0.62);
-            --bg-card: rgba(255, 255, 255, 0.42);
-            --bg-input: rgba(255, 255, 255, 0.78);
-            --text-main: #222421;
-            --text-muted: #6e736b;
-            --border-line: rgba(255, 255, 255, 0.65);
-            --phone-border: rgba(210, 203, 186, 0.6);
-            --glass-rim: rgba(255, 255, 255, 0.85);
-            --shadow-glass: 0 16px 40px -8px rgba(180, 165, 140, 0.35), inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+            --bg-app: #f6f4ee;
+            --bg-surface: #ffffff;
+            --bg-card: #ece8df;
+            --bg-input: #ffffff;
+            --text-main: #2c2e2b;
+            --text-muted: #7a7f78;
+            --border-line: #d8d2c4;
+            --phone-border: #d2cbba;
         }
 
         body.theme-dark {
-            --bg-app: linear-gradient(145deg, #121312 0%, #1a1c1a 50%, #151614 100%);
-            --bg-surface: rgba(36, 38, 35, 0.62);
-            --bg-card: rgba(48, 51, 46, 0.42);
-            --bg-input: rgba(26, 28, 25, 0.78);
-            --text-main: #f5f3eb;
-            --text-muted: #9aa096;
-            --border-line: rgba(255, 255, 255, 0.12);
-            --phone-border: rgba(45, 47, 42, 0.8);
-            --glass-rim: rgba(255, 255, 255, 0.25);
-            --shadow-glass: 0 16px 40px -8px rgba(0, 0, 0, 0.6), inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+            --bg-app: #1c1d1b;
+            --bg-surface: #272825;
+            --bg-card: #333530;
+            --bg-input: #21221f;
+            --text-main: #f0eee6;
+            --text-muted: #939890;
+            --border-line: #454841;
+            --phone-border: #2b2c28;
         }
 
         body {
-            background: var(--bg-app);
+            background-color: var(--bg-app);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            transition: background 0.35s ease, color 0.35s ease;
+            transition: background-color 0.35s ease, color 0.35s ease;
             overflow: hidden;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
@@ -79,8 +74,8 @@
             max-height: 100vh;
             margin: 0 auto;
             position: relative;
-            background: var(--bg-app);
-            box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.35);
+            background-color: var(--bg-app);
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -95,87 +90,9 @@
                 height: 96vh;
                 max-height: 940px;
                 margin-top: 2vh;
-                border-radius: 44px;
+                border-radius: 40px;
                 border-width: 8px;
             }
-        }
-
-        .liquid-blob-1 {
-            position: absolute;
-            width: 260px;
-            height: 260px;
-            top: -40px;
-            left: -50px;
-            background: radial-gradient(circle, rgba(200, 155, 60, 0.45) 0%, rgba(200, 155, 60, 0) 70%);
-            filter: blur(40px);
-            pointer-events: none;
-            z-index: 0;
-            animation: floatBlob1 12s ease-in-out infinite alternate;
-        }
-
-        .liquid-blob-2 {
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            bottom: 80px;
-            right: -60px;
-            background: radial-gradient(circle, rgba(58, 107, 136, 0.4) 0%, rgba(58, 107, 136, 0) 70%);
-            filter: blur(45px);
-            pointer-events: none;
-            z-index: 0;
-            animation: floatBlob2 14s ease-in-out infinite alternate;
-        }
-
-        .liquid-blob-3 {
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            top: 40%;
-            left: 30%;
-            background: radial-gradient(circle, rgba(91, 140, 90, 0.3) 0%, rgba(91, 140, 90, 0) 70%);
-            filter: blur(40px);
-            pointer-events: none;
-            z-index: 0;
-            animation: floatBlob3 16s ease-in-out infinite alternate;
-        }
-
-        @keyframes floatBlob1 {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 60px) scale(1.15); }
-        }
-        @keyframes floatBlob2 {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-50px, -40px) scale(1.2); }
-        }
-        @keyframes floatBlob3 {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, -50px) scale(0.85); }
-        }
-
-        .glass-panel, .bg-app-card {
-            background: var(--bg-card) !important;
-            backdrop-filter: blur(32px) saturate(190%) !important;
-            -webkit-backdrop-filter: blur(32px) saturate(190%) !important;
-            border: 1px solid var(--border-line) !important;
-            border-top: 1.5px solid var(--glass-rim) !important;
-            box-shadow: var(--shadow-glass) !important;
-        }
-
-        .glass-surface {
-            background: var(--bg-surface) !important;
-            backdrop-filter: blur(36px) saturate(200%) !important;
-            -webkit-backdrop-filter: blur(36px) saturate(200%) !important;
-            border: 1px solid var(--border-line) !important;
-            border-top: 1.5px solid var(--glass-rim) !important;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.7);
-        }
-
-        .glass-input {
-            background: var(--bg-input) !important;
-            backdrop-filter: blur(20px) saturate(180%) !important;
-            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-            border: 1px solid var(--border-line) !important;
-            border-top: 1px solid var(--glass-rim) !important;
         }
 
         @keyframes fadeIn {
@@ -190,12 +107,12 @@
 
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(20, 22, 20, 0.42);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            background-color: rgba(44, 46, 43, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(8, 9, 8, 0.68);
+            background-color: rgba(18, 19, 17, 0.72);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -203,19 +120,13 @@
 
         .modal-sheet {
             will-change: transform, opacity;
-            transform: scale(0.92) translateY(12px);
+            transform: scale(0.92) translateY(10px);
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
             max-height: 85vh;
-            border-radius: 32px !important;
+            border-radius: 24px !important;
             width: 100%;
             max-width: 400px;
-            background: var(--bg-surface) !important;
-            backdrop-filter: blur(40px) saturate(220%) !important;
-            -webkit-backdrop-filter: blur(40px) saturate(220%) !important;
-            border: 1px solid var(--border-line) !important;
-            border-top: 1.5px solid var(--glass-rim) !important;
-            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.35), inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.8) !important;
         }
 
         .modal-sheet.is-open {
@@ -224,42 +135,42 @@
         }
 
         .modal-sheet.is-closing {
-            transform: scale(0.92) translateY(12px) !important;
+            transform: scale(0.92) translateY(10px) !important;
             opacity: 0 !important;
         }
 
         button, a, label[class*="cursor-pointer"] {
-            transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.15s ease, box-shadow 0.2s ease;
+            transition: transform 0.08s cubic-bezier(0, 0, 0.2, 1), opacity 0.08s ease;
             will-change: transform;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
         button:active, label[class*="cursor-pointer"]:active {
-            transform: scale(0.94) !important;
-            opacity: 0.85 !important;
-            transition-duration: 0.02s !important;
+            transform: scale(0.95) !important;
+            opacity: 0.82 !important;
+            transition-duration: 0.01s !important;
         }
 
         .accordion-header-btn {
-            transition: background-color 0.2s ease, opacity 0.15s ease;
+            transition: background-color 0.15s ease, opacity 0.12s ease;
             will-change: background-color, opacity;
             -webkit-tap-highlight-color: transparent;
         }
         .accordion-header-btn:hover {
-            background-color: rgba(200, 155, 60, 0.08);
+            background-color: rgba(200, 155, 60, 0.06);
         }
         .accordion-header-btn:active {
-            background-color: rgba(200, 155, 60, 0.16) !important;
+            background-color: rgba(200, 155, 60, 0.14) !important;
             opacity: 0.92 !important;
         }
 
         .pulse-gold { animation: pulseGold 2.5s infinite; }
         @keyframes pulseGold {
-            0%, 100% { box-shadow: 0 0 18px var(--color-gold-glow), inset 0 1.5px 1px rgba(255,255,255,0.8); }
-            50% { box-shadow: 0 0 32px rgba(200, 155, 60, 0.75), inset 0 1.5px 1px rgba(255,255,255,0.9); }
+            0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
+            50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        .bg-app-bg { background: var(--bg-app); }
+        .bg-app-bg { background-color: var(--bg-app); }
         .bg-app-surface { background-color: var(--bg-surface); }
         .bg-app-card { background-color: var(--bg-card); }
         .bg-app-input { background-color: var(--bg-input); }
@@ -300,14 +211,10 @@
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
-        <div class="liquid-blob-1"></div>
-        <div class="liquid-blob-2"></div>
-        <div class="liquid-blob-3"></div>
-
         <!-- Header Bar -->
-        <header class="px-5 pt-3 pb-2.5 glass-surface flex justify-between items-center z-20 shrink-0 shadow-sm relative" style="touch-action: none; overscroll-behavior: none;">
+        <header class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
-                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-2xl glass-panel hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
+                <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
                 </button>
             </div>
@@ -318,17 +225,17 @@
                 <p class="text-[11px] text-app-muted" id="header-date">August 12, 2026</p>
             </div>
             <div class="flex items-center gap-1.5">
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-2xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden relative p-2 rounded-xl bg-brand-gold text-white hover:opacity-95 transition-all active:scale-95 border border-brand-gold/40 flex items-center gap-1 text-xs font-bold shadow-xs">
                     <i data-lucide="download" class="w-4 h-4"></i> Install
                 </button>
-                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-2xl glass-panel hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Notifications">
+                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Notifications">
                     <i data-lucide="bell" class="w-5 h-5 text-brand-gold"></i>
                     <span id="notif-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-brand-red rounded-full ring-2 ring-white dark:ring-gray-900"></span>
                 </button>
             </div>
         </header>
 
-        <main class="flex-1 relative w-full overflow-hidden z-10" id="main-content">
+        <main class="flex-1 relative w-full overflow-hidden" id="main-content">
             <div id="swipe-track-container" class="w-full h-full relative overflow-hidden">
                 <div id="swipe-slider" class="flex w-[300%] h-full transition-transform duration-300 ease-out">
                     <div id="panel-home" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-28 touch-pan-y" style="overscroll-behavior-y: none;"></div>
@@ -341,12 +248,12 @@
 
         <!-- Floating Add Button -->
         <div class="absolute bottom-20 right-5 z-20">
-            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-2xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform border border-white/40">
+            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <nav class="w-full glass-surface border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0 pb-2 shadow-lg">
+        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0 pb-2">
             <button onclick="switchTab('home', true)" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-95">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1 font-medium" data-i18n="nav_home">Dashboard</span>
@@ -364,7 +271,7 @@
         <!-- Splash Screen -->
         <div id="splash-screen" class="absolute inset-0 bg-app-bg z-50 flex flex-col items-center justify-center transition-opacity duration-700">
             <div class="relative flex flex-col items-center animate-pop">
-                <div class="w-24 h-24 rounded-3xl glass-surface p-1 shadow-xl flex items-center justify-center mb-5 border border-brand-gold/40">
+                <div class="w-24 h-24 rounded-3xl bg-app-surface p-1 shadow-xl flex items-center justify-center mb-5 border border-brand-gold/40">
                     <div class="w-full h-full bg-app-card rounded-[22px] flex items-center justify-center">
                         <i data-lucide="wallet" class="w-12 h-12 text-brand-gold"></i>
                     </div>
@@ -1210,67 +1117,49 @@
 
         function toggleAccountManageAccordion() {
             isAccountManageOpen = !isAccountManageOpen;
-            const wrapper = document.getElementById('acc-wrapper-account');
+            const content = document.getElementById('acc-content-account');
             const icon = document.getElementById('acc-icon-account');
-            if (wrapper) {
-                wrapper.classList.toggle('grid-rows-[1fr]', isAccountManageOpen);
-                wrapper.classList.toggle('grid-rows-[0fr]', !isAccountManageOpen);
-            }
+            if (content) content.classList.toggle('hidden', !isAccountManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isAccountManageOpen);
         }
 
         function toggleBudgetManageAccordion() {
             isBudgetManageOpen = !isBudgetManageOpen;
-            const wrapper = document.getElementById('acc-wrapper-budget');
+            const content = document.getElementById('acc-content-budget');
             const icon = document.getElementById('acc-icon-budget');
-            if (wrapper) {
-                wrapper.classList.toggle('grid-rows-[1fr]', isBudgetManageOpen);
-                wrapper.classList.toggle('grid-rows-[0fr]', !isBudgetManageOpen);
-            }
+            if (content) content.classList.toggle('hidden', !isBudgetManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isBudgetManageOpen);
         }
 
         function toggleRecurringManageAccordion() {
             isRecurringManageOpen = !isRecurringManageOpen;
-            const wrapper = document.getElementById('acc-wrapper-recurring');
+            const content = document.getElementById('acc-content-recurring');
             const icon = document.getElementById('acc-icon-recurring');
-            if (wrapper) {
-                wrapper.classList.toggle('grid-rows-[1fr]', isRecurringManageOpen);
-                wrapper.classList.toggle('grid-rows-[0fr]', !isRecurringManageOpen);
-            }
+            if (content) content.classList.toggle('hidden', !isRecurringManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isRecurringManageOpen);
         }
 
         function toggleInstallmentManageAccordion() {
             isInstallmentManageOpen = !isInstallmentManageOpen;
-            const wrapper = document.getElementById('acc-wrapper-installment');
+            const content = document.getElementById('acc-content-installment');
             const icon = document.getElementById('acc-icon-installment');
-            if (wrapper) {
-                wrapper.classList.toggle('grid-rows-[1fr]', isInstallmentManageOpen);
-                wrapper.classList.toggle('grid-rows-[0fr]', !isInstallmentManageOpen);
-            }
+            if (content) content.classList.toggle('hidden', !isInstallmentManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isInstallmentManageOpen);
         }
 
         function toggleBackupManageAccordion() {
             isBackupManageOpen = !isBackupManageOpen;
-            const wrapper = document.getElementById('acc-wrapper-backup');
+            const content = document.getElementById('acc-content-backup');
             const icon = document.getElementById('acc-icon-backup');
-            if (wrapper) {
-                wrapper.classList.toggle('grid-rows-[1fr]', isBackupManageOpen);
-                wrapper.classList.toggle('grid-rows-[0fr]', !isBackupManageOpen);
-            }
+            if (content) content.classList.toggle('hidden', !isBackupManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isBackupManageOpen);
         }
 
         function toggleBasicParamsAccordion() {
             isBasicParamsOpen = !isBasicParamsOpen;
-            const wrapper = document.getElementById('acc-wrapper-params');
+            const content = document.getElementById('acc-content-params');
             const icon = document.getElementById('acc-icon-params');
-            if (wrapper) {
-                wrapper.classList.toggle('grid-rows-[1fr]', isBasicParamsOpen);
-                wrapper.classList.toggle('grid-rows-[0fr]', !isBasicParamsOpen);
-            }
+            if (content) content.classList.toggle('hidden', !isBasicParamsOpen);
             if (icon) icon.classList.toggle('rotate-180', isBasicParamsOpen);
         }
 
@@ -2760,6 +2649,7 @@
 
         function renderHomeView(container) {
             if (!container) return;
+            sortTransactions();
             const baseCurr = appData.baseCurrency || 'USD';
             const usdRate = appData.usdExchangeRate || 32.5;
             const myrToUsd = appData.myrToUsdRate || 0.2222;
@@ -2837,7 +2727,7 @@
 
             container.innerHTML = `
                 <div class="animate-fade space-y-4 w-full">
-                    <div class="group glass-panel border border-brand-gold/40 rounded-3xl p-4 shadow-lg relative overflow-hidden w-full">
+                    <div class="group bg-app-card border border-brand-gold/40 rounded-2xl p-4 shadow-md relative overflow-hidden w-full">
                         <div class="absolute right-4 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
                             <i data-lucide="wallet" class="w-12 h-12 stroke-[1.2]"></i>
                         </div>
@@ -2851,12 +2741,12 @@
                                 <div onclick="navigateToDetails('ALL')" class="text-3xl font-extrabold text-brand-gold tracking-tight font-mono cursor-pointer">
                                     ${baseCurrSymbol} ${grandTotal.toLocaleString('zh-TW', {maximumFractionDigits: 2})}
                                 </div>
-                                <div class="text-[11px] text-app-muted font-mono flex justify-between items-center border-t border-app-line/60 pt-2">
+                                <div class="text-[11px] text-app-muted font-mono flex justify-between items-center border-t border-app-line pt-2">
                                     <div class="flex flex-col gap-0.5">
                                         <span>1 USD = ${usdRate} TWD</span>
                                         ${appData.enableMYR ? `<span>1 USD = ${(1 / (myrToUsd || 0.2222)).toFixed(2)} MYR</span>` : ''}
                                     </div>
-                                    <button onclick="event.stopPropagation(); updateExchangeRateAuto(true);" title="Refresh Exchange Rate" class="glass-surface text-brand-gold p-1.5 rounded-2xl border border-brand-gold/30 active:scale-90 hover:scale-110 shadow-2xs shrink-0 ml-2">
+                                    <button onclick="event.stopPropagation(); updateExchangeRateAuto(true);" title="Refresh Exchange Rate" class="bg-app-surface text-brand-gold p-1.5 rounded-xl border border-brand-gold/30 active:scale-90 hover:scale-110 shadow-2xs shrink-0 ml-2">
                                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                                     </button>
                                 </div>
@@ -2866,13 +2756,13 @@
 
                     <div class="grid grid-cols-2 gap-3 w-full">
                         ${appData.enableTWD ? `
-                            <div onclick="navigateToDetails('TWD')" class="glass-panel border border-brand-gold/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all relative overflow-hidden group">
+                            <div onclick="navigateToDetails('TWD')" class="group relative overflow-hidden bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all duration-200">
                                 <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
                                     <i data-lucide="banknote" class="w-8 h-8 stroke-[1.2]"></i>
                                 </div>
                                 <div class="relative z-10">
                                     <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="banknote" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="twd_cash">${t('twd_cash')}</span></span>
+                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="twd_cash">${t('twd_cash')}</span></span>
                                     </div>
                                     <div class="text-base font-bold text-brand-gold font-mono">NT$ ${appData.assets.TWD.toLocaleString()}</div>
                                     ${getAssetSubConversionText('TWD', appData.assets.TWD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TWD Account' : '台幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
@@ -2880,13 +2770,13 @@
                             </div>
                         ` : ''}
                         ${appData.enableTWStock ? `
-                            <div onclick="navigateToDetails('TW_STOCK')" class="glass-panel border border-brand-blue/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all relative overflow-hidden group">
+                            <div onclick="navigateToDetails('TW_STOCK')" class="group relative overflow-hidden bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all duration-200">
                                 <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:rotate-12 transition-transform duration-300 pointer-events-none z-0">
                                     <i data-lucide="trending-up" class="w-8 h-8 stroke-[1.2]"></i>
                                 </div>
                                 <div class="relative z-10">
                                     <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="trending-up" class="w-4 h-4 text-brand-blue"></i> <span data-i18n="tw_stock_lbl">${t('tw_stock_lbl')}</span></span>
+                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="tw_stock_lbl">${t('tw_stock_lbl')}</span></span>
                                     </div>
                                     <div class="text-base font-bold text-brand-blue font-mono">NT$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
                                     ${getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TW Stocks' : '台股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
@@ -2894,13 +2784,13 @@
                             </div>
                         ` : ''}
                         ${appData.enableUSD ? `
-                            <div onclick="navigateToDetails('USD')" class="glass-panel border border-brand-gold/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all relative overflow-hidden group">
+                            <div onclick="navigateToDetails('USD')" class="group relative overflow-hidden bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all duration-200">
                                 <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
                                     <i data-lucide="banknote" class="w-8 h-8 stroke-[1.2]"></i>
                                 </div>
                                 <div class="relative z-10">
                                     <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="banknote" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="usd_cash">${t('usd_cash')}</span></span>
+                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="usd_cash">${t('usd_cash')}</span></span>
                                     </div>
                                     <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.USD.toLocaleString()}</div>
                                     ${getAssetSubConversionText('USD', appData.assets.USD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'USD Account' : '美金帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
@@ -2908,13 +2798,13 @@
                             </div>
                         ` : ''}
                         ${appData.enableUSStock ? `
-                            <div onclick="navigateToDetails('US_STOCK')" class="glass-panel border border-brand-blue/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all relative overflow-hidden group">
+                            <div onclick="navigateToDetails('US_STOCK')" class="group relative overflow-hidden bg-app-card border border-brand-blue/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-blue active:scale-95 transition-all duration-200">
                                 <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:rotate-12 transition-transform duration-300 pointer-events-none z-0">
                                     <i data-lucide="trending-up" class="w-8 h-8 stroke-[1.2]"></i>
                                 </div>
                                 <div class="relative z-10">
                                     <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="trending-up" class="w-4 h-4 text-brand-blue"></i> <span data-i18n="us_stock_lbl">${t('us_stock_lbl')}</span></span>
+                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="us_stock_lbl">${t('us_stock_lbl')}</span></span>
                                     </div>
                                     <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.US_STOCK.toLocaleString()}</div>
                                     ${getAssetSubConversionText('US_STOCK', appData.assets.US_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'US Stocks' : '美股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
@@ -2922,13 +2812,13 @@
                             </div>
                         ` : ''}
                         ${appData.enableMYR ? `
-                            <div onclick="navigateToDetails('MYR')" class="glass-panel border border-brand-gold/40 p-3.5 rounded-3xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all relative overflow-hidden group">
+                            <div onclick="navigateToDetails('MYR')" class="group relative overflow-hidden bg-app-card border border-brand-gold/40 p-3.5 rounded-2xl cursor-pointer hover:border-brand-gold active:scale-95 transition-all duration-200">
                                 <div class="absolute right-3 top-3 text-[#7a7f78] dark:text-[#939890] opacity-25 group-hover:scale-110 group-active:scale-125 group-active:-rotate-12 transition-transform duration-300 pointer-events-none z-0">
                                     <i data-lucide="banknote" class="w-8 h-8 stroke-[1.2]"></i>
                                 </div>
                                 <div class="relative z-10">
-                                    <div class="flex justify-between items-start mb-1.5">
-                                        <span class="text-xs font-bold text-app-main flex items-center gap-1.5"><i data-lucide="banknote" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="myr_cash">${t('myr_cash')}</span></span>
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="myr_cash">${t('myr_cash')}</span></span>
                                     </div>
                                     <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
                                     ${getAssetSubConversionText('MYR', appData.assets.MYR || 0) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'MYR Account' : '馬幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
@@ -2938,8 +2828,8 @@
                     </div>
 
                     ${enabledBudgets.length > 0 ? `
-                        <div class="glass-panel border border-app-line rounded-3xl p-4 shadow-sm space-y-3 w-full">
-                            <div class="flex justify-between items-center pb-1 border-b border-app-line/60">
+                        <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
+                            <div class="flex justify-between items-center pb-1 border-b border-app-line">
                                 <div class="text-xs font-bold text-app-main flex items-center gap-1.5">
                                     <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="budget_title">${t('budget_title')}</span> (${enabledBudgets.length})
                                 </div>
@@ -2949,7 +2839,7 @@
                             </div>
                             <div class="space-y-2.5">
                                 ${enabledBudgets.map(b => `
-                                    <div onclick="navigateToCategoryDetails(decodeURIComponent('${encodeURIComponent(b.catName)}'), '${b.curr}')" class="glass-surface p-3 rounded-2xl border border-app-line/80 cursor-pointer hover:border-brand-gold active:scale-98">
+                                    <div onclick="navigateToCategoryDetails(decodeURIComponent('${encodeURIComponent(b.catName)}'), '${b.curr}')" class="bg-app-surface p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold active:scale-98">
                                         <div class="flex justify-between items-center text-xs mb-1.5">
                                             <span class="text-app-main font-medium flex items-center gap-1">${b.catName} <i data-lucide="chevron-right" class="w-3 h-3 text-brand-gold"></i></span>
                                             <span class="${b.percent > 90 ? 'text-brand-red' : 'text-brand-gold'} font-bold font-mono">${b.sym}${Math.round(b.spent).toLocaleString()} / ${b.sym}${b.amount.toLocaleString()} (${b.percent}%)</span>
@@ -2963,10 +2853,10 @@
                         </div>
                     ` : ''}
 
-                    <div class="glass-panel border border-app-line rounded-3xl p-4 shadow-sm space-y-3 w-full">
-                        <div class="flex justify-between items-center pb-1 border-b border-app-line/60">
+                    <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
+                        <div class="flex justify-between items-center pb-1 border-b border-app-line">
                             <h3 class="text-xs font-bold text-app-main tracking-wider uppercase flex items-center gap-1.5"><i data-lucide="history" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recent_tx">${t('recent_tx')}</span></h3>
-                            <button onclick="switchTab('details')" class="text-[11px] text-brand-blue hover:underline font-medium" data-i18n="view_all">${t('view_all')}</button>
+                            <button onclick="switchTab('details')" class="text-[11px] text-brand-blue hover:underline" data-i18n="view_all">${t('view_all')}</button>
                         </div>
                         <div class="space-y-2 w-full">${renderTxList(appData.transactions.slice(0, 5))}</div>
                     </div>
@@ -3402,59 +3292,64 @@
                     <!-- Accounts Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="acc_manage">${t('acc_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-wrapper-account" class="grid transition-all duration-300 ease-in-out ${isAccountManageOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}">
-                            <div class="overflow-hidden">
-                                <div id="acc-content-account" class="px-4 pb-4 space-y-3 border-t border-app-line pt-3">
-                                    <div>
-                                        <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                                <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TWD Cash Account (TWD)' : '台幣現金帳戶 (TWD)'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                            <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                                <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'USD Cash Account (USD)' : '美金現金帳戶 (USD)'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                            <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                                <span class="font-bold text-app-main text-xs">🇲🇾 ${appData.language === 'en' ? 'MYR Cash Account (MYR)' : '馬幣現金帳戶 (MYR)'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div id="acc-content-account" class="${isAccountManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                            <div class="pb-2 border-b border-app-line space-y-2">
+                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
+                                <div class="grid grid-cols-3 gap-2 text-xs">
+                                    <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">USD ($)</button>
+                                    <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">TWD (NT$)</button>
+                                    <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">MYR (RM)</button>
+                                </div>
+                            </div>
 
-                                    <div class="pt-2">
-                                        <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                                <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TW Stock Account (TW Stock)' : '台股證券帳戶 (TW Stock)'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                            <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                                <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'US Stock Account (US Stock)' : '美股證券帳戶 (US Stock)'}</span>
-                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
-                                                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                </label>
-                                            </div>
-                                        </div>
+                            <div>
+                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TWD Cash Account (TWD)' : '台幣現金帳戶 (TWD)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'USD Cash Account (USD)' : '美金現金帳戶 (USD)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇲🇾 ${appData.language === 'en' ? 'MYR Cash Account (MYR)' : '馬幣現金帳戶 (MYR)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TW Stock Account (TW Stock)' : '台股證券帳戶 (TW Stock)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'US Stock Account (US Stock)' : '美股證券帳戶 (US Stock)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -3464,113 +3359,140 @@
                     <!-- Budget Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBudgetManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="budget_manage">${t('budget_manage')}</span> (${activeBudgetKeys.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-budget" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBudgetManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-budget" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBudgetManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-wrapper-budget" class="grid transition-all duration-300 ease-in-out ${isBudgetManageOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}">
-                            <div class="overflow-hidden">
-                                <div id="acc-content-budget" class="px-4 pb-4 space-y-3 border-t border-app-line pt-3">
-                                    <p class="text-[11px] text-app-muted">${appData.language==='en'?'Click "+" below to add budgets:':'點擊下方「+」按鈕可自行加入分類來追蹤本月預算：'}</p>
-                                    <div class="${activeBudgetKeys.length > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''} space-y-2.5">
-                                        ${activeBudgetKeys.length === 0 ? `
-                                            <div class="text-center py-6 text-xs text-app-muted bg-app-surface rounded-2xl border border-app-line">
-                                                ${appData.language==='en'?'No budget categories tracked':'目前尚無設定任何預算分類'}
-                                            </div>
-                                        ` : activeBudgetKeys.map(catName => {
-                                            const b = activeBudgets[catName];
-                                            const curr = b.currency || 'TWD';
-                                            const safeId = catName.replace(/[^a-zA-Z0-9]/g, '_');
-                                            return `
-                                                <div class="bg-app-surface p-3 rounded-2xl border border-app-line space-y-2">
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="font-bold text-app-main text-xs flex items-center gap-1.5">${catName}</span>
-                                                        <button type="button" onclick="removeBudgetCategory(decodeURIComponent('${encodeURIComponent(catName)}'))" class="text-[11px] text-app-muted hover:text-brand-red flex items-center gap-1 active:scale-95"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> ${appData.language==='en'?'Remove':'移除'}</button>
-                                                    </div>
-                                                    <div class="flex gap-2 items-center pt-1">
-                                                        <button type="button" onclick="triggerBudgetCurrencyPicker(decodeURIComponent('${encodeURIComponent(catName)}'))" class="bg-app-input text-[11px] font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 font-mono shrink-0 flex items-center gap-1">
-                                                            <span>${curr}</span> <i data-lucide="chevron-down" class="w-3 h-3 text-app-muted"></i>
-                                                        </button>
-                                                        <div class="relative flex-1 flex items-center">
-                                                            <input type="number" id="budget-input-${safeId}" value="${b.amount === 0 ? '' : b.amount}" placeholder="${appData.language==='en'?'Amount...':'輸入預算金額...'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
-                                                            <button type="button" onclick="clearInput('budget-input-${safeId}', function(){ saveBudgetCategoryAmount(decodeURIComponent('${encodeURIComponent(catName)}'), 0); })" class="clear-btn ${b.amount === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                                        </div>
-                                                        <button onclick="saveBudgetCategoryFromInput(decodeURIComponent('${encodeURIComponent(catName)}'), 'budget-input-${safeId}')" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold shrink-0 active:scale-95 flex items-center gap-1">${appData.language==='en'?'Save':'儲存'}</button>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
+                        <div id="acc-content-budget" class="${isBudgetManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                            <p class="text-[11px] text-app-muted">${appData.language==='en'?'Click "+" below to add budgets:':'點擊下方「+」按鈕可自行加入分類來追蹤本月預算：'}</p>
+                            <div class="${activeBudgetKeys.length > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''} space-y-2.5">
+                                ${activeBudgetKeys.length === 0 ? `
+                                    <div class="text-center py-6 text-xs text-app-muted bg-app-surface rounded-2xl border border-app-line">
+                                        ${appData.language==='en'?'No budget categories tracked':'目前尚無設定任何預算分類'}
                                     </div>
-                                    <button type="button" onclick="triggerAddBudgetCategoryPicker()" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-2">
-                                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Budget Category':'新增預算追蹤分類'} (+)
-                                    </button>
-                                </div>
+                                ` : activeBudgetKeys.map(catName => {
+                                    const b = activeBudgets[catName];
+                                    const curr = b.currency || 'TWD';
+                                    const safeId = catName.replace(/[^a-zA-Z0-9]/g, '_');
+                                    return `
+                                        <div class="bg-app-surface p-3 rounded-2xl border border-app-line space-y-2">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-bold text-app-main text-xs flex items-center gap-1.5">${catName}</span>
+                                                <button type="button" onclick="removeBudgetCategory(decodeURIComponent('${encodeURIComponent(catName)}'))" class="text-[11px] text-app-muted hover:text-brand-red flex items-center gap-1 active:scale-95"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> ${appData.language==='en'?'Remove':'移除'}</button>
+                                            </div>
+                                            <div class="flex gap-2 items-center pt-1">
+                                                <button type="button" onclick="triggerBudgetCurrencyPicker(decodeURIComponent('${encodeURIComponent(catName)}'))" class="bg-app-input text-[11px] font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 font-mono shrink-0 flex items-center gap-1">
+                                                    <span>${curr}</span> <i data-lucide="chevron-down" class="w-3 h-3 text-app-muted"></i>
+                                                </button>
+                                                <div class="relative flex-1 flex items-center">
+                                                    <input type="number" id="budget-input-${safeId}" value="${b.amount === 0 ? '' : b.amount}" placeholder="${appData.language==='en'?'Amount...':'輸入預算金額...'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                                    <button type="button" onclick="clearInput('budget-input-${safeId}', function(){ saveBudgetCategoryAmount(decodeURIComponent('${encodeURIComponent(catName)}'), 0); })" class="clear-btn ${b.amount === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                                </div>
+                                                <button onclick="saveBudgetCategoryFromInput(decodeURIComponent('${encodeURIComponent(catName)}'), 'budget-input-${safeId}')" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold shrink-0 active:scale-95 flex items-center gap-1">${appData.language==='en'?'Save':'儲存'}</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
+                            <button type="button" onclick="triggerAddBudgetCategoryPicker()" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-2">
+                                <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Budget Category':'新增預算追蹤分類'} (+)
+                            </button>
                         </div>
                     </div>
 
                     <!-- Recurring Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleRecurringManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recurring_manage">${t('recurring_manage')}</span> (${recurringRules.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-recurring" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isRecurringManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-recurring" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isRecurringManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-wrapper-recurring" class="grid transition-all duration-300 ease-in-out ${isRecurringManageOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}">
-                            <div class="overflow-hidden">
-                                <div id="acc-content-recurring" class="px-4 pb-4 space-y-2.5 border-t border-app-line pt-3">
-                                    <div class="${recurringRules.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
-                                        ${recurringRules.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No recurring rules':'尚未設定自動扣款規則'}</div>` : recurringRules.map(r => `
-                                            <div class="bg-app-surface p-2.5 rounded-xl border border-app-line flex justify-between items-center text-xs">
-                                                <div>
-                                                    <div class="font-bold text-app-main">${r.name}</div>
-                                                    <div class="text-[10px] text-app-muted font-mono">Date: ${r.startDate || 'Day '+r.day} ($${r.amount} ${r.asset})</div>
-                                                </div>
-                                                <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                            </div>
-                                        `).join('')}
+                        <div id="acc-content-recurring" class="${isRecurringManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
+                            <div class="${recurringRules.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
+                                ${recurringRules.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No recurring rules':'尚未設定自動扣款規則'}</div>` : recurringRules.map(r => `
+                                    <div class="bg-app-surface p-2.5 rounded-xl border border-app-line flex justify-between items-center text-xs">
+                                        <div>
+                                            <div class="font-bold text-app-main">${r.name}</div>
+                                            <div class="text-[10px] text-app-muted font-mono">Date: ${r.startDate || 'Day '+r.day} ($${r.amount} ${r.asset})</div>
+                                        </div>
+                                        <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                     </div>
-                                    <button type="button" onclick="openModal('recurring-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
-                                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Rule':'新增固定規則'} (+)
-                                    </button>
-                                </div>
+                                `).join('')}
                             </div>
+                            <button type="button" onclick="openModal('recurring-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
+                                <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Rule':'新增固定規則'} (+)
+                            </button>
                         </div>
                     </div>
 
                     <!-- Installments Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleInstallmentManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="installment_manage">${t('installment_manage')}</span> (${installments.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-installment" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isInstallmentManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-installment" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isInstallmentManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-wrapper-installment" class="grid transition-all duration-300 ease-in-out ${isInstallmentManageOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}">
-                            <div class="overflow-hidden">
-                                <div id="acc-content-installment" class="px-4 pb-4 space-y-2.5 border-t border-app-line pt-3">
-                                    <div class="${installments.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
-                                        ${installments.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No installments':'尚未設定分期付款'}</div>` : installments.map(i => `
-                                            <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1.5 text-xs">
-                                                <div class="flex justify-between items-center">
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="font-bold text-app-main">${i.name}</span>
-                                                        <span class="text-[10px] text-app-muted font-mono bg-app-card px-1.5 py-0.5 rounded border border-app-line">Total $${i.totalAmount.toLocaleString()}</span>
-                                                    </div>
-                                                    <button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                                                </div>
-                                                <div class="flex justify-between items-center text-[11px] text-app-muted font-mono">
-                                                    <span>Per: $${i.monthlyAmount.toLocaleString()}</span>
-                                                    <span>Paid ${i.paidMonths}/${i.totalMonths} (${i.startDate || '1st'})</span>
-                                                </div>
+                        <div id="acc-content-installment" class="${isInstallmentManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
+                            <div class="${installments.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
+                                ${installments.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No installments':'尚未設定分期付款'}</div>` : installments.map(i => `
+                                    <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1.5 text-xs">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-bold text-app-main">${i.name}</span>
+                                                <span class="text-[10px] text-app-muted font-mono bg-app-card px-1.5 py-0.5 rounded border border-app-line">Total $${i.totalAmount.toLocaleString()}</span>
                                             </div>
-                                        `).join('')}
+                                            <button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[11px] text-app-muted font-mono">
+                                            <span>Per: $${i.monthlyAmount.toLocaleString()}</span>
+                                            <span>Paid ${i.paidMonths}/${i.totalMonths} (${i.startDate || '1st'})</span>
+                                        </div>
                                     </div>
-                                    <button type="button" onclick="openModal('installment-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
-                                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Installment':'新增分期項目'} (+)
-                                    </button>
+                                `).join('')}
+                            </div>
+                            <button type="button" onclick="openModal('installment-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
+                                <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Installment':'新增分期項目'} (+)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- General Parameters Accordion -->
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
+                        <button type="button" onclick="toggleBasicParamsAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="params_manage">${t('params_manage')}</span>
+                            </h3>
+                            <i data-lucide="chevron-down" id="acc-icon-params" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBasicParamsOpen ? 'rotate-180' : ''}"></i>
+                        </button>
+                        <div id="acc-content-params" class="${isBasicParamsOpen ? '' : 'hidden'} px-4 pb-4 space-y-4 animate-fade border-t border-app-line pt-3">
+                            <div>
+                                <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">Custom App Title</label>
+                                <div class="flex gap-2">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="text" id="setting-title" value="${(appData && appData.appTitle) ? appData.appTitle : ''}" placeholder="${appData.language === 'en' ? 'Wealth Ledger' : '智慧帳本'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
+                                        <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData && appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                    </div>
+                                    <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95" data-i18n="save_btn">Save</button>
+                                </div>
+                            </div>
+
+                            <div class="pt-3 border-t border-app-line space-y-2">
+                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">${t('lang_label')}</span></label>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <button onclick="setLanguage('en')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'en' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">English</button>
+                                    <button onclick="setLanguage('zh-TW')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'zh-TW' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">繁體中文</button>
+                                </div>
+                            </div>
+
+                            <div class="pt-3 border-t border-app-line space-y-2">
+                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="theme_label">${t('theme_label')}</span></label>
+                                <div class="grid grid-cols-3 gap-1.5 text-xs">
+                                    <button onclick="setTheme('system')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'system' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="laptop" class="w-3.5 h-3.5"></i> <span data-i18n="theme_system">${t('theme_system')}</span></button>
+                                    <button onclick="setTheme('light')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-3.5 h-3.5"></i> <span data-i18n="theme_light">${t('theme_light')}</span></button>
+                                    <button onclick="setTheme('dark')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-3.5 h-3.5"></i> <span data-i18n="theme_dark">${t('theme_dark')}</span></button>
                                 </div>
                             </div>
                         </div>
@@ -3579,75 +3501,20 @@
                     <!-- Backup Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBackupManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="backup_manage">${t('backup_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-backup" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBackupManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-backup" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBackupManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-wrapper-backup" class="grid transition-all duration-300 ease-in-out ${isBackupManageOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}">
-                            <div class="overflow-hidden">
-                                <div id="acc-content-backup" class="px-4 pb-4 space-y-3 border-t border-app-line pt-3">
-                                    <div class="grid grid-cols-2 gap-2 text-xs">
-                                        <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_json">${t('export_json')}</span></button>
-                                        <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> <span data-i18n="import_json">${t('import_json')}</span><input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
-                                    </div>
-                                    <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
-                                        <span class="inline-flex items-center gap-1.5 text-app-main"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_jpg">${t('export_jpg')}</span></span>
-                                    </button>
-                                    <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> <span data-i18n="reset_all">${t('reset_all')}</span></button>
-                                </div>
+                        <div id="acc-content-backup" class="${isBackupManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_json">${t('export_json')}</span></button>
+                                <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> <span data-i18n="import_json">${t('import_json')}</span><input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- General Parameters Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBasicParamsAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
-                                <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="params_manage">${t('params_manage')}</span>
-                            </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-params" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBasicParamsOpen ? 'rotate-180' : ''}"></i>
-                        </button>
-                        <div id="acc-wrapper-params" class="grid transition-all duration-300 ease-in-out ${isBasicParamsOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}">
-                            <div class="overflow-hidden">
-                                <div id="acc-content-params" class="px-4 pb-4 space-y-4 border-t border-app-line pt-3">
-                                    <div>
-                                        <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">Custom App Title</label>
-                                        <div class="flex gap-2">
-                                            <div class="relative flex-1 flex items-center">
-                                                <input type="text" id="setting-title" value="${(appData && appData.appTitle) ? appData.appTitle : ''}" placeholder="${appData.language === 'en' ? 'Wealth Ledger' : '智慧帳本'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
-                                                <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData && appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                            </div>
-                                            <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95" data-i18n="save_btn">Save</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">Language / 語言選擇</span></label>
-                                        <div class="grid grid-cols-2 gap-2 text-xs">
-                                            <button onclick="setLanguage('en')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'en' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">English</button>
-                                            <button onclick="setLanguage('zh-TW')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'zh-TW' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">繁體中文</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
-                                        <div class="grid grid-cols-3 gap-2 text-xs">
-                                            <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">USD ($)</button>
-                                            <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">TWD (NT$)</button>
-                                            <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">MYR (RM)</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> Color Theme</label>
-                                        <div class="grid grid-cols-2 gap-2 text-xs">
-                                            <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> <span data-i18n="theme_light">${t('theme_light')}</span></button>
-                                            <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> <span data-i18n="theme_dark">${t('theme_dark')}</span></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
+                                <span class="inline-flex items-center gap-1.5 text-app-main"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_jpg">${t('export_jpg')}</span></span>
+                            </button>
+                            <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> <span data-i18n="reset_all">${t('reset_all')}</span></button>
                         </div>
                     </div>
                 </div>
