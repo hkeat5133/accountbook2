@@ -25,46 +25,66 @@
             --color-green: #5b8c5a;
             --color-dark: #2c2e2b;
 
-            --bg-app: #f6f4ee;
-            --bg-surface: #ffffff;
-            --bg-card: #ece8df;
-            --bg-input: #ffffff;
-            --text-main: #2c2e2b;
-            --text-muted: #7a7f78;
-            --border-line: #d8d2c4;
-            --phone-border: #d2cbba;
+            /* Liquid Glass Theme - Light */
+            --bg-app: rgba(255, 255, 255, 0.15);
+            --bg-surface: rgba(255, 255, 255, 0.65);
+            --bg-card: rgba(255, 255, 255, 0.45);
+            --bg-input: rgba(255, 255, 255, 0.7);
+            --text-main: #1f2937;
+            --text-muted: #64748b;
+            --border-line: rgba(255, 255, 255, 0.5);
+            --phone-border: rgba(255, 255, 255, 0.8);
+            
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
 
         body.theme-dark {
-            --bg-app: #1c1d1b;
-            --bg-surface: #272825;
-            --bg-card: #333530;
-            --bg-input: #21221f;
-            --text-main: #f0eee6;
-            --text-muted: #939890;
-            --border-line: #454841;
-            --phone-border: #2b2c28;
+            /* Liquid Glass Theme - Dark */
+            --bg-app: rgba(15, 23, 42, 0.3);
+            --bg-surface: rgba(30, 41, 59, 0.5);
+            --bg-card: rgba(15, 23, 42, 0.4);
+            --bg-input: rgba(30, 41, 59, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-line: rgba(255, 255, 255, 0.12);
+            --phone-border: rgba(255, 255, 255, 0.15);
+            
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
         body {
-            background-color: var(--bg-app);
+            /* App background fallback */
+            background-color: #f6f4ee;
+            /* Liquid Animated Background for Light Mode */
+            background: linear-gradient(-45deg, #f0fdfa, #fdf4ff, #e0e7ff, #fce7f3);
+            background-size: 400% 400%;
+            animation: liquidGradient 15s ease infinite;
+            background-attachment: fixed;
+            
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            transition: background-color 0.35s ease, color 0.35s ease;
+            transition: color 0.35s ease;
             overflow: hidden;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
             margin-bottom: 0 !important;
         }
 
-        body.modal-open {
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-            height: 100%;
+        body.theme-dark {
+            /* Liquid Animated Background for Dark Mode */
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #020617, #172554);
+            background-size: 400% 400%;
+            animation: liquidGradient 15s ease infinite;
+            background-attachment: fixed;
+        }
+
+        @keyframes liquidGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .phone-container {
@@ -75,6 +95,8 @@
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
@@ -107,12 +129,12 @@
 
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(44, 46, 43, 0.55);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px) saturate(120%);
+            -webkit-backdrop-filter: blur(16px) saturate(120%);
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(18, 19, 17, 0.72);
+            background-color: rgba(0, 0, 0, 0.4);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -170,10 +192,27 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        .bg-app-bg { background-color: var(--bg-app); }
-        .bg-app-surface { background-color: var(--bg-surface); }
-        .bg-app-card { background-color: var(--bg-card); }
-        .bg-app-input { background-color: var(--bg-input); }
+        .bg-app-bg { 
+            background-color: var(--bg-app); 
+        }
+        .bg-app-surface { 
+            background-color: var(--bg-surface); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--glass-shadow);
+        }
+        .bg-app-card { 
+            background-color: var(--bg-card); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--glass-shadow);
+        }
+        .bg-app-input { 
+            background-color: var(--bg-input); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
         .text-app-main { color: var(--text-main); }
         .text-app-muted { color: var(--text-muted); }
         .border-app-line { border-color: var(--border-line); }
