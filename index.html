@@ -25,66 +25,53 @@
             --color-green: #5b8c5a;
             --color-dark: #2c2e2b;
 
-            /* Liquid Glass Theme - Light */
-            --bg-app: rgba(255, 255, 255, 0.15);
+            /* Liquid Glass Theme Variables - Light Mode */
+            --bg-app: #f0ede6;
+            --bg-app-gradient: linear-gradient(135deg, #fdfbfb 0%, #e8e4d9 100%);
             --bg-surface: rgba(255, 255, 255, 0.65);
             --bg-card: rgba(255, 255, 255, 0.45);
-            --bg-input: rgba(255, 255, 255, 0.7);
-            --text-main: #1f2937;
-            --text-muted: #64748b;
-            --border-line: rgba(255, 255, 255, 0.5);
+            --bg-input: rgba(255, 255, 255, 0.55);
+            --text-main: #2c2e2b;
+            --text-muted: #6b7280;
+            --border-line: rgba(255, 255, 255, 0.65);
             --phone-border: rgba(255, 255, 255, 0.8);
-            
             --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
 
         body.theme-dark {
-            /* Liquid Glass Theme - Dark */
-            --bg-app: rgba(15, 23, 42, 0.3);
-            --bg-surface: rgba(30, 41, 59, 0.5);
-            --bg-card: rgba(15, 23, 42, 0.4);
-            --bg-input: rgba(30, 41, 59, 0.6);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-line: rgba(255, 255, 255, 0.12);
-            --phone-border: rgba(255, 255, 255, 0.15);
-            
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            /* Liquid Glass Theme Variables - Dark Mode */
+            --bg-app: #151614;
+            --bg-app-gradient: linear-gradient(135deg, #1c1d1b 0%, #0f100e 100%);
+            --bg-surface: rgba(40, 42, 39, 0.65);
+            --bg-card: rgba(40, 42, 39, 0.35);
+            --bg-input: rgba(20, 21, 19, 0.45);
+            --text-main: #f0eee6;
+            --text-muted: #9ca3af;
+            --border-line: rgba(255, 255, 255, 0.08);
+            --phone-border: rgba(43, 44, 40, 0.8);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
         }
 
         body {
-            /* App background fallback */
-            background-color: #f6f4ee;
-            /* Liquid Animated Background for Light Mode */
-            background: linear-gradient(-45deg, #f0fdfa, #fdf4ff, #e0e7ff, #fce7f3);
-            background-size: 400% 400%;
-            animation: liquidGradient 15s ease infinite;
-            background-attachment: fixed;
-            
+            background-color: var(--bg-app);
+            background-image: var(--bg-app-gradient);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            transition: color 0.35s ease;
+            transition: background-color 0.35s ease, color 0.35s ease;
             overflow: hidden;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
             margin-bottom: 0 !important;
         }
 
-        body.theme-dark {
-            /* Liquid Animated Background for Dark Mode */
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #020617, #172554);
-            background-size: 400% 400%;
-            animation: liquidGradient 15s ease infinite;
-            background-attachment: fixed;
-        }
-
-        @keyframes liquidGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
 
         .phone-container {
@@ -95,8 +82,7 @@
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            background-image: var(--bg-app-gradient);
             box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
@@ -105,6 +91,56 @@
             touch-action: none;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
+            z-index: 1; /* Establishes stacking context for fluid blobs */
+        }
+
+        /* --- Ambient Liquid Blobs for Glassmorphism Effect --- */
+        .phone-container::before,
+        .phone-container::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(75px);
+            -webkit-filter: blur(75px);
+            z-index: 0;
+            pointer-events: none;
+            animation: fluidFloat 12s infinite alternate ease-in-out;
+            will-change: transform;
+        }
+
+        .phone-container::before {
+            width: 380px;
+            height: 380px;
+            background: rgba(200, 155, 60, 0.25);
+            top: -100px;
+            left: -100px;
+        }
+
+        .phone-container::after {
+            width: 350px;
+            height: 350px;
+            background: rgba(58, 107, 136, 0.2);
+            bottom: -50px;
+            right: -100px;
+            animation-delay: -6s;
+        }
+
+        body.theme-dark .phone-container::before {
+            background: rgba(200, 155, 60, 0.15);
+        }
+        body.theme-dark .phone-container::after {
+            background: rgba(58, 107, 136, 0.12);
+        }
+
+        @keyframes fluidFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, 40px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+            100% { transform: translate(40px, -20px) scale(1.1); }
+        }
+
+        main#main-content {
+            z-index: 10;
         }
 
         @media (min-width: 640px) {
@@ -129,12 +165,12 @@
 
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(16px) saturate(120%);
-            -webkit-backdrop-filter: blur(16px) saturate(120%);
+            background-color: rgba(44, 46, 43, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(18, 19, 17, 0.55);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -149,6 +185,8 @@
             border-radius: 24px !important;
             width: 100%;
             max-width: 400px;
+            box-shadow: var(--glass-shadow);
+            border: 1px solid var(--border-line);
         }
 
         .modal-sheet.is-open {
@@ -186,45 +224,20 @@
             opacity: 0.92 !important;
         }
 
-        /* Liquid Glass Smooth Accordion Animation */
-        .accordion-grid {
-            display: grid;
-            grid-template-rows: 0fr;
-            opacity: 0;
-            visibility: hidden;
-            transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                        opacity 0.4s ease, 
-                        border-color 0.4s ease,
-                        visibility 0s 0.45s;
-            border-top-color: transparent !important;
-        }
-        .accordion-grid.is-open {
-            grid-template-rows: 1fr;
-            opacity: 1;
-            visibility: visible;
-            border-top-color: var(--border-line) !important;
-            transition: grid-template-rows 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                        opacity 0.45s ease, 
-                        border-color 0.45s ease,
-                        visibility 0s 0s;
-        }
-        .accordion-inner {
-            overflow: hidden;
-        }
-
         .pulse-gold { animation: pulseGold 2.5s infinite; }
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 12px rgba(200, 155, 60, 0.25); }
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
+        /* --- Liquid Glass Utility Classes --- */
         .bg-app-bg { 
-            background-color: var(--bg-app); 
+            background: transparent !important; 
         }
         .bg-app-surface { 
             background-color: var(--bg-surface); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             box-shadow: var(--glass-shadow);
         }
         .bg-app-card { 
@@ -237,6 +250,7 @@
             background-color: var(--bg-input); 
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
         }
 
         .text-app-main { color: var(--text-main); }
@@ -1184,7 +1198,7 @@
             isAccountManageOpen = !isAccountManageOpen;
             const content = document.getElementById('acc-content-account');
             const icon = document.getElementById('acc-icon-account');
-            if (content) content.classList.toggle('is-open', isAccountManageOpen);
+            if (content) content.classList.toggle('hidden', !isAccountManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isAccountManageOpen);
         }
 
@@ -1192,7 +1206,7 @@
             isBudgetManageOpen = !isBudgetManageOpen;
             const content = document.getElementById('acc-content-budget');
             const icon = document.getElementById('acc-icon-budget');
-            if (content) content.classList.toggle('is-open', isBudgetManageOpen);
+            if (content) content.classList.toggle('hidden', !isBudgetManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isBudgetManageOpen);
         }
 
@@ -1200,7 +1214,7 @@
             isRecurringManageOpen = !isRecurringManageOpen;
             const content = document.getElementById('acc-content-recurring');
             const icon = document.getElementById('acc-icon-recurring');
-            if (content) content.classList.toggle('is-open', isRecurringManageOpen);
+            if (content) content.classList.toggle('hidden', !isRecurringManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isRecurringManageOpen);
         }
 
@@ -1208,7 +1222,7 @@
             isInstallmentManageOpen = !isInstallmentManageOpen;
             const content = document.getElementById('acc-content-installment');
             const icon = document.getElementById('acc-icon-installment');
-            if (content) content.classList.toggle('is-open', isInstallmentManageOpen);
+            if (content) content.classList.toggle('hidden', !isInstallmentManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isInstallmentManageOpen);
         }
 
@@ -1216,7 +1230,7 @@
             isBackupManageOpen = !isBackupManageOpen;
             const content = document.getElementById('acc-content-backup');
             const icon = document.getElementById('acc-icon-backup');
-            if (content) content.classList.toggle('is-open', isBackupManageOpen);
+            if (content) content.classList.toggle('hidden', !isBackupManageOpen);
             if (icon) icon.classList.toggle('rotate-180', isBackupManageOpen);
         }
 
@@ -1224,7 +1238,7 @@
             isBasicParamsOpen = !isBasicParamsOpen;
             const content = document.getElementById('acc-content-params');
             const icon = document.getElementById('acc-icon-params');
-            if (content) content.classList.toggle('is-open', isBasicParamsOpen);
+            if (content) content.classList.toggle('hidden', !isBasicParamsOpen);
             if (icon) icon.classList.toggle('rotate-180', isBasicParamsOpen);
         }
 
@@ -1321,6 +1335,7 @@
         }
 
         function saveData(shouldRender = true) {
+            sortTransactions();
             localStorage.setItem('wealth_app_data_v30_final', JSON.stringify(appData));
             applyTheme();
             if (shouldRender) renderCurrentView();
@@ -1651,11 +1666,6 @@
 
         window.onload = function() {
             applyTheme();
-            if (window.matchMedia) {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                    if (appData && appData.theme === 'system') applyTheme();
-                });
-            }
             lucide.createIcons();
             initPWA();
             initRealtimeSwipe();
@@ -3361,131 +3371,64 @@
                     <!-- Accounts Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="acc_manage">${t('acc_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-account" class="accordion-grid ${isAccountManageOpen ? 'is-open' : ''} border-t border-app-line">
-                            <div class="accordion-inner">
-                                <div class="px-4 pb-4 pt-3 space-y-3">
-                                    <div class="pb-2 border-b border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
-                                        <div class="grid grid-cols-3 gap-2 text-xs">
-                                            <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">USD ($)</button>
-                                            <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">TWD (NT$)</button>
-                                            <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">MYR (RM)</button>
-                                        </div>
+                        <div id="acc-content-account" class="${isAccountManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                            <div class="pb-2 border-b border-app-line space-y-2">
+                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
+                                <div class="grid grid-cols-3 gap-2 text-xs">
+                                    <button onclick="setBaseCurrency('USD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'USD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">USD ($)</button>
+                                    <button onclick="setBaseCurrency('TWD')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'TWD' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">TWD (NT$)</button>
+                                    <button onclick="setBaseCurrency('MYR')" class="py-2.5 rounded-xl border font-bold ${appData.baseCurrency === 'MYR' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">MYR (RM)</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TWD Cash Account (TWD)' : '台幣現金帳戶 (TWD)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
-
-                                    <div>
-                                        <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                                <div class="flex-1 min-w-0 pr-1">
-                                                    <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TWD Cash' : '台幣現金'}</span>
-                                                    <span class="text-[10px] text-app-muted font-mono">TWD</span>
-                                                </div>
-                                                <div class="flex items-center gap-2.5 shrink-0">
-                                                    <div class="flex flex-col items-end">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                        <input type="number" id="init-asset-TWD" value="${(appData.initialAssets && appData.initialAssets.TWD) ? appData.initialAssets.TWD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TWD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                    </div>
-                                                    <div class="flex flex-col items-center">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
-                                                            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                                <div class="flex-1 min-w-0 pr-1">
-                                                    <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'USD Cash' : '美金現金'}</span>
-                                                    <span class="text-[10px] text-app-muted font-mono">USD</span>
-                                                </div>
-                                                <div class="flex items-center gap-2.5 shrink-0">
-                                                    <div class="flex flex-col items-end">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                        <input type="number" id="init-asset-USD" value="${(appData.initialAssets && appData.initialAssets.USD) ? appData.initialAssets.USD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('USD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                    </div>
-                                                    <div class="flex flex-col items-center">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
-                                                            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                                <div class="flex-1 min-w-0 pr-1">
-                                                    <span class="font-bold text-app-main text-xs block truncate">🇲🇾 ${appData.language === 'en' ? 'MYR Cash' : '馬幣現金'}</span>
-                                                    <span class="text-[10px] text-app-muted font-mono">MYR</span>
-                                                </div>
-                                                <div class="flex items-center gap-2.5 shrink-0">
-                                                    <div class="flex flex-col items-end">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                        <input type="number" id="init-asset-MYR" value="${(appData.initialAssets && appData.initialAssets.MYR) ? appData.initialAssets.MYR : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('MYR', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                    </div>
-                                                    <div class="flex flex-col items-center">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                            <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
-                                                            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'USD Cash Account (USD)' : '美金現金帳戶 (USD)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇲🇾 ${appData.language === 'en' ? 'MYR Cash Account (MYR)' : '馬幣現金帳戶 (MYR)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <div class="pt-2">
-                                        <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                                <div class="flex-1 min-w-0 pr-1">
-                                                    <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TW Stock' : '台股證券'}</span>
-                                                    <span class="text-[10px] text-app-muted font-mono">TW Stock</span>
-                                                </div>
-                                                <div class="flex items-center gap-2.5 shrink-0">
-                                                    <div class="flex flex-col items-end">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                        <input type="number" id="init-asset-TW_STOCK" value="${(appData.initialAssets && appData.initialAssets.TW_STOCK) ? appData.initialAssets.TW_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TW_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                    </div>
-                                                    <div class="flex flex-col items-center">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
-                                                            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                                <div class="flex-1 min-w-0 pr-1">
-                                                    <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'US Stock' : '美股證券'}</span>
-                                                    <span class="text-[10px] text-app-muted font-mono">US Stock</span>
-                                                </div>
-                                                <div class="flex items-center gap-2.5 shrink-0">
-                                                    <div class="flex flex-col items-end">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                        <input type="number" id="init-asset-US_STOCK" value="${(appData.initialAssets && appData.initialAssets.US_STOCK) ? appData.initialAssets.US_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('US_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                    </div>
-                                                    <div class="flex flex-col items-center">
-                                                        <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
-                                                            <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="pt-2">
+                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TW Stock Account (TW Stock)' : '台股證券帳戶 (TW Stock)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
+                                    </div>
+                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
+                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'US Stock Account (US Stock)' : '美股證券帳戶 (US Stock)'}</span>
+                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -3495,156 +3438,140 @@
                     <!-- Budget Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBudgetManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="budget_manage">${t('budget_manage')}</span> (${activeBudgetKeys.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-budget" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBudgetManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-budget" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBudgetManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-budget" class="accordion-grid ${isBudgetManageOpen ? 'is-open' : ''} border-t border-app-line">
-                            <div class="accordion-inner">
-                                <div class="px-4 pb-4 pt-3 space-y-3">
-                                    <p class="text-[11px] text-app-muted">${appData.language==='en'?'Click "+" below to add budgets:':'點擊下方「+」按鈕可自行加入分類來追蹤本月預算：'}</p>
-                                    <div class="${activeBudgetKeys.length > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''} space-y-2.5">
-                                        ${activeBudgetKeys.length === 0 ? `
-                                            <div class="text-center py-6 text-xs text-app-muted bg-app-surface rounded-2xl border border-app-line">
-                                                ${appData.language==='en'?'No budget categories tracked':'目前尚無設定任何預算分類'}
-                                            </div>
-                                        ` : activeBudgetKeys.map(catName => {
-                                            const b = activeBudgets[catName];
-                                            const curr = b.currency || 'TWD';
-                                            const safeId = catName.replace(/[^a-zA-Z0-9]/g, '_');
-                                            return `
-                                                <div class="bg-app-surface p-3 rounded-2xl border border-app-line space-y-2">
-                                                    <div class="flex justify-between items-center">
-                                                        <span class="font-bold text-app-main text-xs flex items-center gap-1.5">${catName}</span>
-                                                        <button type="button" onclick="removeBudgetCategory(decodeURIComponent('${encodeURIComponent(catName)}'))" class="text-[11px] text-app-muted hover:text-brand-red flex items-center gap-1 active:scale-95"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> ${appData.language==='en'?'Remove':'移除'}</button>
-                                                    </div>
-                                                    <div class="flex gap-2 items-center pt-1">
-                                                        <button type="button" onclick="triggerBudgetCurrencyPicker(decodeURIComponent('${encodeURIComponent(catName)}'))" class="bg-app-input text-[11px] font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 font-mono shrink-0 flex items-center gap-1">
-                                                            <span>${curr}</span> <i data-lucide="chevron-down" class="w-3 h-3 text-app-muted"></i>
-                                                        </button>
-                                                        <div class="relative flex-1 flex items-center">
-                                                            <input type="number" id="budget-input-${safeId}" value="${b.amount === 0 ? '' : b.amount}" placeholder="${appData.language==='en'?'Amount...':'輸入預算金額...'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
-                                                            <button type="button" onclick="clearInput('budget-input-${safeId}', function(){ saveBudgetCategoryAmount(decodeURIComponent('${encodeURIComponent(catName)}'), 0); })" class="clear-btn ${b.amount === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                                        </div>
-                                                        <button onclick="saveBudgetCategoryFromInput(decodeURIComponent('${encodeURIComponent(catName)}'), 'budget-input-${safeId}')" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold shrink-0 active:scale-95 flex items-center gap-1">${appData.language==='en'?'Save':'儲存'}</button>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
+                        <div id="acc-content-budget" class="${isBudgetManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                            <p class="text-[11px] text-app-muted">${appData.language==='en'?'Click "+" below to add budgets:':'點擊下方「+」按鈕可自行加入分類來追蹤本月預算：'}</p>
+                            <div class="${activeBudgetKeys.length > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''} space-y-2.5">
+                                ${activeBudgetKeys.length === 0 ? `
+                                    <div class="text-center py-6 text-xs text-app-muted bg-app-surface rounded-2xl border border-app-line">
+                                        ${appData.language==='en'?'No budget categories tracked':'目前尚無設定任何預算分類'}
                                     </div>
-                                    <button type="button" onclick="triggerAddBudgetCategoryPicker()" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-2">
-                                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Budget Category':'新增預算追蹤分類'} (+)
-                                    </button>
-                                </div>
+                                ` : activeBudgetKeys.map(catName => {
+                                    const b = activeBudgets[catName];
+                                    const curr = b.currency || 'TWD';
+                                    const safeId = catName.replace(/[^a-zA-Z0-9]/g, '_');
+                                    return `
+                                        <div class="bg-app-surface p-3 rounded-2xl border border-app-line space-y-2">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-bold text-app-main text-xs flex items-center gap-1.5">${catName}</span>
+                                                <button type="button" onclick="removeBudgetCategory(decodeURIComponent('${encodeURIComponent(catName)}'))" class="text-[11px] text-app-muted hover:text-brand-red flex items-center gap-1 active:scale-95"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> ${appData.language==='en'?'Remove':'移除'}</button>
+                                            </div>
+                                            <div class="flex gap-2 items-center pt-1">
+                                                <button type="button" onclick="triggerBudgetCurrencyPicker(decodeURIComponent('${encodeURIComponent(catName)}'))" class="bg-app-input text-[11px] font-bold text-brand-gold px-2.5 py-2 rounded-xl border border-app-line active:scale-95 font-mono shrink-0 flex items-center gap-1">
+                                                    <span>${curr}</span> <i data-lucide="chevron-down" class="w-3 h-3 text-app-muted"></i>
+                                                </button>
+                                                <div class="relative flex-1 flex items-center">
+                                                    <input type="number" id="budget-input-${safeId}" value="${b.amount === 0 ? '' : b.amount}" placeholder="${appData.language==='en'?'Amount...':'輸入預算金額...'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-2.5 pr-6 py-2 text-xs text-app-main outline-none focus:border-brand-gold font-mono placeholder:text-app-muted/30">
+                                                    <button type="button" onclick="clearInput('budget-input-${safeId}', function(){ saveBudgetCategoryAmount(decodeURIComponent('${encodeURIComponent(catName)}'), 0); })" class="clear-btn ${b.amount === 0 ? 'hidden' : ''} absolute right-1.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
+                                                </div>
+                                                <button onclick="saveBudgetCategoryFromInput(decodeURIComponent('${encodeURIComponent(catName)}'), 'budget-input-${safeId}')" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold shrink-0 active:scale-95 flex items-center gap-1">${appData.language==='en'?'Save':'儲存'}</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
+                            <button type="button" onclick="triggerAddBudgetCategoryPicker()" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-2">
+                                <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Budget Category':'新增預算追蹤分類'} (+)
+                            </button>
                         </div>
                     </div>
 
                     <!-- Recurring Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleRecurringManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recurring_manage">${t('recurring_manage')}</span> (${recurringRules.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-recurring" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isRecurringManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-recurring" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isRecurringManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-recurring" class="accordion-grid ${isRecurringManageOpen ? 'is-open' : ''} border-t border-app-line">
-                            <div class="accordion-inner">
-                                <div class="px-4 pb-4 pt-3 space-y-2.5">
-                                    <div class="${recurringRules.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
-                                        ${recurringRules.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No recurring rules':'尚未設定自動扣款規則'}</div>` : recurringRules.map(r => `
-                                            <div class="bg-app-surface p-2.5 rounded-xl border border-app-line flex justify-between items-center text-xs">
-                                                <div>
-                                                    <div class="font-bold text-app-main">${r.name}</div>
-                                                    <div class="text-[10px] text-app-muted font-mono">Date: ${r.startDate || 'Day '+r.day} ($${r.amount} ${r.asset})</div>
-                                                </div>
-                                                <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                            </div>
-                                        `).join('')}
+                        <div id="acc-content-recurring" class="${isRecurringManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
+                            <div class="${recurringRules.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
+                                ${recurringRules.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No recurring rules':'尚未設定自動扣款規則'}</div>` : recurringRules.map(r => `
+                                    <div class="bg-app-surface p-2.5 rounded-xl border border-app-line flex justify-between items-center text-xs">
+                                        <div>
+                                            <div class="font-bold text-app-main">${r.name}</div>
+                                            <div class="text-[10px] text-app-muted font-mono">Date: ${r.startDate || 'Day '+r.day} ($${r.amount} ${r.asset})</div>
+                                        </div>
+                                        <button onclick="deleteRecurringRule('${r.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                     </div>
-                                    <button type="button" onclick="openModal('recurring-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
-                                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Rule':'新增固定規則'} (+)
-                                    </button>
-                                </div>
+                                `).join('')}
                             </div>
+                            <button type="button" onclick="openModal('recurring-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
+                                <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Rule':'新增固定規則'} (+)
+                            </button>
                         </div>
                     </div>
 
                     <!-- Installments Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleInstallmentManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="installment_manage">${t('installment_manage')}</span> (${installments.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-installment" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isInstallmentManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-installment" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isInstallmentManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-installment" class="accordion-grid ${isInstallmentManageOpen ? 'is-open' : ''} border-t border-app-line">
-                            <div class="accordion-inner">
-                                <div class="px-4 pb-4 pt-3 space-y-2.5">
-                                    <div class="${installments.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
-                                        ${installments.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No installments':'尚未設定分期付款'}</div>` : installments.map(i => `
-                                            <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1.5 text-xs">
-                                                <div class="flex justify-between items-center">
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="font-bold text-app-main">${i.name}</span>
-                                                        <span class="text-[10px] text-app-muted font-mono bg-app-card px-1.5 py-0.5 rounded border border-app-line">Total $${i.totalAmount.toLocaleString()}</span>
-                                                    </div>
-                                                    <button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                                                </div>
-                                                <div class="flex justify-between items-center text-[11px] text-app-muted font-mono">
-                                                    <span>Per: $${i.monthlyAmount.toLocaleString()}</span>
-                                                    <span>Paid ${i.paidMonths}/${i.totalMonths} (${i.startDate || '1st'})</span>
-                                                </div>
+                        <div id="acc-content-installment" class="${isInstallmentManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-2.5 animate-fade border-t border-app-line pt-3">
+                            <div class="${installments.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
+                                ${installments.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No installments':'尚未設定分期付款'}</div>` : installments.map(i => `
+                                    <div class="bg-app-surface p-2.5 rounded-xl border border-app-line space-y-1.5 text-xs">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-bold text-app-main">${i.name}</span>
+                                                <span class="text-[10px] text-app-muted font-mono bg-app-card px-1.5 py-0.5 rounded border border-app-line">Total $${i.totalAmount.toLocaleString()}</span>
                                             </div>
-                                        `).join('')}
+                                            <button onclick="deleteInstallment('${i.id}')" class="text-app-muted hover:text-brand-red p-1 active:scale-75"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[11px] text-app-muted font-mono">
+                                            <span>Per: $${i.monthlyAmount.toLocaleString()}</span>
+                                            <span>Paid ${i.paidMonths}/${i.totalMonths} (${i.startDate || '1st'})</span>
+                                        </div>
                                     </div>
-                                    <button type="button" onclick="openModal('installment-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
-                                        <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Installment':'新增分期項目'} (+)
-                                    </button>
-                                </div>
+                                `).join('')}
                             </div>
+                            <button type="button" onclick="openModal('installment-modal')" class="w-full bg-brand-gold/15 text-brand-gold border border-brand-gold/40 hover:bg-brand-gold/25 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 mt-1">
+                                <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i> ${appData.language==='en'?'Add Installment':'新增分期項目'} (+)
+                            </button>
                         </div>
                     </div>
 
                     <!-- General Parameters Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBasicParamsAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="params_manage">${t('params_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-params" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBasicParamsOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-params" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBasicParamsOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-params" class="accordion-grid ${isBasicParamsOpen ? 'is-open' : ''} border-t border-app-line">
-                            <div class="accordion-inner">
-                                <div class="px-4 pb-4 pt-3 space-y-4">
-                                    <div>
-                                        <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">Custom App Title</label>
-                                        <div class="flex gap-2">
-                                            <div class="relative flex-1 flex items-center">
-                                                <input type="text" id="setting-title" value="${(appData && appData.appTitle) ? appData.appTitle : ''}" placeholder="${appData.language === 'en' ? 'Wealth Ledger' : '智慧帳本'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
-                                                <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData && appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
-                                            </div>
-                                            <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95" data-i18n="save_btn">Save</button>
-                                        </div>
+                        <div id="acc-content-params" class="${isBasicParamsOpen ? '' : 'hidden'} px-4 pb-4 space-y-4 animate-fade border-t border-app-line pt-3">
+                            <div>
+                                <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">Custom App Title</label>
+                                <div class="flex gap-2">
+                                    <div class="relative flex-1 flex items-center">
+                                        <input type="text" id="setting-title" value="${(appData && appData.appTitle) ? appData.appTitle : ''}" placeholder="${appData.language === 'en' ? 'Wealth Ledger' : '智慧帳本'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
+                                        <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData && appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                     </div>
+                                    <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95" data-i18n="save_btn">Save</button>
+                                </div>
+                            </div>
 
-                                    <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">Language / 語言選擇</span></label>
-                                        <div class="grid grid-cols-2 gap-2 text-xs">
-                                            <button onclick="setLanguage('en')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'en' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">English</button>
-                                            <button onclick="setLanguage('zh-TW')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'zh-TW' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">繁體中文</button>
-                                        </div>
-                                    </div>
+                            <div class="pt-3 border-t border-app-line space-y-2">
+                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">${t('lang_label')}</span></label>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <button onclick="setLanguage('en')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'en' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">English</button>
+                                    <button onclick="setLanguage('zh-TW')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'zh-TW' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">繁體中文</button>
+                                </div>
+                            </div>
 
-                                    <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="theme_label">Color Theme</span></label>
-                                        <div class="grid grid-cols-3 gap-1.5 text-xs">
-                                            <button onclick="setTheme('system')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'system' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="laptop" class="w-3.5 h-3.5"></i> <span data-i18n="theme_system">${t('theme_system') || 'System'}</span></button>
-                                            <button onclick="setTheme('light')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-3.5 h-3.5"></i> <span data-i18n="theme_light">${t('theme_light')}</span></button>
-                                            <button onclick="setTheme('dark')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-3.5 h-3.5"></i> <span data-i18n="theme_dark">${t('theme_dark')}</span></button>
-                                        </div>
-                                    </div>
+                            <div class="pt-3 border-t border-app-line space-y-2">
+                                <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="theme_label">${t('theme_label')}</span></label>
+                                <div class="grid grid-cols-3 gap-1.5 text-xs">
+                                    <button onclick="setTheme('system')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'system' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="laptop" class="w-3.5 h-3.5"></i> <span data-i18n="theme_system">${t('theme_system')}</span></button>
+                                    <button onclick="setTheme('light')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-3.5 h-3.5"></i> <span data-i18n="theme_light">${t('theme_light')}</span></button>
+                                    <button onclick="setTheme('dark')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-3.5 h-3.5"></i> <span data-i18n="theme_dark">${t('theme_dark')}</span></button>
                                 </div>
                             </div>
                         </div>
@@ -3653,24 +3580,20 @@
                     <!-- Backup Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBackupManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="backup_manage">${t('backup_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-backup" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBackupManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-backup" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBackupManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-backup" class="accordion-grid ${isBackupManageOpen ? 'is-open' : ''} border-t border-app-line">
-                            <div class="accordion-inner">
-                                <div class="px-4 pb-4 pt-3 space-y-3">
-                                    <div class="grid grid-cols-2 gap-2 text-xs">
-                                        <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_json">${t('export_json')}</span></button>
-                                        <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> <span data-i18n="import_json">${t('import_json')}</span><input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
-                                    </div>
-                                    <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
-                                        <span class="inline-flex items-center gap-1.5 text-app-main"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_jpg">${t('export_jpg')}</span></span>
-                                    </button>
-                                    <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> <span data-i18n="reset_all">${t('reset_all')}</span></button>
-                                </div>
+                        <div id="acc-content-backup" class="${isBackupManageOpen ? '' : 'hidden'} px-4 pb-4 space-y-3 animate-fade border-t border-app-line pt-3">
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_json">${t('export_json')}</span></button>
+                                <label class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95"><i data-lucide="upload" class="w-3.5 h-3.5 text-brand-blue"></i> <span data-i18n="import_json">${t('import_json')}</span><input type="file" accept=".json" onchange="importJSONData(event)" class="hidden"></label>
                             </div>
+                            <button onclick="openModal('export-jpg-modal')" class="w-full bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 text-xs active:scale-95">
+                                <span class="inline-flex items-center gap-1.5 text-app-main"><i data-lucide="image" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_jpg">${t('export_jpg')}</span></span>
+                            </button>
+                            <button onclick="openModal('confirm-modal')" class="w-full bg-brand-red/15 hover:bg-brand-red/25 text-brand-red border border-brand-red/40 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> <span data-i18n="reset_all">${t('reset_all')}</span></button>
                         </div>
                     </div>
                 </div>
