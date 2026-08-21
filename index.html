@@ -254,8 +254,8 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        @keyframes settingsEnter {
-            from { opacity: 0; transform: scale(0.96) translateY(12px); }
+        .bg-app-bg { background-color: var(--bg-app); }
+        .bg-app-surface { background-color: var(--bg-surface); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .animate-settings-enter {
@@ -1242,52 +1242,92 @@
         let isBackupManageOpen = false;
         let isBasicParamsOpen = false;
 
+        function runAccordionAnimation(contentId, iconId, isOpen) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            if (!content) return;
+
+            if (icon) {
+                if (isOpen) icon.classList.add('rotate-180');
+                else icon.classList.remove('rotate-180');
+            }
+
+            const duration = isOpen ? 350 : 300;
+
+            if (isOpen) {
+                content.classList.remove('hidden');
+                content.style.height = 'auto';
+                const targetHeight = content.scrollHeight;
+                
+                content.style.height = '0px';
+                content.style.opacity = '0';
+                content.offsetHeight; // Force browser reflow to reset height
+                
+                content.style.transition = 'height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease';
+                content.style.height = targetHeight + 'px';
+                content.style.opacity = '1';
+
+                let fired = false;
+                const handler = function(e) {
+                    if (e && e.propertyName !== 'height') return;
+                    if (fired) return;
+                    fired = true;
+                    content.style.height = 'auto';
+                    content.removeEventListener('transitionend', handler);
+                };
+                content.addEventListener('transitionend', handler);
+                setTimeout(handler, duration + 50); // Fallback
+            } else {
+                content.style.height = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                content.offsetHeight; // Force browser reflow to register current height
+                
+                content.style.transition = 'height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease';
+                content.style.height = '0px';
+                content.style.opacity = '0';
+
+                let fired = false;
+                const handler = function(e) {
+                    if (e && e.propertyName !== 'height') return;
+                    if (fired) return;
+                    fired = true;
+                    content.classList.add('hidden');
+                    content.style.transition = '';
+                    content.removeEventListener('transitionend', handler);
+                };
+                content.addEventListener('transitionend', handler);
+                setTimeout(handler, duration + 50); // Fallback
+            }
+        }
+
         function toggleAccountManageAccordion() {
             isAccountManageOpen = !isAccountManageOpen;
-            const content = document.getElementById('acc-content-account');
-            const icon = document.getElementById('acc-icon-account');
-            if (content) content.classList.toggle('is-open', isAccountManageOpen);
-            if (icon) icon.classList.toggle('rotate-180', isAccountManageOpen);
+            runAccordionAnimation('acc-content-account', 'acc-icon-account', isAccountManageOpen);
         }
 
         function toggleBudgetManageAccordion() {
             isBudgetManageOpen = !isBudgetManageOpen;
-            const content = document.getElementById('acc-content-budget');
-            const icon = document.getElementById('acc-icon-budget');
-            if (content) content.classList.toggle('is-open', isBudgetManageOpen);
-            if (icon) icon.classList.toggle('rotate-180', isBudgetManageOpen);
+            runAccordionAnimation('acc-content-budget', 'acc-icon-budget', isBudgetManageOpen);
         }
 
         function toggleRecurringManageAccordion() {
             isRecurringManageOpen = !isRecurringManageOpen;
-            const content = document.getElementById('acc-content-recurring');
-            const icon = document.getElementById('acc-icon-recurring');
-            if (content) content.classList.toggle('is-open', isRecurringManageOpen);
-            if (icon) icon.classList.toggle('rotate-180', isRecurringManageOpen);
+            runAccordionAnimation('acc-content-recurring', 'acc-icon-recurring', isRecurringManageOpen);
         }
 
         function toggleInstallmentManageAccordion() {
             isInstallmentManageOpen = !isInstallmentManageOpen;
-            const content = document.getElementById('acc-content-installment');
-            const icon = document.getElementById('acc-icon-installment');
-            if (content) content.classList.toggle('is-open', isInstallmentManageOpen);
-            if (icon) icon.classList.toggle('rotate-180', isInstallmentManageOpen);
+            runAccordionAnimation('acc-content-installment', 'acc-icon-installment', isInstallmentManageOpen);
         }
 
         function toggleBackupManageAccordion() {
             isBackupManageOpen = !isBackupManageOpen;
-            const content = document.getElementById('acc-content-backup');
-            const icon = document.getElementById('acc-icon-backup');
-            if (content) content.classList.toggle('is-open', isBackupManageOpen);
-            if (icon) icon.classList.toggle('rotate-180', isBackupManageOpen);
+            runAccordionAnimation('acc-content-backup', 'acc-icon-backup', isBackupManageOpen);
         }
 
         function toggleBasicParamsAccordion() {
             isBasicParamsOpen = !isBasicParamsOpen;
-            const content = document.getElementById('acc-content-params');
-            const icon = document.getElementById('acc-icon-params');
-            if (content) content.classList.toggle('is-open', isBasicParamsOpen);
-            if (icon) icon.classList.toggle('rotate-180', isBasicParamsOpen);
+            runAccordionAnimation('acc-content-params', 'acc-icon-params', isBasicParamsOpen);
         }
 
         function loadAppData() {
@@ -3456,13 +3496,13 @@
 
                     <!-- Accounts Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full px-4 py-3 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                        <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left relative z-10 bg-app-card">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="acc_manage">${t('acc_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-account" class="accordion-collapse ${isAccountManageOpen ? 'is-open' : ''}">
+                        <div id="acc-content-account" class="overflow-hidden will-change-[height,opacity] ${isAccountManageOpen ? '' : 'hidden'}" style="${isAccountManageOpen ? 'opacity: 1; height: auto;' : 'opacity: 0; height: 0px;'}">
                             <div class="px-4 pb-4 space-y-3 border-t border-app-line pt-3">
                                 <div class="pb-2 border-b border-app-line space-y-2">
                                     <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="base_currency_lbl">Base Net Worth Currency</span></label>
@@ -3525,76 +3565,76 @@
                                                 <div class="flex flex-col items-end">
                                                     <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
                                                     <input type="number" id="init-asset-MYR" value="${(appData.initialAssets && appData.initialAssets.MYR) ? appData.initialAssets.MYR : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('MYR', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                </div>
-                                                <div class="flex flex-col items-center">
-                                                    <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                        <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
-                                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                    </label>
-                                                </div>
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="pt-2">
-                                    <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
-                                    <div class="space-y-2">
-                                        <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                            <div class="flex-1 min-w-0 pr-1">
-                                                <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TW Stock' : '台股證券'}</span>
-                                                <span class="text-[10px] text-app-muted font-mono">TW Stock</span>
+                            <div class="pt-2">
+                                <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TW Stock' : '台股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">TW Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-TW_STOCK" value="${(appData.initialAssets && appData.initialAssets.TW_STOCK) ? appData.initialAssets.TW_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TW_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
                                             </div>
-                                            <div class="flex items-center gap-2.5 shrink-0">
-                                                <div class="flex flex-col items-end">
-                                                    <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                    <input type="number" id="init-asset-TW_STOCK" value="${(appData.initialAssets && appData.initialAssets.TW_STOCK) ? appData.initialAssets.TW_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TW_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                </div>
-                                                <div class="flex flex-col items-center">
-                                                    <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                        <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
-                                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                    </label>
-                                                </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
-                                            <div class="flex-1 min-w-0 pr-1">
-                                                <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'US Stock' : '美股證券'}</span>
-                                                <span class="text-[10px] text-app-muted font-mono">US Stock</span>
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'US Stock' : '美股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">US Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-US_STOCK" value="${(appData.initialAssets && appData.initialAssets.US_STOCK) ? appData.initialAssets.US_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('US_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
                                             </div>
-                                            <div class="flex items-center gap-2.5 shrink-0">
-                                                <div class="flex flex-col items-end">
-                                                    <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
-                                                    <input type="number" id="init-asset-US_STOCK" value="${(appData.initialAssets && appData.initialAssets.US_STOCK) ? appData.initialAssets.US_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('US_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
-                                                </div>
-                                                <div class="flex flex-col items-center">
-                                                    <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
-                                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                                        <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
-                                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
-                                                    </label>
-                                                </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Budget Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBudgetManageAccordion()" class="accordion-header-btn w-full px-4 py-3 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                        <button type="button" onclick="toggleBudgetManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left relative z-10 bg-app-card">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="budget_manage">${t('budget_manage')}</span> (${activeBudgetKeys.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-budget" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBudgetManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-budget" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBudgetManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-budget" class="accordion-collapse ${isBudgetManageOpen ? 'is-open' : ''}">
+                        <div id="acc-content-budget" class="overflow-hidden will-change-[height,opacity] ${isBudgetManageOpen ? '' : 'hidden'}" style="${isBudgetManageOpen ? 'opacity: 1; height: auto;' : 'opacity: 0; height: 0px;'}">
                             <div class="px-4 pb-4 space-y-3 border-t border-app-line pt-3">
                                 <p class="text-[11px] text-app-muted">${appData.language==='en'?'Click "+" below to add budgets:':'點擊下方「+」按鈕可自行加入分類來追蹤本月預算：'}</p>
                                 <div class="${activeBudgetKeys.length > 5 ? 'max-h-[260px] overflow-y-auto pr-1' : ''} space-y-2.5">
@@ -3635,13 +3675,13 @@
 
                     <!-- Recurring Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleRecurringManageAccordion()" class="accordion-header-btn w-full px-4 py-3 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                        <button type="button" onclick="toggleRecurringManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left relative z-10 bg-app-card">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recurring_manage">${t('recurring_manage')}</span> (${recurringRules.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-recurring" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isRecurringManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-recurring" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isRecurringManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-recurring" class="accordion-collapse ${isRecurringManageOpen ? 'is-open' : ''}">
+                        <div id="acc-content-recurring" class="overflow-hidden will-change-[height,opacity] ${isRecurringManageOpen ? '' : 'hidden'}" style="${isRecurringManageOpen ? 'opacity: 1; height: auto;' : 'opacity: 0; height: 0px;'}">
                             <div class="px-4 pb-4 space-y-2.5 border-t border-app-line pt-3">
                                 <div class="${recurringRules.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
                                     ${recurringRules.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No recurring rules':'尚未設定自動扣款規則'}</div>` : recurringRules.map(r => `
@@ -3663,13 +3703,13 @@
 
                     <!-- Installments Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleInstallmentManageAccordion()" class="accordion-header-btn w-full px-4 py-3 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                        <button type="button" onclick="toggleInstallmentManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left relative z-10 bg-app-card">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="installment_manage">${t('installment_manage')}</span> (${installments.length})
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-installment" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isInstallmentManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-installment" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isInstallmentManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-installment" class="accordion-collapse ${isInstallmentManageOpen ? 'is-open' : ''}">
+                        <div id="acc-content-installment" class="overflow-hidden will-change-[height,opacity] ${isInstallmentManageOpen ? '' : 'hidden'}" style="${isInstallmentManageOpen ? 'opacity: 1; height: auto;' : 'opacity: 0; height: 0px;'}">
                             <div class="px-4 pb-4 space-y-2.5 border-t border-app-line pt-3">
                                 <div class="${installments.length > 5 ? 'max-h-[240px] overflow-y-auto pr-1' : ''} space-y-2">
                                     ${installments.length === 0 ? `<div class="text-app-muted text-center py-4 text-xs">${appData.language==='en'?'No installments':'尚未設定分期付款'}</div>` : installments.map(i => `
@@ -3697,13 +3737,13 @@
 
                     <!-- General Parameters Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBasicParamsAccordion()" class="accordion-header-btn w-full px-4 py-3 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                        <button type="button" onclick="toggleBasicParamsAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left relative z-10 bg-app-card">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="params_manage">${t('params_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-params" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBasicParamsOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-params" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBasicParamsOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-params" class="accordion-collapse ${isBasicParamsOpen ? 'is-open' : ''}">
+                        <div id="acc-content-params" class="overflow-hidden will-change-[height,opacity] ${isBasicParamsOpen ? '' : 'hidden'}" style="${isBasicParamsOpen ? 'opacity: 1; height: auto;' : 'opacity: 0; height: 0px;'}">
                             <div class="px-4 pb-4 space-y-4 border-t border-app-line pt-3">
                                 <div>
                                     <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">Custom App Title</label>
@@ -3717,7 +3757,7 @@
                                 </div>
 
                                 <div class="pt-3 border-t border-app-line space-y-2">
-                                    <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">${t('lang_label')}</span></label>
+                                    <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">Language / 語言選擇</span></label>
                                     <div class="grid grid-cols-2 gap-2 text-xs">
                                         <button onclick="setLanguage('en')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'en' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">English</button>
                                         <button onclick="setLanguage('zh-TW')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'zh-TW' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">繁體中文</button>
@@ -3738,13 +3778,13 @@
 
                     <!-- Backup Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
-                        <button type="button" onclick="toggleBackupManageAccordion()" class="accordion-header-btn w-full px-4 py-3 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                        <button type="button" onclick="toggleBackupManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left relative z-10 bg-app-card">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="backup_manage">${t('backup_manage')}</span>
                             </h3>
-                            <i data-lucide="chevron-down" id="acc-icon-backup" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isBackupManageOpen ? 'rotate-180' : ''}"></i>
+                            <i data-lucide="chevron-down" id="acc-icon-backup" class="w-4 h-4 text-app-muted transition-transform duration-300 ${isBackupManageOpen ? 'rotate-180' : ''}"></i>
                         </button>
-                        <div id="acc-content-backup" class="accordion-collapse ${isBackupManageOpen ? 'is-open' : ''}">
+                        <div id="acc-content-backup" class="overflow-hidden will-change-[height,opacity] ${isBackupManageOpen ? '' : 'hidden'}" style="${isBackupManageOpen ? 'opacity: 1; height: auto;' : 'opacity: 0; height: 0px;'}">
                             <div class="px-4 pb-4 space-y-3 border-t border-app-line pt-3">
                                 <div class="grid grid-cols-2 gap-2 text-xs">
                                     <button onclick="exportJSONData()" class="bg-app-surface border border-app-line hover:border-brand-gold text-app-main p-2.5 rounded-xl flex items-center justify-center gap-1 active:scale-95"><i data-lucide="download" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="export_json">${t('export_json')}</span></button>
