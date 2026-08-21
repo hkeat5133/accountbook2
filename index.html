@@ -165,12 +165,10 @@
 
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(44, 46, 43, 0.35);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(44, 46, 43, 0.65);
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(18, 19, 17, 0.55);
+            background-color: rgba(18, 19, 17, 0.85);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -2265,7 +2263,7 @@
             const totalSlots = 42;
             const filledSlots = firstDayIndex + daysInMonth;
             for (let i = filledSlots; i < totalSlots; i++) {
-                html += `<div class="w-full h-9"></div>`;
+                html += `<div class="p-2"></div>`;
             }
 
             html += `</div>`;
@@ -2283,10 +2281,10 @@
             const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
 
             let html = `
-                <div class="flex justify-between items-center h-10 mb-3 px-1">
-                    <button type="button" onclick="renderMonthPicker(${year - 1})" class="w-8 h-8 flex items-center justify-center bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <button type="button" onclick="renderMonthPicker(${year - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
                     <div class="font-bold text-app-main text-sm">${year}</div>
-                    <button type="button" onclick="renderMonthPicker(${year + 1})" class="w-8 h-8 flex items-center justify-center bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    <button type="button" onclick="renderMonthPicker(${year + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                 </div>
                 <div class="grid grid-cols-3 gap-2 py-2">
             `;
@@ -2301,39 +2299,6 @@
             }
             
             html += `</div>`;
-            const content = document.getElementById('date-picker-content');
-            if (content) {
-                content.innerHTML = html;
-            }
-            if (window.lucide) lucide.createIcons();
-        }
-
-        function renderMonthPicker(year) {
-            const lang = appData ? appData.language : 'en';
-            const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const monthNamesTw = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-            const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
-
-            let html = `
-                <div>
-                    <div class="flex justify-between items-center mb-4 px-2">
-                        <button type="button" onclick="renderMonthPicker(${year - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <div class="font-bold text-app-main text-sm">${year}</div>
-                        <button type="button" onclick="renderMonthPicker(${year + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2">
-            `;
-
-            for (let i = 0; i < 12; i++) {
-                const monthStr = `${year}-${String(i+1).padStart(2, '0')}`;
-                if (currentPickerTarget === 'MONTHLY' || currentPickerTarget === 'EXP_MONTHLY') {
-                    html += `<button type="button" onclick="selectCustomDate('${monthStr}')" class="p-3 bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all">${monthsNames[i]}</button>`;
-                } else {
-                    html += `<button type="button" onclick="renderCalendar(${year}, ${i})" class="p-3 bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all">${monthsNames[i]}</button>`;
-                }
-            }
-            
-            html += `</div></div>`;
             const content = document.getElementById('date-picker-content');
             if (content) {
                 content.innerHTML = html;
