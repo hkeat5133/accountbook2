@@ -910,7 +910,7 @@
                 stock_portfolio_val: "股票組合估計總值",
                 settings_title: "系統設定",
                 back_home: "‹ 返回首頁",
-                acc_manage: "帳戶與幣別開關管理",
+                acc_manage: "帳戶與幣別管理",
                 budget_manage: "本月預算設定",
                 recurring_manage: "每月固定支出/存入",
                 installment_manage: "分期付款設定",
@@ -2008,28 +2008,34 @@
                     const el = document.getElementById(id);
                     if (el) el.value = '';
                 });
-                document.getElementById('input-date').value = todayStr;
+                
+                const inputDateElem = document.getElementById('input-date');
                 const inputDateDisplay = document.getElementById('input-date-display');
+                if (inputDateElem) inputDateElem.value = todayStr;
                 if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
+                
                 document.querySelectorAll('#transaction-modal .clear-btn').forEach(b => b.classList.add('hidden'));
             } else if (modalId === 'recurring-modal') {
                 const form = document.getElementById('recurring-form');
                 if (form) form.reset();
-                document.getElementById('rec-type-val').value = '支出';
-                document.getElementById('rec-type-btn-txt').innerText = lang === 'en' ? 'Expense' : '支出';
-                document.getElementById('rec-date-val').value = todayStr;
+                
+                const recDateVal = document.getElementById('rec-date-val');
                 const recDateBtn = document.getElementById('rec-date-btn-txt');
+                if (recDateVal) recDateVal.value = todayStr;
                 if (recDateBtn) recDateBtn.innerText = todayStr;
-                document.getElementById('rec-asset-val').value = 'TWD';
-                document.getElementById('rec-asset-btn-txt').innerText = lang === 'en' ? 'TWD Account' : '台幣帳戶 (TWD)';
+                
                 document.querySelectorAll('#recurring-modal .clear-btn').forEach(b => b.classList.add('hidden'));
             } else if (modalId === 'installment-modal') {
                 const form = document.getElementById('installment-form');
                 if (form) form.reset();
-                document.getElementById('inst-date-val').value = todayStr;
+                
+                const instDateVal = document.getElementById('inst-date-val');
                 const instDateBtn = document.getElementById('inst-date-btn-txt');
+                if (instDateVal) instDateVal.value = todayStr;
                 if (instDateBtn) instDateBtn.innerText = todayStr;
-                document.getElementById('inst-months').value = '12';
+                
+                const instMonths = document.getElementById('inst-months');
+                if (instMonths) instMonths.value = '12';
                 document.querySelectorAll('#installment-modal .clear-btn').forEach(b => b.classList.add('hidden'));
             } else if (modalId === 'export-jpg-modal') {
                 const assetSel = document.getElementById('export-jpg-asset-select');
@@ -2054,8 +2060,10 @@
                 filterMonthDate = val.substring(0, 7);
             } else if (targetType === 'CUSTOM_START') {
                 filterStartDate = val;
+                filterEndDate = val; // 自動同步右邊結束日期
             } else if (targetType === 'CUSTOM_END') {
                 filterEndDate = val;
+                if (filterEndDate < filterStartDate) filterStartDate = val; // 防呆：結束日期不能早於開始日期
             }
             updateDetailsViewDOM();
         }
@@ -2084,7 +2092,14 @@
             else if (target === 'EXP_CUSTOM_START') initialDateStr = exportJpgStartDate;
             else if (target === 'EXP_CUSTOM_END') initialDateStr = exportJpgEndDate;
 
-            pickerCurrentViewDate = new Date(initialDateStr);
+            const parts = initialDateStr.split('-');
+            if (parts.length === 3) {
+                pickerCurrentViewDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            } else if (parts.length === 2) {
+                pickerCurrentViewDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1);
+            } else {
+                pickerCurrentViewDate = new Date();
+            }
             if (isNaN(pickerCurrentViewDate.getTime())) pickerCurrentViewDate = new Date();
             
             if (target === 'MONTHLY' || target === 'EXP_MONTHLY') {
@@ -2255,9 +2270,11 @@
                 updateExportJpgRangeUI();
             } else if (currentPickerTarget === 'EXP_CUSTOM_START') {
                 exportJpgStartDate = dateStr;
+                exportJpgEndDate = dateStr; // 自動同步右邊結束日期
                 updateExportJpgRangeUI();
             } else if (currentPickerTarget === 'EXP_CUSTOM_END') {
                 exportJpgEndDate = dateStr;
+                if (exportJpgEndDate < exportJpgStartDate) exportJpgStartDate = dateStr; // 防呆：結束日期不能早於開始日期
                 updateExportJpgRangeUI();
             }
             closeModal('custom-date-modal');
@@ -2366,6 +2383,12 @@
         }
 
         function openTransactionModal() {
+            const todayStr = getLocalDateStr();
+            const inputDateElem = document.getElementById('input-date');
+            const inputDateDisplay = document.getElementById('input-date-display');
+            if (inputDateElem) inputDateElem.value = todayStr;
+            if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
+
             openModal('transaction-modal');
             setModalMode(currentModalMode);
             setTxType(currentTxType);
@@ -3070,13 +3093,13 @@
 
                 if (filterRange === 'SINGLE_DAY') {
                     datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selRangeTxt}</span><button onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button>`;
+                    datePickerBox.innerHTML = `<span>${selRangeTxt}</span><button type="button" onclick="openCustomDatePicker('SINGLE_DAY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterCustomDate}</span></button>`;
                 } else if (filterRange === 'MONTHLY') {
                     datePickerBox.className = "flex items-center gap-2 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selMonthTxt}</span><button onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button>`;
+                    datePickerBox.innerHTML = `<span>${selMonthTxt}</span><button type="button" onclick="openCustomDatePicker('MONTHLY')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2.5 py-1.5 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterMonthDate}</span></button>`;
                 } else if (filterRange === 'CUSTOM') {
-                    datePickerBox.className = "flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted";
-                    datePickerBox.innerHTML = `<span>${selRangeKw}</span><button onclick="openCustomDatePicker('CUSTOM_START')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span>${toTxt}</span><button onclick="openCustomDatePicker('CUSTOM_END')" class="bg-app-input text-xs text-app-main border border-app-line rounded-lg px-2 py-2 font-mono active:scale-95 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button>`;
+                    datePickerBox.className = "flex flex-wrap items-center gap-1.5 pt-1 text-xs text-app-muted w-full";
+                    datePickerBox.innerHTML = `<span>${selRangeKw}</span><button type="button" onclick="openCustomDatePicker('CUSTOM_START')" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono active:scale-95 flex items-center justify-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterStartDate}</span></button><span class="shrink-0">${toTxt}</span><button type="button" onclick="openCustomDatePicker('CUSTOM_END')" class="flex-1 bg-app-input text-xs text-app-main border border-app-line rounded-lg px-1 py-1.5 font-mono active:scale-95 flex items-center justify-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i> <span>${filterEndDate}</span></button>`;
                 } else {
                     datePickerBox.className = "hidden";
                     datePickerBox.innerHTML = "";
@@ -3371,7 +3394,7 @@
                     <!-- Accounts Accordion -->
                     <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5">
+                            <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="acc_manage">${t('acc_manage')}</span>
                             </h3>
                             <i data-lucide="chevron-down" id="acc-icon-account" class="w-4 h-4 text-app-muted transition-transform duration-200 ${isAccountManageOpen ? 'rotate-180' : ''}"></i>
@@ -3387,48 +3410,111 @@
                             </div>
 
                             <div>
-                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
+                                <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_cash_group">💵 Cash Accounts</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TWD Cash Account (TWD)' : '台幣現金帳戶 (TWD)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TWD Cash' : '台幣現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">TWD</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-TWD" value="${(appData.initialAssets && appData.initialAssets.TWD) ? appData.initialAssets.TWD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TWD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWD', this.checked)" ${appData.enableTWD ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'USD Cash Account (USD)' : '美金現金帳戶 (USD)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'USD Cash' : '美金現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">USD</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-USD" value="${(appData.initialAssets && appData.initialAssets.USD) ? appData.initialAssets.USD : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('USD', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSD', this.checked)" ${appData.enableUSD ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇲🇾 ${appData.language === 'en' ? 'MYR Cash Account (MYR)' : '馬幣現金帳戶 (MYR)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇲🇾 ${appData.language === 'en' ? 'MYR Cash' : '馬幣現金'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">MYR</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-MYR" value="${(appData.initialAssets && appData.initialAssets.MYR) ? appData.initialAssets.MYR : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('MYR', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableMYR', this.checked)" ${appData.enableMYR ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="pt-2">
-                                <span class="text-[11px] font-bold text-app-muted block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
+                                <span class="text-[11px] font-bold text-app-muted uppercase tracking-wider block mb-2 px-1" data-i18n="asset_stock_group">📈 Stock Brokerages</span>
                                 <div class="space-y-2">
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇹🇼 ${appData.language === 'en' ? 'TW Stock Account (TW Stock)' : '台股證券帳戶 (TW Stock)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇹🇼 ${appData.language === 'en' ? 'TW Stock' : '台股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">TW Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-TW_STOCK" value="${(appData.initialAssets && appData.initialAssets.TW_STOCK) ? appData.initialAssets.TW_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('TW_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableTWStock', this.checked)" ${appData.enableTWStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex justify-between items-center bg-app-surface p-3 rounded-xl border border-app-line">
-                                        <span class="font-bold text-app-main text-xs">🇺🇸 ${appData.language === 'en' ? 'US Stock Account (US Stock)' : '美股證券帳戶 (US Stock)'}</span>
-                                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                            <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
-                                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-gold"></div>
-                                        </label>
+
+                                    <div class="flex justify-between items-center bg-app-surface p-2.5 rounded-xl border border-app-line gap-2">
+                                        <div class="flex-1 min-w-0 pr-1">
+                                            <span class="font-bold text-app-main text-xs block truncate">🇺🇸 ${appData.language === 'en' ? 'US Stock' : '美股證券'}</span>
+                                            <span class="text-[10px] text-app-muted font-mono">US Stock</span>
+                                        </div>
+                                        <div class="flex items-center gap-2.5 shrink-0">
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Init Capital' : '初始本金'}</span>
+                                                <input type="number" id="init-asset-US_STOCK" value="${(appData.initialAssets && appData.initialAssets.US_STOCK) ? appData.initialAssets.US_STOCK : ''}" placeholder="0" step="any" onchange="saveSingleInitialAsset('US_STOCK', this.value)" class="w-20 bg-app-input border border-app-line rounded-lg px-2 py-1 text-xs text-app-main font-mono text-right outline-none focus:border-brand-gold placeholder:text-app-muted/30">
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="text-[9px] text-app-muted font-medium mb-0.5">${appData.language === 'en' ? 'Enable' : '啟用'}</span>
+                                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                                    <input type="checkbox" onchange="toggleEnableAsset('enableUSStock', this.checked)" ${appData.enableUSStock ? 'checked' : ''} class="sr-only peer">
+                                                    <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold"></div>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
