@@ -163,6 +163,22 @@
             to { opacity: 0; }
         }
 
+        @keyframes calSlideLeft {
+            from { opacity: 0; transform: translateX(15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes calSlideRight {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes calFadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .cal-slide-left { animation: calSlideLeft 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; will-change: transform, opacity; }
+        .cal-slide-right { animation: calSlideRight 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; will-change: transform, opacity; }
+        .cal-fade-up { animation: calFadeUp 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; will-change: transform, opacity; }
+
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             background-color: rgba(30, 32, 28, 0.65);
@@ -2197,15 +2213,15 @@
             if (isNaN(pickerCurrentViewDate.getTime())) pickerCurrentViewDate = new Date();
             
             if (target === 'MONTHLY' || target === 'EXP_MONTHLY') {
-                renderMonthPicker(pickerCurrentViewDate.getFullYear());
+                renderMonthPicker(pickerCurrentViewDate.getFullYear(), 'fade');
             } else {
-                renderCalendar(pickerCurrentViewDate.getFullYear(), pickerCurrentViewDate.getMonth());
+                renderCalendar(pickerCurrentViewDate.getFullYear(), pickerCurrentViewDate.getMonth(), 'fade');
             }
             
             openModal('custom-date-modal');
         }
 
-        function renderCalendar(year, month) {
+        function renderCalendar(year, month, dir = 'fade') {
             const lang = appData ? appData.language : 'en';
             
             let d = new Date(year, month, 1);
@@ -2223,12 +2239,19 @@
             const daysTw = ["日", "一", "二", "三", "四", "五", "六"];
             const daysLabels = lang === 'en' ? daysEn : daysTw;
 
+            let animClass = 'cal-fade-up';
+            if (dir === 'next') animClass = 'cal-slide-left';
+            if (dir === 'prev') animClass = 'cal-slide-right';
+
+            const svgLeft = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
+            const svgRight = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+
             let html = `
-                <div class="animate-fade flex flex-col h-full w-full">
+                <div class="${animClass} flex flex-col h-full w-full">
                     <div class="flex justify-between items-center mb-3 px-1 shrink-0">
-                        <button type="button" onclick="renderCalendar(${year}, ${month - 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <div class="font-bold text-app-main text-sm cursor-pointer hover:text-brand-gold transition-colors px-4 py-1.5 rounded-xl hover:bg-app-card" onclick="renderMonthPicker(${year})">${year} ${monthsNames[month]}</div>
-                        <button type="button" onclick="renderCalendar(${year}, ${month + 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="renderCalendar(${year}, ${month - 1}, 'prev')" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs">${svgLeft}</button>
+                        <div class="font-bold text-app-main text-sm cursor-pointer hover:text-brand-gold transition-colors px-4 py-1.5 rounded-xl hover:bg-app-card" onclick="renderMonthPicker(${year}, 'fade')">${year} ${monthsNames[month]}</div>
+                        <button type="button" onclick="renderCalendar(${year}, ${month + 1}, 'next')" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs">${svgRight}</button>
                     </div>
                     <div class="grid grid-cols-7 gap-1 text-center mb-2 shrink-0">
                         ${daysLabels.map(dayLabel => `<div class="h-6 flex items-center justify-center text-[10px] font-bold text-app-muted uppercase tracking-wider">${dayLabel}</div>`).join('')}
@@ -2267,21 +2290,27 @@
             if(content) {
                 content.innerHTML = html;
             }
-            if (window.lucide) lucide.createIcons();
         }
 
-        function renderMonthPicker(year) {
+        function renderMonthPicker(year, dir = 'fade') {
             const lang = appData ? appData.language : 'en';
             const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             const monthNamesTw = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
             const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
 
+            let animClass = 'cal-fade-up';
+            if (dir === 'next') animClass = 'cal-slide-left';
+            if (dir === 'prev') animClass = 'cal-slide-right';
+
+            const svgLeft = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
+            const svgRight = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+
             let html = `
-                <div class="animate-fade flex flex-col h-full w-full">
+                <div class="${animClass} flex flex-col h-full w-full">
                     <div class="flex justify-between items-center mb-4 px-1 shrink-0">
-                        <button type="button" onclick="renderMonthPicker(${year - 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="renderMonthPicker(${year - 1}, 'prev')" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs">${svgLeft}</button>
                         <div class="font-bold text-app-main text-sm px-4 py-1.5">${year}</div>
-                        <button type="button" onclick="renderMonthPicker(${year + 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        <button type="button" onclick="renderMonthPicker(${year + 1}, 'next')" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs">${svgRight}</button>
                     </div>
                     <div class="grid grid-cols-3 gap-3 flex-1 content-center">
             `;
@@ -2300,7 +2329,6 @@
             if(content) {
                 content.innerHTML = html;
             }
-            if (window.lucide) lucide.createIcons();
         }
 
         function selectCustomDate(dateStr) {
