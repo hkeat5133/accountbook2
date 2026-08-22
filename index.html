@@ -797,16 +797,16 @@
 
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 z-[130] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-hidden shadow-2xl flex flex-col" onclick="event.stopPropagation()">
-                <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
-                    <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-6 border border-app-line space-y-4 text-xs max-h-[85vh] overflow-hidden shadow-2xl flex flex-col" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center pb-3 border-b border-app-line shrink-0">
+                    <h3 id="date-modal-title" class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> Select Date
                     </h3>
-                    <button type="button" onclick="closeModal('custom-date-modal')" class="text-app-muted hover:text-app-main p-1 active:scale-90">
-                        <i data-lucide="x" class="w-5 h-5"></i>
+                    <button type="button" onclick="closeModal('custom-date-modal')" class="text-app-muted hover:text-brand-red p-1.5 bg-app-card rounded-full transition-all active:scale-90">
+                        <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <div id="date-picker-content" class="pt-1 pb-2 h-[280px] flex flex-col w-full"></div>
+                <div id="date-picker-content" class="py-2 h-[360px] flex flex-col w-full"></div>
             </div>
         </div>
 
@@ -2186,7 +2186,14 @@
             else if (target === 'EXP_CUSTOM_START') initialDateStr = exportJpgStartDate;
             else if (target === 'EXP_CUSTOM_END') initialDateStr = exportJpgEndDate;
 
-            pickerCurrentViewDate = new Date(initialDateStr);
+            const parts = initialDateStr.split('-');
+            if (parts.length === 3) {
+                pickerCurrentViewDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            } else if (parts.length === 2) {
+                pickerCurrentViewDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1);
+            } else {
+                pickerCurrentViewDate = new Date();
+            }
             if (isNaN(pickerCurrentViewDate.getTime())) pickerCurrentViewDate = new Date();
             
             if (target === 'MONTHLY' || target === 'EXP_MONTHLY') {
@@ -2217,20 +2224,20 @@
             const daysLabels = lang === 'en' ? daysEn : daysTw;
 
             let html = `
-                <div class="animate-calendar-switch flex flex-col h-full w-full">
-                    <div class="flex justify-between items-center mb-4 px-2 shrink-0">
-                        <button type="button" onclick="renderCalendar(${year}, ${month - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <div class="font-bold text-app-main text-sm cursor-pointer hover:text-brand-gold transition-colors" onclick="renderMonthPicker(${year})">${year} ${monthsNames[month]}</div>
-                        <button type="button" onclick="renderCalendar(${year}, ${month + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                <div class="animate-fade flex flex-col h-full w-full">
+                    <div class="flex justify-between items-center mb-3 px-1 shrink-0">
+                        <button type="button" onclick="renderCalendar(${year}, ${month - 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <div class="font-bold text-app-main text-sm cursor-pointer hover:text-brand-gold transition-colors px-4 py-1.5 rounded-xl hover:bg-app-card" onclick="renderMonthPicker(${year})">${year} ${monthsNames[month]}</div>
+                        <button type="button" onclick="renderCalendar(${year}, ${month + 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
                     <div class="grid grid-cols-7 gap-1 text-center mb-2 shrink-0">
-                        ${daysLabels.map(dayLabel => `<div class="text-[10px] font-bold text-app-muted uppercase">${dayLabel}</div>`).join('')}
+                        ${daysLabels.map(dayLabel => `<div class="h-6 flex items-center justify-center text-[10px] font-bold text-app-muted uppercase tracking-wider">${dayLabel}</div>`).join('')}
                     </div>
-                    <div class="grid grid-cols-7 gap-1 text-center flex-1">
+                    <div class="grid grid-cols-7 gap-y-1 gap-x-1 text-center flex-1 content-start">
             `;
 
             for (let i = 0; i < firstDayIndex; i++) {
-                html += `<div></div>`;
+                html += `<div class="w-full h-10"></div>`;
             }
 
             const todayStr = getLocalDateStr(new Date());
@@ -2240,9 +2247,11 @@
                 const dateStr = getLocalDateStr(currentDate);
                 const isToday = dateStr === todayStr;
                 html += `
-                    <button type="button" onclick="selectCustomDate('${dateStr}')" class="p-2 rounded-lg text-xs font-medium transition-all active:scale-90 flex items-center justify-center ${isToday ? 'bg-brand-blue/10 text-brand-blue font-bold border border-brand-blue/30' : 'text-app-main hover:bg-app-card border border-transparent'}">
-                        ${i}
-                    </button>
+                    <div class="flex justify-center items-center h-10 w-full">
+                        <button type="button" onclick="selectCustomDate('${dateStr}')" class="w-9 h-9 rounded-full text-xs font-medium transition-all active:scale-90 flex items-center justify-center ${isToday ? 'bg-brand-gold text-white font-bold shadow-md' : 'text-app-main hover:bg-app-card hover:text-brand-gold border border-transparent'}">
+                            ${i}
+                        </button>
+                    </div>
                 `;
             }
 
@@ -2250,12 +2259,12 @@
             const totalSlots = 42;
             const filledSlots = firstDayIndex + daysInMonth;
             for (let i = filledSlots; i < totalSlots; i++) {
-                html += `<div class="p-2"></div>`;
+                html += `<div class="w-full h-10"></div>`;
             }
 
             html += `</div></div>`;
             const content = document.getElementById('date-picker-content');
-            if (content) {
+            if(content) {
                 content.innerHTML = html;
             }
             if (window.lucide) lucide.createIcons();
@@ -2268,27 +2277,27 @@
             const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
 
             let html = `
-                <div class="animate-calendar-switch flex flex-col h-full w-full">
-                    <div class="flex justify-between items-center mb-4 px-2 shrink-0">
-                        <button type="button" onclick="renderMonthPicker(${year - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <div class="font-bold text-app-main text-sm">${year}</div>
-                        <button type="button" onclick="renderMonthPicker(${year + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                <div class="animate-fade flex flex-col h-full w-full">
+                    <div class="flex justify-between items-center mb-4 px-1 shrink-0">
+                        <button type="button" onclick="renderMonthPicker(${year - 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <div class="font-bold text-app-main text-sm px-4 py-1.5">${year}</div>
+                        <button type="button" onclick="renderMonthPicker(${year + 1})" class="w-9 h-9 flex items-center justify-center bg-app-card border border-app-line rounded-xl active:scale-90 transition-all text-app-main hover:bg-brand-gold hover:text-white hover:border-brand-gold shadow-xs"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 flex-1">
+                    <div class="grid grid-cols-3 gap-3 flex-1 content-center">
             `;
 
             for (let i = 0; i < 12; i++) {
                 const monthStr = `${year}-${String(i+1).padStart(2, '0')}`;
                 if (currentPickerTarget === 'MONTHLY' || currentPickerTarget === 'EXP_MONTHLY') {
-                    html += `<button type="button" onclick="selectCustomDate('${monthStr}')" class="w-full h-full min-h-[3.5rem] bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all flex items-center justify-center">${monthsNames[i]}</button>`;
+                    html += `<button type="button" onclick="selectCustomDate('${monthStr}')" class="h-14 bg-app-card rounded-xl text-xs font-bold text-app-main hover:bg-brand-gold hover:text-white hover:shadow-md border border-transparent active:scale-95 transition-all flex items-center justify-center shadow-xs">${monthsNames[i]}</button>`;
                 } else {
-                    html += `<button type="button" onclick="renderCalendar(${year}, ${i})" class="w-full h-full min-h-[3.5rem] bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all flex items-center justify-center">${monthsNames[i]}</button>`;
+                    html += `<button type="button" onclick="renderCalendar(${year}, ${i})" class="h-14 bg-app-card rounded-xl text-xs font-bold text-app-main hover:bg-brand-gold hover:text-white hover:shadow-md border border-transparent active:scale-95 transition-all flex items-center justify-center shadow-xs">${monthsNames[i]}</button>`;
                 }
             }
             
             html += `</div></div>`;
             const content = document.getElementById('date-picker-content');
-            if (content) {
+            if(content) {
                 content.innerHTML = html;
             }
             if (window.lucide) lucide.createIcons();
@@ -3448,7 +3457,7 @@
                     </div>
 
                     <!-- Accounts Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden shadow-2xs">
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleAccountManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="coins" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="acc_manage">${t('acc_manage')}</span>
@@ -3582,7 +3591,7 @@
                     </div>
 
                     <!-- Budget Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden shadow-2xs">
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBudgetManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="pie-chart" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="budget_manage">${t('budget_manage')}</span> (${activeBudgetKeys.length})
@@ -3631,7 +3640,7 @@
                     </div>
 
                     <!-- Recurring Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden shadow-2xs">
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleRecurringManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="repeat" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recurring_manage">${t('recurring_manage')}</span> (${recurringRules.length})
@@ -3661,7 +3670,7 @@
                     </div>
 
                     <!-- Installments Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden shadow-2xs">
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleInstallmentManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="credit-card" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="installment_manage">${t('installment_manage')}</span> (${installments.length})
@@ -3697,7 +3706,7 @@
                     </div>
 
                     <!-- General Parameters Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden shadow-2xs">
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBasicParamsAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="sliders" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="params_manage">${t('params_manage')}</span>
@@ -3727,7 +3736,7 @@
                                     </div>
 
                                     <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> Color Theme</label>
+                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="theme_label">Color Theme</span></label>
                                         <div class="grid grid-cols-2 gap-2 text-xs">
                                             <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> <span data-i18n="theme_light">${t('theme_light')}</span></button>
                                             <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> <span data-i18n="theme_dark">${t('theme_dark')}</span></button>
@@ -3739,7 +3748,7 @@
                     </div>
 
                     <!-- Backup Accordion -->
-                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden shadow-2xs">
+                    <div class="bg-app-card rounded-2xl border border-app-line w-full overflow-hidden transition-all shadow-2xs">
                         <button type="button" onclick="toggleBackupManageAccordion()" class="accordion-header-btn w-full p-4 flex justify-between items-center text-left">
                             <h3 class="text-xs font-bold text-app-main uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="database" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="backup_manage">${t('backup_manage')}</span>
