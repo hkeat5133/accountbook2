@@ -3745,18 +3745,18 @@
                             <div class="accordion-inner">
                                 <div class="px-4 pb-4 space-y-4 border-t border-app-line pt-3">
                                     <div>
-                                        <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">Custom App Title</label>
+                                        <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">${t('app_title_lbl')}</label>
                                         <div class="flex gap-2">
                                             <div class="relative flex-1 flex items-center">
                                                 <input type="text" id="setting-title" value="${(appData && appData.appTitle) ? appData.appTitle : ''}" placeholder="${appData.language === 'en' ? 'Wealth Ledger' : '智慧帳本'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
                                                 <button type="button" onclick="clearInput('setting-title')" class="clear-btn ${appData && appData.appTitle ? '' : 'hidden'} absolute right-2.5 text-app-muted hover:text-app-main font-bold text-xs p-1">✕</button>
                                             </div>
-                                            <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95" data-i18n="save_btn">Save</button>
+                                            <button onclick="saveTitleSetting()" class="bg-brand-gold text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95" data-i18n="save_btn">${t('save_btn')}</button>
                                         </div>
                                     </div>
 
                                     <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">Language / 語言選擇</span></label>
+                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="lang_label">${t('lang_label')}</span></label>
                                         <div class="grid grid-cols-2 gap-2 text-xs">
                                             <button onclick="setLanguage('en')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'en' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">English</button>
                                             <button onclick="setLanguage('zh-TW')" class="py-2.5 rounded-xl border font-bold ${appData.language === 'zh-TW' ? 'bg-brand-gold text-white border-brand-gold shadow' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95">繁體中文</button>
@@ -3764,10 +3764,11 @@
                                     </div>
 
                                     <div class="pt-3 border-t border-app-line space-y-2">
-                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="theme_label">Color Theme</span></label>
-                                        <div class="grid grid-cols-2 gap-2 text-xs">
-                                            <button onclick="setTheme('light')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-4 h-4"></i> <span data-i18n="theme_light">${t('theme_light')}</span></button>
-                                            <button onclick="setTheme('dark')" class="p-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-4 h-4"></i> <span data-i18n="theme_dark">${t('theme_dark')}</span></button>
+                                        <label class="text-xs font-bold text-app-main block flex items-center gap-1.5"><i data-lucide="sun-moon" class="w-3.5 h-3.5 text-brand-gold"></i> <span data-i18n="theme_label">${t('theme_label')}</span></label>
+                                        <div class="grid grid-cols-3 gap-1.5 text-xs">
+                                            <button onclick="setTheme('system')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'system' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="laptop" class="w-3.5 h-3.5"></i> <span data-i18n="theme_system">${t('theme_system')}</span></button>
+                                            <button onclick="setTheme('light')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'light' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="sun" class="w-3.5 h-3.5"></i> <span data-i18n="theme_light">${t('theme_light')}</span></button>
+                                            <button onclick="setTheme('dark')" class="p-2.5 rounded-xl border flex items-center justify-center gap-1 transition-all ${appData.theme === 'dark' ? 'bg-brand-gold text-white border-brand-gold font-bold shadow-md' : 'bg-app-surface text-app-muted border-app-line'} active:scale-95"><i data-lucide="moon" class="w-3.5 h-3.5"></i> <span data-i18n="theme_dark">${t('theme_dark')}</span></button>
                                         </div>
                                     </div>
                                 </div>
