@@ -407,33 +407,34 @@
         <main class="flex-1 relative w-full overflow-hidden" id="main-content">
             <div id="swipe-track-container" class="w-full h-full relative overflow-hidden">
                 <div id="swipe-slider" class="flex w-[300%] h-full transition-transform duration-300 ease-out">
-                    <div id="panel-home" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-28 touch-pan-y" style="overscroll-behavior-y: none;"></div>
-                    <div id="panel-details" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-28 touch-pan-y" style="overscroll-behavior-y: none;"></div>
-                    <div id="panel-stock-stats" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-28 touch-pan-y" style="overscroll-behavior-y: none;"></div>
+                    <div id="panel-home" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-36 touch-pan-y" style="overscroll-behavior-y: none;"></div>
+                    <div id="panel-details" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-36 touch-pan-y" style="overscroll-behavior-y: none;"></div>
+                    <div id="panel-stock-stats" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-36 touch-pan-y" style="overscroll-behavior-y: none;"></div>
                 </div>
             </div>
-            <div id="panel-settings" class="hidden absolute inset-0 w-full h-full overflow-y-auto p-4 space-y-4 pb-28 bg-transparent z-10 touch-pan-y" style="overscroll-behavior-y: none;"></div>
+            <div id="panel-settings" class="hidden absolute inset-0 w-full h-full overflow-y-auto p-4 space-y-4 pb-36 bg-app-bg z-10 touch-pan-y" style="overscroll-behavior-y: none;"></div>
         </main>
 
         <!-- Floating Add Button -->
-        <div class="absolute bottom-20 right-5 z-20">
+        <div class="absolute bottom-[104px] right-5 z-20">
             <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <nav class="w-full bg-app-surface/95 backdrop-blur-lg border-t border-app-line px-3 py-2 flex justify-around items-center absolute bottom-0 left-0 z-30 shrink-0 pb-2">
-            <button onclick="switchTab('home', true)" id="nav-home" class="flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 active:scale-95">
+        <!-- Modern iOS-Style Floating Navigation -->
+        <nav class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-[92%] max-w-[360px] bg-app-surface/85 backdrop-blur-[32px] border border-app-line/60 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.2)] dark:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.6)] rounded-[32px] p-1.5 flex justify-between items-center z-40 shrink-0 transition-transform duration-300 hover:scale-[1.02]">
+            <button onclick="switchTab('home', true)" id="nav-home" class="flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] text-brand-gold bg-brand-gold/15 transition-all duration-400 shadow-sm">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                <span class="text-[10px] mt-1 font-medium" data-i18n="nav_home">Dashboard</span>
+                <span class="text-[10px] mt-1 font-bold tracking-wide" data-i18n="nav_home">Dashboard</span>
             </button>
-            <button onclick="switchTab('details', true)" id="nav-details" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-95">
+            <button onclick="switchTab('details', true)" id="nav-details" class="flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] text-app-muted bg-transparent transition-all duration-400 hover:bg-app-card/50 active:scale-95">
                 <i data-lucide="receipt" class="w-5 h-5"></i>
-                <span class="text-[10px] mt-1 font-medium" data-i18n="nav_details">Transactions</span>
+                <span class="text-[10px] mt-1 font-medium tracking-wide" data-i18n="nav_details">Transactions</span>
             </button>
-            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 active:scale-95">
+            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] text-app-muted bg-transparent transition-all duration-400 hover:bg-app-card/50 active:scale-95">
                 <i data-lucide="trending-up" class="w-5 h-5"></i>
-                <span class="text-[10px] mt-1 font-medium" data-i18n="nav_stats">Portfolio</span>
+                <span class="text-[10px] mt-1 font-medium tracking-wide" data-i18n="nav_stats">Portfolio</span>
             </button>
         </nav>
 
@@ -1984,7 +1985,15 @@
             ['home', 'details', 'stock-stats'].forEach(t => {
                 const navBtn = document.getElementById(`nav-${t}`);
                 if (navBtn) {
-                    navBtn.className = t === tab ? "flex flex-col items-center py-1 px-4 text-brand-gold transition-all duration-200 scale-105 font-bold" : "flex flex-col items-center py-1 px-4 text-app-muted transition-all duration-200 font-medium";
+                    if (t === tab) {
+                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] bg-brand-gold/15 text-brand-gold transition-all duration-400 scale-100 shadow-sm";
+                        const span = navBtn.querySelector('span');
+                        if (span) { span.classList.add('font-bold'); span.classList.remove('font-medium'); }
+                    } else {
+                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] bg-transparent text-app-muted transition-all duration-400 active:scale-90 hover:bg-app-card/50";
+                        const span = navBtn.querySelector('span');
+                        if (span) { span.classList.remove('font-bold'); span.classList.add('font-medium'); }
+                    }
                 }
             });
             const headerSettingsBtn = document.getElementById('nav-settings-header');
