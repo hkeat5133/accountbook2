@@ -198,6 +198,15 @@
             opacity: 0 !important;
         }
 
+        @keyframes calendarSwitch {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-calendar-switch {
+            animation: calendarSwitch 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: transform, opacity;
+        }
+
         button, a, label[class*="cursor-pointer"] {
             transition: transform 0.08s cubic-bezier(0, 0, 0.2, 1), opacity 0.08s ease;
             will-change: transform;
@@ -788,8 +797,8 @@
 
         <!-- Custom Date Picker Modal -->
         <div id="custom-date-modal" onclick="closeModal('custom-date-modal')" class="modal-backdrop absolute inset-0 z-[130] hidden flex items-center justify-center p-4">
-            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-                <div class="flex justify-between items-center pb-2 border-b border-app-line">
+            <div class="modal-sheet w-full max-w-md bg-app-surface rounded-3xl p-5 border border-app-line space-y-3 text-xs max-h-[78vh] overflow-hidden shadow-2xl flex flex-col" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center pb-2 border-b border-app-line shrink-0">
                     <h3 id="date-modal-title" class="font-bold text-brand-gold text-xs flex items-center gap-1.5">
                         <i data-lucide="calendar" class="w-4 h-4"></i> Select Date
                     </h3>
@@ -797,7 +806,7 @@
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div id="date-picker-content" class="py-1 min-h-[320px]"></div>
+                <div id="date-picker-content" class="pt-1 pb-2 h-[280px] flex flex-col w-full"></div>
             </div>
         </div>
 
@@ -2208,19 +2217,20 @@
             const daysLabels = lang === 'en' ? daysEn : daysTw;
 
             let html = `
-                <div class="flex justify-between items-center h-10 mb-3 px-1">
-                    <button type="button" onclick="renderCalendar(${year}, ${month - 1})" class="w-8 h-8 flex items-center justify-center bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                    <div class="font-bold text-app-main text-sm cursor-pointer hover:text-brand-gold transition-colors" onclick="renderMonthPicker(${year})">${year} ${monthsNames[month]}</div>
-                    <button type="button" onclick="renderCalendar(${year}, ${month + 1})" class="w-8 h-8 flex items-center justify-center bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
-                </div>
-                <div class="grid grid-cols-7 gap-1 text-center mb-2">
-                    ${daysLabels.map(dayLabel => `<div class="h-6 flex items-center justify-center text-[10px] font-bold text-app-muted uppercase">${dayLabel}</div>`).join('')}
-                </div>
-                <div class="grid grid-cols-7 gap-1 text-center">
+                <div class="animate-calendar-switch flex flex-col h-full w-full">
+                    <div class="flex justify-between items-center mb-4 px-2 shrink-0">
+                        <button type="button" onclick="renderCalendar(${year}, ${month - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <div class="font-bold text-app-main text-sm cursor-pointer hover:text-brand-gold transition-colors" onclick="renderMonthPicker(${year})">${year} ${monthsNames[month]}</div>
+                        <button type="button" onclick="renderCalendar(${year}, ${month + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center mb-2 shrink-0">
+                        ${daysLabels.map(dayLabel => `<div class="text-[10px] font-bold text-app-muted uppercase">${dayLabel}</div>`).join('')}
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center flex-1">
             `;
 
             for (let i = 0; i < firstDayIndex; i++) {
-                html += `<div class="w-full h-9"></div>`;
+                html += `<div></div>`;
             }
 
             const todayStr = getLocalDateStr(new Date());
@@ -2230,23 +2240,25 @@
                 const dateStr = getLocalDateStr(currentDate);
                 const isToday = dateStr === todayStr;
                 html += `
-                    <button type="button" onclick="selectCustomDate('${dateStr}')" class="w-full h-9 rounded-xl text-xs font-medium flex items-center justify-center transition-all active:scale-90 ${isToday ? 'bg-brand-blue/10 text-brand-blue font-bold border border-brand-blue/30' : 'text-app-main hover:bg-app-card border border-transparent'}">
+                    <button type="button" onclick="selectCustomDate('${dateStr}')" class="p-2 rounded-lg text-xs font-medium transition-all active:scale-90 flex items-center justify-center ${isToday ? 'bg-brand-blue/10 text-brand-blue font-bold border border-brand-blue/30' : 'text-app-main hover:bg-app-card border border-transparent'}">
                         ${i}
                     </button>
                 `;
             }
 
+            // Always pad to 42 cells (6 full rows x 7 columns) to maintain fixed height across months
             const totalSlots = 42;
             const filledSlots = firstDayIndex + daysInMonth;
             for (let i = filledSlots; i < totalSlots; i++) {
-                html += `<div class="w-full h-9"></div>`;
+                html += `<div class="p-2"></div>`;
             }
 
-            html += `</div>`;
+            html += `</div></div>`;
             const content = document.getElementById('date-picker-content');
             if (content) {
                 content.innerHTML = html;
             }
+            if (window.lucide) lucide.createIcons();
         }
 
         function renderMonthPicker(year) {
@@ -2256,28 +2268,30 @@
             const monthsNames = lang === 'en' ? monthNamesEn : monthNamesTw;
 
             let html = `
-                <div class="flex justify-between items-center h-10 mb-3 px-1">
-                    <button type="button" onclick="renderMonthPicker(${year - 1})" class="w-8 h-8 flex items-center justify-center bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-                    <div class="font-bold text-app-main text-sm">${year}</div>
-                    <button type="button" onclick="renderMonthPicker(${year + 1})" class="w-8 h-8 flex items-center justify-center bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
-                </div>
-                <div class="grid grid-cols-3 gap-2 py-2">
+                <div class="animate-calendar-switch flex flex-col h-full w-full">
+                    <div class="flex justify-between items-center mb-4 px-2 shrink-0">
+                        <button type="button" onclick="renderMonthPicker(${year - 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <div class="font-bold text-app-main text-sm">${year}</div>
+                        <button type="button" onclick="renderMonthPicker(${year + 1})" class="p-2 bg-app-card rounded-lg active:scale-90 transition-all text-app-main"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 flex-1">
             `;
 
             for (let i = 0; i < 12; i++) {
                 const monthStr = `${year}-${String(i+1).padStart(2, '0')}`;
                 if (currentPickerTarget === 'MONTHLY' || currentPickerTarget === 'EXP_MONTHLY') {
-                    html += `<button type="button" onclick="selectCustomDate('${monthStr}')" class="h-14 bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all flex items-center justify-center">${monthsNames[i]}</button>`;
+                    html += `<button type="button" onclick="selectCustomDate('${monthStr}')" class="w-full h-full min-h-[3.5rem] bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all flex items-center justify-center">${monthsNames[i]}</button>`;
                 } else {
-                    html += `<button type="button" onclick="renderCalendar(${year}, ${i})" class="h-14 bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all flex items-center justify-center">${monthsNames[i]}</button>`;
+                    html += `<button type="button" onclick="renderCalendar(${year}, ${i})" class="w-full h-full min-h-[3.5rem] bg-app-card rounded-xl text-xs font-medium text-app-main hover:border-brand-gold border border-transparent active:scale-95 transition-all flex items-center justify-center">${monthsNames[i]}</button>`;
                 }
             }
             
-            html += `</div>`;
+            html += `</div></div>`;
             const content = document.getElementById('date-picker-content');
             if (content) {
                 content.innerHTML = html;
             }
+            if (window.lucide) lucide.createIcons();
         }
 
         function selectCustomDate(dateStr) {
