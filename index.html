@@ -244,19 +244,23 @@
             will-change: transform, opacity;
         }
 
-        .accordion-collapse {
+        .accordion-grid {
             display: grid;
             grid-template-rows: 0fr;
-            transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+            transition: grid-template-rows 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
             opacity: 0;
+            pointer-events: none;
             will-change: grid-template-rows, opacity;
         }
-        .accordion-collapse.is-open {
+        .accordion-grid.is-open {
             grid-template-rows: 1fr;
             opacity: 1;
+            pointer-events: auto;
         }
-        .accordion-collapse > div {
+        .accordion-inner {
             overflow: hidden;
+            min-height: 0; /* Critical fix for smooth CSS grid 0fr transition */
+            contain: content;
         }
 
         .accordion-header-btn {
@@ -278,22 +282,47 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        .accordion-grid {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
-            opacity: 0;
+        /* --- Liquid Glass Navigation --- */
+        .liquid-glass-nav {
+            background: rgba(255, 255, 255, 0.18); /* High transparency for clear glass */
+            backdrop-filter: blur(35px) saturate(250%);
+            -webkit-backdrop-filter: blur(35px) saturate(250%);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 
+                0 24px 48px -12px rgba(0,0,0,0.12), 
+                inset 0 2px 6px rgba(255,255,255,0.6), 
+                inset 0 -1px 4px rgba(0,0,0,0.05);
+            overflow: hidden; /* Contains the inner liquid wave */
+        }
+        
+        body.theme-dark .liquid-glass-nav {
+            background: rgba(30, 32, 28, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 24px 48px -12px rgba(0,0,0,0.5), 
+                inset 0 1px 2px rgba(255,255,255,0.12), 
+                inset 0 -1px 4px rgba(0,0,0,0.2);
+        }
+
+        /* The Liquid Wave / Swoosh Highlight */
+        .liquid-glass-nav::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(160% 120% at 85% 120%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 55%);
+            z-index: 0;
             pointer-events: none;
-            will-change: grid-template-rows, opacity;
+            border-radius: inherit;
         }
-        .accordion-grid.is-open {
-            grid-template-rows: 1fr;
-            opacity: 1;
-            pointer-events: auto;
+
+        body.theme-dark .liquid-glass-nav::before {
+            background: radial-gradient(160% 120% at 85% 120%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 55%);
         }
-        .accordion-inner {
-            overflow: hidden;
-            contain: content;
+
+        /* Ensure nav items float above the liquid wave */
+        .liquid-glass-nav > * {
+            z-index: 10;
+            position: relative;
         }
 
         .bg-app-bg { background-color: var(--bg-app); }
@@ -422,24 +451,23 @@
             </button>
         </div>
 
-        <!-- Modern iOS-Style Floating Navigation -->
-        <nav class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-[92%] max-w-[360px] bg-app-surface/85 backdrop-blur-[32px] border border-app-line/60 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.2)] dark:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.6)] rounded-[32px] p-1.5 flex justify-between items-center z-40 shrink-0 transition-transform duration-300 hover:scale-[1.02]">
-            <button onclick="switchTab('home', true)" id="nav-home" class="flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] text-brand-gold bg-brand-gold/15 transition-all duration-400 shadow-sm">
+        <nav class="liquid-glass-nav w-[92%] max-w-[360px] p-1.5 flex justify-between items-center absolute bottom-6 left-1/2 transform -translate-x-1/2 z-40 rounded-[32px] transition-transform duration-300 hover:scale-[1.02]">
+            <button onclick="switchTab('home', true)" id="nav-home" class="flex-1 flex flex-col items-center justify-center py-2.5 rounded-[24px] bg-white/50 dark:bg-white/10 text-brand-gold transition-all duration-400 scale-100 shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-white/60 dark:border-white/10">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                <span class="text-[10px] mt-1 font-bold tracking-wide" data-i18n="nav_home">Dashboard</span>
+                <span class="text-[10px] mt-1 font-bold" data-i18n="nav_home">Dashboard</span>
             </button>
-            <button onclick="switchTab('details', true)" id="nav-details" class="flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] text-app-muted bg-transparent transition-all duration-400 hover:bg-app-card/50 active:scale-95">
+            <button onclick="switchTab('details', true)" id="nav-details" class="flex-1 flex flex-col items-center justify-center py-2.5 rounded-[24px] bg-transparent text-app-muted transition-all duration-400 active:scale-90 hover:bg-white/20 dark:hover:bg-white/5">
                 <i data-lucide="receipt" class="w-5 h-5"></i>
-                <span class="text-[10px] mt-1 font-medium tracking-wide" data-i18n="nav_details">Transactions</span>
+                <span class="text-[10px] mt-1 font-medium" data-i18n="nav_details">Transactions</span>
             </button>
-            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] text-app-muted bg-transparent transition-all duration-400 hover:bg-app-card/50 active:scale-95">
+            <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="flex-1 flex flex-col items-center justify-center py-2.5 rounded-[24px] bg-transparent text-app-muted transition-all duration-400 active:scale-90 hover:bg-white/20 dark:hover:bg-white/5">
                 <i data-lucide="trending-up" class="w-5 h-5"></i>
-                <span class="text-[10px] mt-1 font-medium tracking-wide" data-i18n="nav_stats">Portfolio</span>
+                <span class="text-[10px] mt-1 font-medium" data-i18n="nav_stats">Portfolio</span>
             </button>
         </nav>
 
         <!-- Splash Screen -->
-        <div id="splash-screen" class="fixed inset-0 w-screen h-screen bg-app-bg z-[9999] flex flex-col items-center justify-center transition-opacity duration-700 m-0 p-0">
+        <div id="splash-screen" class="fixed inset-0 w-screen h-screen z-[9999] flex flex-col items-center justify-center transition-opacity duration-700 m-0 p-0" style="background-color: var(--bg-app); background-image: var(--bg-app-gradient);">
             <div class="relative flex flex-col items-center animate-pop">
                 <div class="w-24 h-24 rounded-3xl bg-app-surface p-1 shadow-xl flex items-center justify-center mb-5 border border-brand-gold/40">
                     <div class="w-full h-full bg-app-card rounded-[22px] flex items-center justify-center">
@@ -1986,11 +2014,11 @@
                 const navBtn = document.getElementById(`nav-${t}`);
                 if (navBtn) {
                     if (t === tab) {
-                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] bg-brand-gold/15 text-brand-gold transition-all duration-400 scale-100 shadow-sm";
+                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2.5 rounded-[24px] bg-white/50 dark:bg-white/10 text-brand-gold transition-all duration-400 scale-100 shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-white/60 dark:border-white/10";
                         const span = navBtn.querySelector('span');
                         if (span) { span.classList.add('font-bold'); span.classList.remove('font-medium'); }
                     } else {
-                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2 rounded-[24px] bg-transparent text-app-muted transition-all duration-400 active:scale-90 hover:bg-app-card/50";
+                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2.5 rounded-[24px] bg-transparent text-app-muted transition-all duration-400 active:scale-90 hover:bg-white/20 dark:hover:bg-white/5";
                         const span = navBtn.querySelector('span');
                         if (span) { span.classList.remove('font-bold'); span.classList.add('font-medium'); }
                     }
@@ -3754,7 +3782,7 @@
                             <div class="accordion-inner">
                                 <div class="px-4 pb-4 space-y-4 border-t border-app-line pt-3">
                                     <div>
-                                        <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">${t('app_title_lbl')}</label>
+                                        <label class="block text-xs text-app-muted mb-1" data-i18n="app_title_lbl">Custom App Title</label>
                                         <div class="flex gap-2">
                                             <div class="relative flex-1 flex items-center">
                                                 <input type="text" id="setting-title" value="${(appData && appData.appTitle) ? appData.appTitle : ''}" placeholder="${appData.language === 'en' ? 'Wealth Ledger' : '智慧帳本'}" oninput="toggleClearBtn(this)" class="w-full bg-app-input border border-app-line rounded-xl pl-3 pr-8 py-2.5 text-xs text-app-main outline-none focus:border-brand-gold">
