@@ -2004,14 +2004,27 @@
 
             if (tab === 'settings') {
                 document.getElementById('swipe-track-container').classList.add('hidden');
-                document.getElementById('panel-settings').classList.remove('hidden');
+                const pSettings = document.getElementById('panel-settings');
+                pSettings.classList.remove('hidden');
+                pSettings.classList.remove('animate-settings-enter');
+                void pSettings.offsetWidth; // Trigger reflow for animation restart
+                pSettings.classList.add('animate-settings-enter');
                 if (!keepBudgetOpen) {
                     resetSettingsAccordions();
                 }
             } else {
+                const prevWasSettings = !document.getElementById('panel-settings').classList.contains('hidden');
                 document.getElementById('swipe-track-container').classList.remove('hidden');
                 document.getElementById('panel-settings').classList.add('hidden');
+                document.getElementById('panel-settings').classList.remove('animate-settings-enter');
                 updateSliderPosition();
+                
+                if (prevWasSettings) {
+                    const track = document.getElementById('swipe-track-container');
+                    track.classList.remove('animate-settings-enter');
+                    void track.offsetWidth;
+                    track.classList.add('animate-settings-enter');
+                }
             }
 
             ['home', 'details', 'stock-stats'].forEach(t => {
