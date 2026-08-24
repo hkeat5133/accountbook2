@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title id="app-html-title">智慧帳本</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -39,24 +39,22 @@
         }
 
         body.theme-dark {
-            --bg-app: #1c1d1b;
-            --bg-surface: #272825;
-            --bg-card: #333530;
-            --bg-input: #21221f;
+            /* Liquid Glass Theme Variables - Dark Mode */
+            --bg-app: #151614;
+            --bg-app-gradient: linear-gradient(135deg, #1c1d1b 0%, #0f100e 100%);
+            --bg-surface: rgba(40, 42, 39, 0.65);
+            --bg-card: rgba(40, 42, 39, 0.35);
+            --bg-input: rgba(20, 21, 19, 0.45);
             --text-main: #f0eee6;
-            --text-muted: #939890;
-            --border-line: #454841;
-            --phone-border: #2b2c28;
-        }
-
-        html {
-            background-color: var(--bg-app);
-            height: 100%;
-            width: 100%;
+            --text-muted: #9ca3af;
+            --border-line: rgba(255, 255, 255, 0.08);
+            --phone-border: rgba(43, 44, 40, 0.8);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
         }
 
         body {
             background-color: var(--bg-app);
+            background-image: var(--bg-app-gradient);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
@@ -67,8 +65,6 @@
             overscroll-behavior: none;
             padding-bottom: 0 !important;
             margin-bottom: 0 !important;
-            height: 100%;
-            min-height: 100dvh;
         }
 
         body.modal-open {
@@ -81,11 +77,12 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            height: 100dvh;
-            max-height: 100dvh;
+            height: 100vh;
+            max-height: 100vh;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
+            background-image: var(--bg-app-gradient);
             box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
@@ -94,16 +91,56 @@
             touch-action: none;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
+            z-index: 1; /* Establishes stacking context for fluid blobs */
         }
 
-        @supports (-webkit-touch-callout: none) {
-            body {
-                min-height: -webkit-fill-available;
-            }
-            .phone-container {
-                height: -webkit-fill-available;
-                max-height: -webkit-fill-available;
-            }
+        /* --- Ambient Liquid Blobs for Glassmorphism Effect --- */
+        .phone-container::before,
+        .phone-container::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(75px);
+            -webkit-filter: blur(75px);
+            z-index: 0;
+            pointer-events: none;
+            animation: fluidFloat 12s infinite alternate ease-in-out;
+            will-change: transform;
+        }
+
+        .phone-container::before {
+            width: 380px;
+            height: 380px;
+            background: rgba(200, 155, 60, 0.25);
+            top: -100px;
+            left: -100px;
+        }
+
+        .phone-container::after {
+            width: 350px;
+            height: 350px;
+            background: rgba(58, 107, 136, 0.2);
+            bottom: -50px;
+            right: -100px;
+            animation-delay: -6s;
+        }
+
+        body.theme-dark .phone-container::before {
+            background: rgba(200, 155, 60, 0.15);
+        }
+        body.theme-dark .phone-container::after {
+            background: rgba(58, 107, 136, 0.12);
+        }
+
+        @keyframes fluidFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, 40px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+            100% { transform: translate(40px, -20px) scale(1.1); }
+        }
+
+        main#main-content {
+            z-index: 10;
         }
 
         @media (min-width: 640px) {
