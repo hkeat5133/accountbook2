@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="app-html-title">智慧帳本</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -39,22 +39,24 @@
         }
 
         body.theme-dark {
-            /* Liquid Glass Theme Variables - Dark Mode */
-            --bg-app: #151614;
-            --bg-app-gradient: linear-gradient(135deg, #1c1d1b 0%, #0f100e 100%);
-            --bg-surface: rgba(40, 42, 39, 0.65);
-            --bg-card: rgba(40, 42, 39, 0.35);
-            --bg-input: rgba(20, 21, 19, 0.45);
+            --bg-app: #1c1d1b;
+            --bg-surface: #272825;
+            --bg-card: #333530;
+            --bg-input: #21221f;
             --text-main: #f0eee6;
-            --text-muted: #9ca3af;
-            --border-line: rgba(255, 255, 255, 0.08);
-            --phone-border: rgba(43, 44, 40, 0.8);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+            --text-muted: #939890;
+            --border-line: #454841;
+            --phone-border: #2b2c28;
+        }
+
+        html {
+            background-color: var(--bg-app);
+            height: 100%;
+            width: 100%;
         }
 
         body {
             background-color: var(--bg-app);
-            background-image: var(--bg-app-gradient);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Segoe UI", Roboto, sans-serif;
             user-select: none;
@@ -65,6 +67,8 @@
             overscroll-behavior: none;
             padding-bottom: 0 !important;
             margin-bottom: 0 !important;
+            height: 100%;
+            min-height: 100dvh;
         }
 
         body.modal-open {
@@ -77,12 +81,11 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            height: 100vh;
-            max-height: 100vh;
+            height: 100dvh;
+            max-height: 100dvh;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
-            background-image: var(--bg-app-gradient);
             box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
@@ -91,56 +94,16 @@
             touch-action: none;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
-            z-index: 1; /* Establishes stacking context for fluid blobs */
         }
 
-        /* --- Ambient Liquid Blobs for Glassmorphism Effect --- */
-        .phone-container::before,
-        .phone-container::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(75px);
-            -webkit-filter: blur(75px);
-            z-index: 0;
-            pointer-events: none;
-            animation: fluidFloat 12s infinite alternate ease-in-out;
-            will-change: transform;
-        }
-
-        .phone-container::before {
-            width: 380px;
-            height: 380px;
-            background: rgba(200, 155, 60, 0.25);
-            top: -100px;
-            left: -100px;
-        }
-
-        .phone-container::after {
-            width: 350px;
-            height: 350px;
-            background: rgba(58, 107, 136, 0.2);
-            bottom: -50px;
-            right: -100px;
-            animation-delay: -6s;
-        }
-
-        body.theme-dark .phone-container::before {
-            background: rgba(200, 155, 60, 0.15);
-        }
-        body.theme-dark .phone-container::after {
-            background: rgba(58, 107, 136, 0.12);
-        }
-
-        @keyframes fluidFloat {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, 40px) scale(1.05); }
-            66% { transform: translate(-20px, 20px) scale(0.95); }
-            100% { transform: translate(40px, -20px) scale(1.1); }
-        }
-
-        main#main-content {
-            z-index: 10;
+        @supports (-webkit-touch-callout: none) {
+            body {
+                min-height: -webkit-fill-available;
+            }
+            .phone-container {
+                height: -webkit-fill-available;
+                max-height: -webkit-fill-available;
+            }
         }
 
         @media (min-width: 640px) {
@@ -297,9 +260,47 @@
             50% { box-shadow: 0 0 22px rgba(200, 155, 60, 0.5); }
         }
 
-        .safe-header {
-            padding-top: max(env(safe-area-inset-top), 1.25rem) !important;
-            padding-bottom: 0.75rem !important;
+        /* --- Liquid Glass Navigation --- */
+        .liquid-glass-nav {
+            background: rgba(255, 255, 255, 0.18); /* High transparency for clear glass */
+            backdrop-filter: blur(35px) saturate(250%);
+            -webkit-backdrop-filter: blur(35px) saturate(250%);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 
+                0 24px 48px -12px rgba(0,0,0,0.12), 
+                inset 0 2px 6px rgba(255,255,255,0.6), 
+                inset 0 -1px 4px rgba(0,0,0,0.05);
+            overflow: hidden; /* Contains the inner liquid wave */
+        }
+        
+        body.theme-dark .liquid-glass-nav {
+            background: rgba(30, 32, 28, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 24px 48px -12px rgba(0,0,0,0.5), 
+                inset 0 1px 2px rgba(255,255,255,0.12), 
+                inset 0 -1px 4px rgba(0,0,0,0.2);
+        }
+
+        /* The Liquid Wave / Swoosh Highlight */
+        .liquid-glass-nav::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(160% 120% at 85% 120%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 55%);
+            z-index: 0;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        body.theme-dark .liquid-glass-nav::before {
+            background: radial-gradient(160% 120% at 85% 120%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 55%);
+        }
+
+        /* Ensure nav items float above the liquid wave */
+        .liquid-glass-nav > * {
+            z-index: 10;
+            position: relative;
         }
 
         .bg-app-bg { background-color: var(--bg-app); }
@@ -387,7 +388,7 @@
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
         <!-- Header Bar -->
-        <header class="px-5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm safe-header" style="touch-action: none; overscroll-behavior: none;">
+        <header class="px-5 pt-1 pb-2 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0 shadow-sm" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
