@@ -2005,27 +2005,14 @@
 
             if (tab === 'settings') {
                 document.getElementById('swipe-track-container').classList.add('hidden');
-                const pSettings = document.getElementById('panel-settings');
-                pSettings.classList.remove('hidden');
-                pSettings.classList.remove('animate-settings-enter');
-                void pSettings.offsetWidth; // Trigger reflow for animation restart
-                pSettings.classList.add('animate-settings-enter');
+                document.getElementById('panel-settings').classList.remove('hidden');
                 if (!keepBudgetOpen) {
                     resetSettingsAccordions();
                 }
             } else {
-                const prevWasSettings = !document.getElementById('panel-settings').classList.contains('hidden');
                 document.getElementById('swipe-track-container').classList.remove('hidden');
                 document.getElementById('panel-settings').classList.add('hidden');
-                document.getElementById('panel-settings').classList.remove('animate-settings-enter');
                 updateSliderPosition();
-                
-                if (prevWasSettings) {
-                    const track = document.getElementById('swipe-track-container');
-                    track.classList.remove('animate-settings-enter');
-                    void track.offsetWidth;
-                    track.classList.add('animate-settings-enter');
-                }
             }
 
             ['home', 'details', 'stock-stats'].forEach(t => {
@@ -2036,7 +2023,7 @@
                         const span = navBtn.querySelector('span');
                         if (span) { span.classList.add('font-bold'); span.classList.remove('font-medium'); }
                     } else {
-                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2.5 rounded-[24px] bg-transparent text-app-muted transition-all duration-400 active:scale-90 hover:bg-white/20 dark:hover:bg-white/5";
+                        navBtn.className = "flex-1 flex flex-col items-center justify-center py-2.5 rounded-[24px] bg-transparent text-app-muted transition-all duration-400 active:scale-90 hover:bg-white/20 dark:hover:bg-white/5 border border-transparent";
                         const span = navBtn.querySelector('span');
                         if (span) { span.classList.remove('font-bold'); span.classList.add('font-medium'); }
                     }
