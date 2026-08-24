@@ -165,13 +165,12 @@
 
         .modal-backdrop {
             animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            background-color: rgba(30, 32, 28, 0.35); /* 降低背景遮罩濃度，透出底層漸層供玻璃折射 */
+            background-color: rgba(0, 0, 0, 0.2); /* 更清透的中性底色，避免灰濛濛 */
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            will-change: opacity;
         }
         body.theme-dark .modal-backdrop {
-            background-color: rgba(10, 11, 9, 0.65);
+            background-color: rgba(0, 0, 0, 0.6);
         }
         .modal-backdrop.is-closing {
             animation: fadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -183,27 +182,27 @@
             opacity: 0;
             transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
             max-height: 85vh;
-            border-radius: 32px !important; /* 提升圓角讓玻璃質感更好 */
+            border-radius: 32px !important; /* 增加圓角增添精緻感 */
             width: 100%;
             max-width: 400px;
             
-            /* Liquid Glass 面板設定 */
-            background: rgba(255, 255, 255, 0.35) !important;
-            backdrop-filter: blur(45px) saturate(220%) !important;
-            -webkit-backdrop-filter: blur(45px) saturate(220%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.55) !important;
+            /* Liquid Glass 高亮/高穿透面板設定 */
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(45px) saturate(250%) contrast(105%) !important;
+            -webkit-backdrop-filter: blur(45px) saturate(250%) contrast(105%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
             box-shadow: 
-                0 32px 64px -12px rgba(0,0,0,0.15), 
-                inset 0 2px 6px rgba(255,255,255,0.6), 
+                0 32px 64px -12px rgba(0,0,0,0.1), 
+                inset 0 4px 12px rgba(255,255,255,0.7), 
                 inset 0 -1px 4px rgba(0,0,0,0.05) !important;
             position: relative;
         }
 
         body.theme-dark .modal-sheet {
             background: rgba(30, 32, 28, 0.45) !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
             box-shadow: 
-                0 32px 64px -12px rgba(0,0,0,0.6), 
+                0 32px 64px -12px rgba(0,0,0,0.5), 
                 inset 0 1px 2px rgba(255,255,255,0.1), 
                 inset 0 -1px 4px rgba(0,0,0,0.3) !important;
         }
@@ -213,7 +212,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 100%);
             z-index: 0;
             pointer-events: none;
             border-radius: inherit;
@@ -237,15 +236,6 @@
         .modal-sheet.is-closing {
             transform: scale(0.92) translateY(10px) !important;
             opacity: 0 !important;
-        }
-
-        @keyframes calendarSwitch {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .animate-calendar-switch {
-            animation: calendarSwitch 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            will-change: transform, opacity;
         }
 
         button, a, label[class*="cursor-pointer"] {
