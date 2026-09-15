@@ -240,12 +240,8 @@
         .text-brand-red { color: var(--color-red); }
         .text-brand-green { color: var(--color-green); }
 
-        #panel-settings {
-            background: transparent !important;
-        }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--border-line); border-radius: 4px; }
+        ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
 
         #swipe-track-container {
             touch-action: pan-y;
@@ -2952,7 +2948,7 @@
 
                     <div class="bg-app-card border border-app-line rounded-2xl p-4 shadow-sm space-y-3 w-full">
                         <div class="flex justify-between items-center pb-1 border-b border-app-line">
-                            <h3 class="text-xs font-bold text-app-main tracking-wider uppercase flex items-center gap-1.5"><i data-lucide="history" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recent_tx">${t('recent_tx')}</span></h3>
+                            <h3 class="text-xs font-bold text-app-main tracking-wider flex items-center gap-1.5"><i data-lucide="history" class="w-4 h-4 text-brand-gold"></i> <span data-i18n="recent_tx">${t('recent_tx')}</span></h3>
                             <button onclick="switchTab('details')" class="text-[11px] text-brand-blue hover:underline" data-i18n="view_all">${t('view_all')}</button>
                         </div>
                         <div class="space-y-2 w-full">${renderTxList(appData.transactions.slice(0, 5))}</div>
