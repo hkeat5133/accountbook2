@@ -26,28 +26,24 @@
             --color-dark: #2c2e2b;
 
             --bg-app: #f6f4ee;
-            --bg-surface: rgba(255, 255, 255, 0.55);
-            --bg-card: rgba(255, 255, 255, 0.35);
-            --bg-input: rgba(255, 255, 255, 0.65);
+            --bg-surface: #ffffff;
+            --bg-card: #ece8df;
+            --bg-input: #ffffff;
             --text-main: #2c2e2b;
             --text-muted: #7a7f78;
-            --border-line: rgba(255, 255, 255, 0.6);
+            --border-line: #d8d2c4;
             --phone-border: #d2cbba;
-            --glass-specular: rgba(255, 255, 255, 0.9);
-            --glass-shadow: rgba(0, 0, 0, 0.08);
         }
 
         body.theme-dark {
             --bg-app: #1c1d1b;
-            --bg-surface: rgba(39, 40, 37, 0.6);
-            --bg-card: rgba(51, 53, 48, 0.4);
-            --bg-input: rgba(33, 34, 31, 0.5);
+            --bg-surface: #272825;
+            --bg-card: #333530;
+            --bg-input: #21221f;
             --text-main: #f0eee6;
             --text-muted: #939890;
-            --border-line: rgba(255, 255, 255, 0.12);
+            --border-line: #454841;
             --phone-border: #2b2c28;
-            --glass-specular: rgba(255, 255, 255, 0.15);
-            --glass-shadow: rgba(0, 0, 0, 0.3);
         }
 
         body {
@@ -199,10 +195,10 @@
         
         .bg-app-surface {
             background-color: var(--bg-surface) !important;
-            backdrop-filter: blur(32px) saturate(200%);
-            -webkit-backdrop-filter: blur(32px) saturate(200%);
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
             border: 1px solid var(--border-line) !important;
-            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 8px 32px 0 var(--glass-shadow);
+            box-shadow: inset 0 1px 1.5px 0 var(--glass-specular);
         }
 
         .bg-app-card {
@@ -210,7 +206,7 @@
             backdrop-filter: blur(24px) saturate(190%);
             -webkit-backdrop-filter: blur(24px) saturate(190%);
             border: 1px solid var(--border-line) !important;
-            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 4px 16px 0 var(--glass-shadow) !important;
+            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular) !important;
         }
 
         .bg-app-input {
@@ -218,7 +214,7 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-color: var(--border-line);
-            box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05), inset 0 1px 1px 0 var(--glass-specular);
+            box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 0 0 var(--glass-specular);
         }
 
         .text-app-main { color: var(--text-main); }
@@ -263,18 +259,18 @@
         }
 
         .ios26-dock {
-            background: var(--bg-surface) !important;
-            backdrop-filter: blur(36px) saturate(220%);
-            -webkit-backdrop-filter: blur(36px) saturate(220%);
-            border: 1px solid var(--border-line);
-            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 12px 40px 0 var(--glass-shadow);
+            background: rgba(255, 255, 255, 0.76) !important;
+            backdrop-filter: blur(32px) saturate(210%);
+            -webkit-backdrop-filter: blur(32px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
         }
         body.theme-dark .ios26-dock {
-            background: var(--bg-surface) !important;
-            backdrop-filter: blur(36px) saturate(220%);
-            -webkit-backdrop-filter: blur(36px) saturate(220%);
-            border: 1px solid var(--border-line);
-            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 12px 40px 0 var(--glass-shadow);
+            background: rgba(28, 30, 28, 0.78) !important;
+            backdrop-filter: blur(32px) saturate(210%);
+            -webkit-backdrop-filter: blur(32px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.22);
         }
 
         .ios26-nav-item {
