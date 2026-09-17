@@ -26,24 +26,28 @@
             --color-dark: #2c2e2b;
 
             --bg-app: #f6f4ee;
-            --bg-surface: #ffffff;
-            --bg-card: #ece8df;
-            --bg-input: #ffffff;
+            --bg-surface: rgba(255, 255, 255, 0.55);
+            --bg-card: rgba(255, 255, 255, 0.35);
+            --bg-input: rgba(255, 255, 255, 0.65);
             --text-main: #2c2e2b;
             --text-muted: #7a7f78;
-            --border-line: #d8d2c4;
+            --border-line: rgba(255, 255, 255, 0.6);
             --phone-border: #d2cbba;
+            --glass-specular: rgba(255, 255, 255, 0.9);
+            --glass-shadow: rgba(0, 0, 0, 0.08);
         }
 
         body.theme-dark {
             --bg-app: #1c1d1b;
-            --bg-surface: #272825;
-            --bg-card: #333530;
-            --bg-input: #21221f;
+            --bg-surface: rgba(39, 40, 37, 0.6);
+            --bg-card: rgba(51, 53, 48, 0.4);
+            --bg-input: rgba(33, 34, 31, 0.5);
             --text-main: #f0eee6;
             --text-muted: #939890;
-            --border-line: #454841;
+            --border-line: rgba(255, 255, 255, 0.12);
             --phone-border: #2b2c28;
+            --glass-specular: rgba(255, 255, 255, 0.15);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
         }
 
         body {
@@ -195,10 +199,10 @@
         
         .bg-app-surface {
             background-color: var(--bg-surface) !important;
-            backdrop-filter: blur(28px) saturate(200%);
-            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            backdrop-filter: blur(32px) saturate(200%);
+            -webkit-backdrop-filter: blur(32px) saturate(200%);
             border: 1px solid var(--border-line) !important;
-            box-shadow: inset 0 1px 1.5px 0 var(--glass-specular);
+            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 8px 32px 0 var(--glass-shadow);
         }
 
         .bg-app-card {
@@ -206,7 +210,7 @@
             backdrop-filter: blur(24px) saturate(190%);
             -webkit-backdrop-filter: blur(24px) saturate(190%);
             border: 1px solid var(--border-line) !important;
-            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular) !important;
+            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 4px 16px 0 var(--glass-shadow) !important;
         }
 
         .bg-app-input {
@@ -214,7 +218,7 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-color: var(--border-line);
-            box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 0 0 var(--glass-specular);
+            box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05), inset 0 1px 1px 0 var(--glass-specular);
         }
 
         .text-app-main { color: var(--text-main); }
@@ -259,18 +263,18 @@
         }
 
         .ios26-dock {
-            background: rgba(255, 255, 255, 0.76) !important;
-            backdrop-filter: blur(32px) saturate(210%);
-            -webkit-backdrop-filter: blur(32px) saturate(210%);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
+            background: var(--bg-surface) !important;
+            backdrop-filter: blur(36px) saturate(220%);
+            -webkit-backdrop-filter: blur(36px) saturate(220%);
+            border: 1px solid var(--border-line);
+            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 12px 40px 0 var(--glass-shadow);
         }
         body.theme-dark .ios26-dock {
-            background: rgba(28, 30, 28, 0.78) !important;
-            backdrop-filter: blur(32px) saturate(210%);
-            -webkit-backdrop-filter: blur(32px) saturate(210%);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.22);
+            background: var(--bg-surface) !important;
+            backdrop-filter: blur(36px) saturate(220%);
+            -webkit-backdrop-filter: blur(36px) saturate(220%);
+            border: 1px solid var(--border-line);
+            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular), 0 12px 40px 0 var(--glass-shadow);
         }
 
         .ios26-nav-item {
@@ -597,9 +601,9 @@
                             <button type="button" onclick="openCustomDatePicker('TX_INPUT')" class="w-full bg-app-input border border-app-line rounded-xl px-2.5 py-2.5 text-app-main text-left flex items-center justify-between active:scale-98">
                                 <span class="flex items-center gap-1.5 font-mono text-xs">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
-                                    <span id="input-date-display">2026-08-18</span>
+                                    <span id="input-date-display"></span>
                                 </span>
-                                <input type="hidden" id="input-date" value="2026-08-18">
+                                <input type="hidden" id="input-date" value="">
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted shrink-0"></i>
                             </button>
                         </div>
@@ -816,8 +820,8 @@
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="rec_date_label">Start Date (Monthly)</label>
                         <button type="button" onclick="openCustomDatePicker('REC_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs active:scale-98">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt">2026-08-18</span></span>
-                            <input type="hidden" id="rec-date-val" value="2026-08-18">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="rec-date-btn-txt"></span></span>
+                            <input type="hidden" id="rec-date-val" value="">
                             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                         </button>
                     </div>
@@ -855,8 +859,8 @@
                     <div>
                         <label class="block text-app-muted mb-1" data-i18n="inst_date_label">Start Date (Monthly)</label>
                         <button type="button" onclick="openCustomDatePicker('INST_DATE')" class="w-full bg-app-input border border-app-line rounded-xl px-3 py-2.5 text-app-main text-left flex items-center justify-between text-xs active:scale-98">
-                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt">2026-08-18</span></span>
-                            <input type="hidden" id="inst-date-val" value="2026-08-18">
+                            <span class="flex items-center gap-1.5 font-mono"><i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold"></i> <span id="inst-date-btn-txt"></span></span>
+                            <input type="hidden" id="inst-date-val" value="">
                             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-app-muted"></i>
                         </button>
                     </div>
@@ -1709,21 +1713,6 @@
             initPWA();
             initRealtimeSwipe();
 
-            const todayStr = getLocalDateStr();
-            const inputDateElem = document.getElementById('input-date');
-            if (inputDateElem) inputDateElem.value = todayStr;
-
-            const recDateVal = document.getElementById('rec-date-val');
-            if (recDateVal) recDateVal.value = todayStr;
-
-            const instDateVal = document.getElementById('inst-date-val');
-            if (instDateVal) instDateVal.value = todayStr;
-
-            filterCustomDate = todayStr;
-            filterStartDate = todayStr;
-            filterEndDate = todayStr;
-            filterMonthDate = getLocalMonthStr();
-
             appData = loadAppData();
             if (!appData) {
                 appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -1731,6 +1720,32 @@
             }
 
             sortTransactions();
+            
+            const todayStr = getLocalDateStr();
+            const inputDateElem = document.getElementById('input-date');
+            const inputDateDisplay = document.getElementById('input-date-display');
+            if (inputDateElem) inputDateElem.value = todayStr;
+            if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
+
+            const recDateVal = document.getElementById('rec-date-val');
+            const recDateBtnTxt = document.getElementById('rec-date-btn-txt');
+            if (recDateVal) recDateVal.value = todayStr;
+            if (recDateBtnTxt) recDateBtnTxt.innerText = todayStr;
+
+            const instDateVal = document.getElementById('inst-date-val');
+            const instDateBtnTxt = document.getElementById('inst-date-btn-txt');
+            if (instDateVal) instDateVal.value = todayStr;
+            if (instDateBtnTxt) instDateBtnTxt.innerText = todayStr;
+
+            let latestDate = todayStr;
+            if (appData.transactions && appData.transactions.length > 0) {
+                latestDate = appData.transactions[0].date || latestDate;
+            }
+            filterCustomDate = latestDate;
+            filterStartDate = latestDate;
+            filterEndDate = latestDate;
+            filterMonthDate = latestDate.substring(0, 7);
+
             updateHeaderDate();
             applyTranslations();
             checkRecurringTransactions();
@@ -1895,10 +1910,15 @@
                 stockSubFilter = 'ALL';
                 filterCategoryName = 'ALL';
                 filterSearchQuery = '';
-                filterCustomDate = getLocalDateStr();
-                filterStartDate = getLocalDateStr();
-                filterEndDate = getLocalDateStr();
-                filterMonthDate = getLocalMonthStr();
+                
+                let latestDate = getLocalDateStr();
+                if (appData && appData.transactions && appData.transactions.length > 0) {
+                    latestDate = appData.transactions[0].date || latestDate;
+                }
+                filterCustomDate = latestDate;
+                filterStartDate = latestDate;
+                filterEndDate = latestDate;
+                filterMonthDate = latestDate.substring(0, 7);
             }
 
             currentTab = tab;
@@ -2853,19 +2873,21 @@
                     <div class="bg-app-card border border-brand-gold/40 rounded-2xl p-4 shadow-md relative overflow-hidden w-full interactive-card">
                         <div class="flex justify-between items-start mb-1">
                             <span onclick="navigateToDetails('ALL')" class="text-xs text-app-muted flex items-center gap-1 font-medium cursor-pointer hover:text-brand-gold" data-i18n="net_asset">
-                                ${t('net_asset')} (${baseCurrShort}) <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i>
+                                ${t('net_asset')} <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i>
                             </span>
-                            <button onclick="updateExchangeRateAuto(true)" title="Refresh Exchange Rate" class="bg-app-surface text-brand-gold p-1.5 rounded-xl border border-brand-gold/30 active:scale-90 hover:scale-110 shadow-2xs">
-                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                            </button>
                         </div>
                         <div class="flex flex-col gap-2">
                             <div onclick="navigateToDetails('ALL')" class="text-3xl font-extrabold text-brand-gold tracking-tight font-mono cursor-pointer">
-                                ${baseCurrSymbol} ${grandTotal.toLocaleString('zh-TW', {maximumFractionDigits: 2})}
+                                $ ${grandTotal.toLocaleString('zh-TW', {maximumFractionDigits: 2})} ${baseCurr}
                             </div>
-                            <div class="text-[11px] text-app-muted font-mono flex flex-col gap-0.5 border-t border-app-line pt-2">
-                                <span>1 USD = ${usdRate} TWD</span>
-                                ${appData.enableMYR ? `<span>1 USD = ${(1 / (myrToUsd || 0.2222)).toFixed(2)} MYR</span>` : ''}
+                            <div class="flex justify-between items-center border-t border-app-line pt-2">
+                                <div class="text-[11px] text-app-muted font-mono flex flex-col gap-0.5">
+                                    <span>1 USD = ${usdRate} TWD</span>
+                                    ${appData.enableMYR ? `<span>1 USD = ${(1 / (myrToUsd || 0.2222)).toFixed(2)} MYR</span>` : ''}
+                                </div>
+                                <button onclick="updateExchangeRateAuto(true)" title="Refresh Exchange Rate" class="bg-app-surface text-brand-gold p-1.5 rounded-xl border border-brand-gold/30 active:scale-90 hover:scale-110 shadow-2xs shrink-0">
+                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -2876,7 +2898,7 @@
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="twd_cash">${t('twd_cash')}</span></span>
                                 </div>
-                                <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()}</div>
+                                <div class="text-base font-bold text-brand-gold font-mono">$ ${appData.assets.TWD.toLocaleString()} TWD</div>
                                 ${getAssetSubConversionText('TWD', appData.assets.TWD) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TWD Account' : '台幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
                             </div>
                         ` : ''}
@@ -2885,7 +2907,7 @@
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-blue"></span> <span data-i18n="tw_stock_lbl">${t('tw_stock_lbl')}</span></span>
                                 </div>
-                                <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()}</div>
+                                <div class="text-base font-bold text-brand-blue font-mono">$ ${appData.assets.TW_STOCK.toLocaleString()} TWD</div>
                                 ${getAssetSubConversionText('TW_STOCK', appData.assets.TW_STOCK) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'TW Stocks' : '台股證券'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-blue"></i></div>`}
                             </div>
                         ` : ''}
@@ -2912,7 +2934,7 @@
                                 <div class="flex justify-between items-start mb-1.5">
                                     <span class="text-xs font-bold text-app-main flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-gold"></span> <span data-i18n="myr_cash">${t('myr_cash')}</span></span>
                                 </div>
-                                <div class="text-base font-bold text-brand-gold font-mono">RM ${(appData.assets.MYR || 0).toLocaleString()}</div>
+                                <div class="text-base font-bold text-brand-gold font-mono">$ ${(appData.assets.MYR || 0).toLocaleString()} MYR</div>
                                 ${getAssetSubConversionText('MYR', appData.assets.MYR || 0) || `<div class="flex justify-between items-center mt-1"><span class="text-[10px] text-app-muted font-mono">${appData.language === 'en' ? 'MYR Account' : '馬幣帳戶'}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-brand-gold"></i></div>`}
                             </div>
                         ` : ''}
@@ -2930,7 +2952,7 @@
                             </div>
                             <div class="space-y-2.5">
                                 ${enabledBudgets.map(b => `
-                                    <div onclick="navigateToCategoryDetails(decodeURIComponent('${encodeURIComponent(b.catName)}'), '${b.curr}')" class="bg-app-surface p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold active:scale-98 interactive-card">
+                                    <div onclick="navigateToCategoryDetails(decodeURIComponent('${encodeURIComponent(b.catName)}'), '${b.curr}')" class="bg-app-surface p-3 rounded-xl border border-app-line cursor-pointer hover:border-brand-gold active:scale-98">
                                         <div class="flex justify-between items-center text-xs mb-1.5">
                                             <span class="text-app-main font-medium flex items-center gap-1">${b.catName} <i data-lucide="chevron-right" class="w-3 h-3 text-brand-gold"></i></span>
                                             <span class="${b.percent > 90 ? 'text-brand-red' : 'text-brand-gold'} font-bold font-mono">${b.sym}${Math.round(b.spent).toLocaleString()} / ${b.sym}${b.amount.toLocaleString()} (${b.percent}%)</span>
