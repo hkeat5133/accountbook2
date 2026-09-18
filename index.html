@@ -2217,7 +2217,7 @@
 
             let html = `
         <!-- Floating Add Button -->
-        <div class="absolute bottom-28 right-5 z-20">
+        <div class="absolute right-5 z-20" style="bottom: max(calc(env(safe-area-inset-bottom) + 7rem), 7rem);">
             <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
