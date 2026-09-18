@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="app-html-title">智慧帳本</title>
 
     <!-- PWA Primary Meta Tags -->
@@ -33,14 +33,6 @@
             --text-muted: #7a7f78;
             --border-line: #d8d2c4;
             --phone-border: #d2cbba;
-            
-            /* Liquid Glass Variables */
-            --glass-specular: rgba(255, 255, 255, 0.7);
-            --glass-bg-surface: rgba(255, 255, 255, 0.65);
-            --glass-bg-card: rgba(255, 255, 255, 0.45);
-            --glass-bg-input: rgba(255, 255, 255, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
         }
 
         body.theme-dark {
@@ -52,14 +44,6 @@
             --text-muted: #939890;
             --border-line: #454841;
             --phone-border: #2b2c28;
-
-            /* Liquid Glass Variables Dark Mode */
-            --glass-specular: rgba(255, 255, 255, 0.12);
-            --glass-bg-surface: rgba(39, 40, 37, 0.65);
-            --glass-bg-card: rgba(51, 53, 48, 0.45);
-            --glass-bg-input: rgba(33, 34, 31, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
         body {
@@ -207,56 +191,30 @@
             50% { box-shadow: 0 0 28px rgba(200, 155, 60, 0.65); transform: scale(1.04); }
         }
 
-        /* Liquid Ambient Orbs */
-        .liquid-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(65px);
-            opacity: 0.45;
-            animation: floatOrb 18s infinite ease-in-out alternate;
-            z-index: 0;
-            pointer-events: none;
-            mix-blend-mode: screen;
-        }
-        body.theme-dark .liquid-orb {
-            mix-blend-mode: color-dodge;
-            opacity: 0.35;
-        }
-        .orb-1 { width: 320px; height: 320px; background: var(--color-gold); top: -120px; left: -120px; animation-delay: 0s; }
-        .orb-2 { width: 280px; height: 280px; background: var(--color-blue); bottom: -80px; right: -80px; animation-delay: -5s; }
-        .orb-3 { width: 220px; height: 220px; background: var(--color-green); top: 35%; left: 45%; animation-delay: -10s; }
-        
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(40px, -60px) scale(1.1); }
-            66% { transform: translate(-30px, 30px) scale(0.9); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
-
         .bg-app-bg { background-color: var(--bg-app); }
         
         .bg-app-surface {
-            background: var(--glass-bg-surface) !important;
-            backdrop-filter: blur(32px) saturate(200%);
-            -webkit-backdrop-filter: blur(32px) saturate(200%);
-            border: 1px solid var(--glass-border) !important;
-            box-shadow: var(--glass-shadow), inset 0 1px 1.5px 0 var(--glass-specular) !important;
+            background-color: var(--bg-surface) !important;
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            border: 1px solid var(--border-line) !important;
+            box-shadow: inset 0 1px 1.5px 0 var(--glass-specular);
         }
 
         .bg-app-card {
-            background: var(--glass-bg-card) !important;
-            backdrop-filter: blur(28px) saturate(190%);
-            -webkit-backdrop-filter: blur(28px) saturate(190%);
-            border: 1px solid var(--glass-border) !important;
-            box-shadow: var(--glass-shadow), inset 0 1.5px 2px 0 var(--glass-specular) !important;
+            background-color: var(--bg-card) !important;
+            backdrop-filter: blur(24px) saturate(190%);
+            -webkit-backdrop-filter: blur(24px) saturate(190%);
+            border: 1px solid var(--border-line) !important;
+            box-shadow: inset 0 1.5px 2px 0 var(--glass-specular) !important;
         }
 
         .bg-app-input {
-            background: var(--glass-bg-input) !important;
+            background-color: var(--bg-input) !important;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border) !important;
-            box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 0 var(--glass-specular) !important;
+            border-color: var(--border-line);
+            box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 0 0 var(--glass-specular);
         }
 
         .text-app-main { color: var(--text-main); }
@@ -282,8 +240,12 @@
         .text-brand-red { color: var(--color-red); }
         .text-brand-green { color: var(--color-green); }
 
-        ::-webkit-scrollbar { display: none; width: 0; height: 0; }
-        * { scrollbar-width: none; -ms-overflow-style: none; }
+        #panel-settings {
+            background: transparent !important;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-line); border-radius: 4px; }
 
         #swipe-track-container {
             touch-action: pan-y;
@@ -301,18 +263,18 @@
         }
 
         .ios26-dock {
-            background: var(--glass-bg-surface) !important;
-            backdrop-filter: blur(36px) saturate(220%);
-            -webkit-backdrop-filter: blur(36px) saturate(220%);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow), inset 0 1px 1.5px 0 var(--glass-specular);
+            background: rgba(255, 255, 255, 0.76) !important;
+            backdrop-filter: blur(32px) saturate(210%);
+            -webkit-backdrop-filter: blur(32px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
         }
         body.theme-dark .ios26-dock {
-            background: var(--glass-bg-surface) !important;
-            backdrop-filter: blur(36px) saturate(220%);
-            -webkit-backdrop-filter: blur(36px) saturate(220%);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow), inset 0 1px 1.5px 0 var(--glass-specular);
+            background: rgba(28, 30, 28, 0.78) !important;
+            backdrop-filter: blur(32px) saturate(210%);
+            -webkit-backdrop-filter: blur(32px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.22);
         }
 
         .ios26-nav-item {
@@ -360,7 +322,7 @@
         <div class="liquid-orb orb-3"></div>
 
         <!-- Header Bar -->
-        <header class="px-5 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="padding-top: max(env(safe-area-inset-top), 0.75rem); touch-action: none; overscroll-behavior: none;">
+        <header class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -389,6 +351,44 @@
                     <div id="panel-home" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-32 touch-pan-y" style="overscroll-behavior-y: none;"></div>
                     <div id="panel-details" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-32 touch-pan-y" style="overscroll-behavior-y: none;"></div>
                     <div id="panel-stock-stats" class="w-[33.333333%] h-full overflow-y-auto p-4 space-y-4 pb-32 touch-pan-y" style="overscroll-behavior-y: none;"></div>
+                </div>
+            </div>
+            <div id="panel-settings" class="hidden absolute inset-0 w-full h-full overflow-y-auto p-4 space-y-4 pb-32 bg-app-bg z-10 touch-pan-y" style="overscroll-behavior-y: none;"></div>
+        </main>
+
+        <!-- Floating Add Button -->
+        <div class="absolute bottom-20 right-5 z-40">
+            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform shadow-xl">
+                <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
+            </button>
+        </div>
+
+        <!-- iOS 26 Floating Spatial Glass Dock -->
+        <nav class="absolute bottom-2 left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] z-30 pointer-events-auto flex flex-col items-center">
+            <div class="ios26-dock w-full flex items-center justify-around px-2 py-1.5 rounded-[28px] transition-all">
+                <button onclick="switchTab('home', true)" id="nav-home" class="ios26-nav-item active flex flex-col items-center justify-center flex-1 py-1 px-2 rounded-2xl relative">
+                    <div class="nav-icon-box flex items-center justify-center w-8 h-8 rounded-xl">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-[10px] mt-0.5 tracking-tight font-medium" data-i18n="nav_home">Dashboard</span>
+                    <span class="nav-dot w-1 h-1 rounded-full bg-brand-gold mt-0.5"></span>
+                </button>
+                <button onclick="switchTab('details', true)" id="nav-details" class="ios26-nav-item flex flex-col items-center justify-center flex-1 py-1 px-2 rounded-2xl relative">
+                    <div class="nav-icon-box flex items-center justify-center w-8 h-8 rounded-xl">
+                        <i data-lucide="receipt" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-[10px] mt-0.5 tracking-tight font-medium" data-i18n="nav_details">Transactions</span>
+                    <span class="nav-dot w-1 h-1 rounded-full bg-brand-gold mt-0.5"></span>
+                </button>
+                <button onclick="switchTab('stock-stats')" id="nav-stock-stats" class="ios26-nav-item flex flex-col items-center justify-center flex-1 py-1 px-2 rounded-2xl relative">
+                    <div class="nav-icon-box flex items-center justify-center w-8 h-8 rounded-xl">
+                        <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-[10px] mt-0.5 tracking-tight font-medium" data-i18n="nav_stats">Portfolio</span>
+                    <span class="nav-dot w-1 h-1 rounded-full bg-brand-gold mt-0.5"></span>
+                </button>
+            </div>
+        </nav>
                 </div>
             </div>
             <div id="panel-settings" class="hidden absolute inset-0 w-full h-full overflow-y-auto p-4 space-y-4 pb-32 bg-app-bg z-10 touch-pan-y" style="overscroll-behavior-y: none;"></div>
