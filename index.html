@@ -49,11 +49,9 @@
         html, body {
             position: fixed;
             top: 0;
-            bottom: 0;
             left: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw !important;
+            height: 100vh !important;
             margin: 0 !important;
             padding: 0 !important;
             overflow: hidden;
@@ -86,8 +84,8 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            height: 100%;
-            max-height: 100%;
+            height: 100vh !important;
+            max-height: 100vh !important;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
@@ -401,7 +399,7 @@
 
         <!-- Flush Bottom Dock (移除所有底部間隙與安全區域限制) -->
         <nav class="absolute bottom-0 left-0 w-full z-30 pointer-events-auto flex flex-col items-center m-0 p-0">
-            <div class="ios26-dock w-full flex items-center justify-around px-2 pt-2 pb-3 rounded-t-[28px] rounded-b-none border-b-0 transition-all">
+            <div class="ios26-dock w-full flex items-center justify-around px-2 pt-2 pb-5 rounded-t-[28px] rounded-b-none border-b-0 transition-all">
                 <button onclick="switchTab('home', true)" id="nav-home" class="ios26-nav-item active flex flex-col items-center justify-center flex-1 py-1 px-2 rounded-2xl relative">
                     <div class="nav-icon-box flex items-center justify-center w-8 h-8 rounded-xl">
                         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
