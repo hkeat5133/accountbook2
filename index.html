@@ -53,11 +53,14 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
-            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
             overscroll-behavior: none;
             padding-bottom: 0 !important;
             margin-bottom: 0 !important;
+        }
+
+        body.theme-ready {
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body.modal-open {
@@ -70,8 +73,8 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            height: 100vh;
-            max-height: 100vh;
+            height: 100dvh;
+            max-height: 100dvh;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
@@ -312,7 +315,27 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen theme-light pb-0 mb-0" style="touch-action: none; overscroll-behavior: none;">
+<body class="flex items-center justify-center min-h-[100dvh] theme-light pb-0 mb-0" style="touch-action: none; overscroll-behavior: none;">
+
+    <!-- 立即執行主題檢測，防止開啟時背景與狀態列閃爍 (FOUC) -->
+    <script>
+        try {
+            const saved = localStorage.getItem('wealth_app_data_v30_final');
+            let isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.theme === 'dark') isDark = true;
+                else if (parsed.theme === 'light') isDark = false;
+            }
+            if (isDark) {
+                document.body.classList.remove('theme-light');
+                document.body.classList.add('theme-dark');
+                document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#1c1d1b');
+            } else {
+                document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f6f4ee');
+            }
+        } catch(e) {}
+    </script>
 
     <div class="phone-container text-app-main flex flex-col relative overflow-hidden border-gray-300 pb-0" id="app-phone-container" style="touch-action: none; overscroll-behavior: none;">
 
@@ -1394,23 +1417,18 @@
                 isDark = (theme === 'dark');
             }
 
-            const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-
             if (isDark) {
                 document.body.classList.add('theme-dark');
                 document.body.classList.remove('theme-light');
-                if (themeColorMeta) themeColorMeta.setAttribute("content", "#272825"); // 對齊深色表面背景色
+                document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#1c1d1b');
             } else {
                 document.body.classList.add('theme-light');
                 document.body.classList.remove('theme-dark');
-                if (themeColorMeta) themeColorMeta.setAttribute("content", "#ffffff"); // 對齊淺色表面背景色
+                document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f6f4ee');
             }
+            
+            setTimeout(() => document.body.classList.add('theme-ready'), 50);
         }
-
-        // 監聽系統深淺色模式變化並即時更新 PWA 狀態列
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            if (appData && appData.theme === 'system') applyTheme();
-        });
 
         function setTheme(themeMode) {
             appData.theme = themeMode;
