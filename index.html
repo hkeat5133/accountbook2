@@ -48,12 +48,15 @@
 
         html, body {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw !important;
-            height: 100vh !important;
-            margin: 0 !important;
-            padding: 0 !important;
+            inset: 0;
+            width: 100vw;
+            /* CRITICAL FIX for iOS PWA bottom gap (WebKit bug): 
+               When using viewport-fit=cover in standalone mode, iOS sometimes subtracts 
+               the safe-area-inset-bottom from 100vh. We force the height to be 100vh 
+               PLUS the safe area inset to guarantee it bleeds to the physical bottom edge. */
+            height: calc(100vh + env(safe-area-inset-bottom, 0px));
+            margin: 0;
+            padding: 0;
             overflow: hidden;
             overscroll-behavior: none;
             background-color: var(--bg-app);
@@ -66,7 +69,7 @@
             -webkit-user-select: none;
             touch-action: manipulation;
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* Change from center to flex-start to allow filling from top */
             justify-content: center;
         }
 
@@ -84,8 +87,8 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            height: 100vh !important;
-            max-height: 100vh !important;
+            /* Container fills the entire expanded body height */
+            height: 100%;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
@@ -96,7 +99,8 @@
             border-color: var(--phone-border);
             touch-action: none;
             overscroll-behavior: none;
-            padding-bottom: 0 !important;
+            /* Ensure the bottom padding accounts for the safe area we added to the body height */
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         @media (min-width: 640px) {
@@ -106,6 +110,8 @@
                 margin-top: 2vh;
                 border-radius: 40px;
                 border-width: 8px;
+                /* Reset padding on desktop where safe area isn't an issue */
+                padding-bottom: 0;
             }
         }
 
@@ -391,15 +397,16 @@
         </main>
 
         <!-- Floating Add Button -->
-        <div class="absolute bottom-24 right-5 z-40">
+        <div class="absolute right-5 z-40" style="bottom: calc(96px + env(safe-area-inset-bottom, 0px));">
             <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform shadow-xl">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <!-- Flush Bottom Dock (移除所有底部間隙與安全區域限制) -->
+        <!-- Flush Bottom Dock -->
         <nav class="absolute bottom-0 left-0 w-full z-30 pointer-events-auto flex flex-col items-center m-0 p-0">
-            <div class="ios26-dock w-full flex items-center justify-around px-2 pt-2 rounded-t-[28px] rounded-b-none border-b-0 transition-all" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);">
+            <!-- Ensure dock background bleeds down into the safe area -->
+            <div class="ios26-dock w-full flex items-center justify-around px-2 pt-2 rounded-t-[28px] rounded-b-none border-b-0 transition-all" style="padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));">
                 <button onclick="switchTab('home', true)" id="nav-home" class="ios26-nav-item active flex flex-col items-center justify-center flex-1 py-1 px-2 rounded-2xl relative">
                     <div class="nav-icon-box flex items-center justify-center w-8 h-8 rounded-xl">
                         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
