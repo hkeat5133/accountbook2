@@ -6,7 +6,7 @@
     <title id="app-html-title">智慧帳本</title>
 
     <!-- PWA Primary Meta Tags -->
-    <meta name="theme-color" content="#c89b3c">
+    <meta name="theme-color" content="#f6f4ee" id="meta-theme-color">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -322,7 +322,7 @@
         <div class="liquid-orb orb-3"></div>
 
         <!-- Header Bar -->
-        <header class="px-5 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="padding-top: max(2.5rem, env(safe-area-inset-top)); touch-action: none; overscroll-behavior: none;">
+        <header id="app-header" class="px-5 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="padding-top: max(2.5rem, env(safe-area-inset-top)); touch-action: none; overscroll-behavior: none; -webkit-transform: translateZ(0); transform: translateZ(0);">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -1394,12 +1394,16 @@
                 isDark = (theme === 'dark');
             }
 
+            const metaTheme = document.getElementById('meta-theme-color') || document.querySelector('meta[name="theme-color"]');
+
             if (isDark) {
                 document.body.classList.add('theme-dark');
                 document.body.classList.remove('theme-light');
+                if (metaTheme) metaTheme.setAttribute('content', '#1c1d1b');
             } else {
                 document.body.classList.add('theme-light');
                 document.body.classList.remove('theme-dark');
+                if (metaTheme) metaTheme.setAttribute('content', '#f6f4ee');
             }
         }
 
@@ -1752,6 +1756,15 @@
             checkRecurringTransactions();
             renderAllPanels();
             updateExchangeRateAuto();
+
+            // iOS PWA Render Glitch Hack: Force a micro-repaint of the header
+            setTimeout(() => {
+                const header = document.getElementById('app-header');
+                if (header) {
+                    header.style.opacity = '0.99';
+                    setTimeout(() => header.style.opacity = '1', 50);
+                }
+            }, 150);
 
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
