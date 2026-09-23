@@ -49,12 +49,8 @@
         html, body {
             position: fixed;
             inset: 0;
-            width: 100vw;
-            /* CRITICAL FIX for iOS PWA bottom gap (WebKit bug): 
-               When using viewport-fit=cover in standalone mode, iOS sometimes subtracts 
-               the safe-area-inset-bottom from 100vh. We force the height to be 100vh 
-               PLUS the safe area inset to guarantee it bleeds to the physical bottom edge. */
-            height: calc(100vh + env(safe-area-inset-bottom, 0px));
+            width: 100%;
+            height: 100%;
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -87,7 +83,6 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            /* Container fills the entire expanded body height */
             height: 100%;
             margin: 0 auto;
             position: relative;
@@ -99,8 +94,7 @@
             border-color: var(--phone-border);
             touch-action: none;
             overscroll-behavior: none;
-            /* Ensure the bottom padding accounts for the safe area we added to the body height */
-            padding-bottom: env(safe-area-inset-bottom, 0px);
+            padding-bottom: 0; /* 徹底移除底部安全區域 */
         }
 
         @media (min-width: 640px) {
@@ -397,16 +391,15 @@
         </main>
 
         <!-- Floating Add Button -->
-        <div class="absolute right-5 z-40" style="bottom: calc(96px + env(safe-area-inset-bottom, 0px));">
+        <div class="absolute right-5 z-40" style="bottom: 80px;">
             <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform shadow-xl">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
         </div>
 
-        <!-- Flush Bottom Dock -->
+        <!-- Flush Bottom Dock (原生 App 貼底設計) -->
         <nav class="absolute bottom-0 left-0 w-full z-30 pointer-events-auto flex flex-col items-center m-0 p-0">
-            <!-- Ensure dock background bleeds down into the safe area -->
-            <div class="ios26-dock w-full flex items-center justify-around px-2 pt-2 rounded-t-[28px] rounded-b-none border-b-0 transition-all" style="padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));">
+            <div class="ios26-dock w-full flex items-center justify-around px-2 py-3 rounded-t-[28px] rounded-b-none border-b-0 transition-all">
                 <button onclick="switchTab('home', true)" id="nav-home" class="ios26-nav-item active flex flex-col items-center justify-center flex-1 py-1 px-2 rounded-2xl relative">
                     <div class="nav-icon-box flex items-center justify-center w-8 h-8 rounded-xl">
                         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
