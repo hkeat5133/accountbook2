@@ -57,6 +57,11 @@
             overscroll-behavior: none;
             padding-bottom: 0 !important;
             margin-bottom: 0 !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
         }
 
         body.theme-ready {
@@ -73,8 +78,8 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            height: 100dvh;
-            max-height: 100dvh;
+            height: 100vh;
+            max-height: 100vh;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
@@ -315,7 +320,7 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-[100dvh] theme-light pb-0 mb-0" style="touch-action: none; overscroll-behavior: none;">
+<body class="flex items-center justify-center w-full h-full theme-light pb-0 mb-0" style="touch-action: none; overscroll-behavior: none;">
 
     <!-- 立即執行主題檢測，防止開啟時背景與狀態列閃爍 (FOUC) -->
     <script>
