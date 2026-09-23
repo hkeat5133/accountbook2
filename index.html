@@ -70,8 +70,8 @@
         .phone-container {
             width: 100%;
             max-width: 430px;
-            height: 100dvh;
-            max-height: 100dvh;
+            height: 100vh;
+            max-height: 100vh;
             margin: 0 auto;
             position: relative;
             background-color: var(--bg-app);
@@ -322,7 +322,7 @@
         <div class="liquid-orb orb-3"></div>
 
         <!-- Header Bar -->
-        <header class="px-5 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="padding-top: max(1rem, env(safe-area-inset-top)); touch-action: none; overscroll-behavior: none;">
+        <header class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -364,7 +364,7 @@
         </div>
 
         <!-- iOS 26 Floating Spatial Glass Dock -->
-        <nav class="absolute bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] z-30 pointer-events-auto flex flex-col items-center">
+        <nav class="absolute bottom-3 left-1/2 -translate-x-1/2 w-[92%] max-w-[380px] z-30 pointer-events-auto flex flex-col items-center">
             <div class="ios26-dock w-full flex items-center justify-around px-2 py-1.5 rounded-[28px] transition-all">
                 <button onclick="switchTab('home', true)" id="nav-home" class="ios26-nav-item active flex flex-col items-center justify-center flex-1 py-1 px-2 rounded-2xl relative">
                     <div class="nav-icon-box flex items-center justify-center w-8 h-8 rounded-xl">
@@ -388,6 +388,7 @@
                     <span class="nav-dot w-1 h-1 rounded-full bg-brand-gold mt-0.5"></span>
                 </button>
             </div>
+            <!-- iOS Home Indicator Bar removed to prevent duplicate bar -->
         </nav>
 
         <!-- Splash Screen -->
@@ -2178,8 +2179,8 @@
             const daysLabels = lang === 'en' ? daysEn : daysTw;
 
             let html = `
-        <!-- Floating Add Button -->
-        <div class="absolute right-5 z-20" style="bottom: max(calc(env(safe-area-inset-bottom) + 7rem), 7rem);">
+        <!-- Floating Add Button within Calendar -->
+        <div class="absolute bottom-28 right-5 z-20">
             <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
                 <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
             </button>
