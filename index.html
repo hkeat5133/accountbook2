@@ -345,7 +345,7 @@
         <div class="liquid-orb orb-3"></div>
 
         <!-- Header Bar -->
-        <header class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="touch-action: none; overscroll-behavior: none;">
+        <header id="app-header" class="px-5 pt-3 pb-2.5 bg-app-surface border-b border-app-line flex justify-between items-center z-20 shrink-0" style="touch-action: none; overscroll-behavior: none;">
             <div class="flex items-center gap-1.5">
                 <button onclick="switchTab('settings')" id="nav-settings-header" class="relative p-2 rounded-xl bg-app-card hover:opacity-80 text-app-main transition-all active:scale-95 border border-app-line" title="Settings">
                     <i data-lucide="settings" class="w-5 h-5 text-brand-gold"></i>
@@ -1780,13 +1780,23 @@
             renderAllPanels();
             updateExchangeRateAuto();
 
-            // iOS PWA Render Glitch Hack: Force a micro-repaint of the header
+            // iOS PWA Render Glitch Hack: Force a micro-repaint to fix blurry text
             setTimeout(() => {
                 const header = document.getElementById('app-header');
                 if (header) {
                     header.style.opacity = '0.99';
-                    setTimeout(() => header.style.opacity = '1', 50);
+                    header.style.transform = 'translateZ(0)'; // Force GPU render
+                    setTimeout(() => {
+                        header.style.opacity = '1';
+                        header.style.transform = 'none';
+                    }, 50);
                 }
+                
+                // Simulate opening and closing a modal to force a complete iOS Safari layout repaint
+                document.body.classList.add('modal-open');
+                setTimeout(() => {
+                    document.body.classList.remove('modal-open');
+                }, 20);
             }, 150);
 
             setTimeout(() => {
