@@ -2192,12 +2192,6 @@
             const daysLabels = lang === 'en' ? daysEn : daysTw;
 
             let html = `
-        <!-- Floating Add Button within Calendar -->
-        <div class="absolute bottom-28 right-5 z-20">
-            <button onclick="openTransactionModal()" class="bg-brand-gold text-white p-4 rounded-full shadow-xl flex items-center justify-center pulse-gold active:scale-90 hover:scale-110 transition-transform">
-                <i data-lucide="plus" class="w-6 h-6 stroke-[2.5]"></i>
-            </button>
-        </div>
                 <div class="grid grid-cols-7 gap-1 text-center mb-2">
                     ${daysLabels.map(dayLabel => `<div class="h-6 flex items-center justify-center text-[10px] font-bold text-app-muted uppercase">${dayLabel}</div>`).join('')}
                 </div>
