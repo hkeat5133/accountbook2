@@ -1417,22 +1417,41 @@
                 isDark = (theme === 'dark');
             }
 
+            // Sync meta theme-color dynamically to solve iOS PWA status bar blur issue
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            
             if (isDark) {
                 document.body.classList.add('theme-dark');
                 document.body.classList.remove('theme-light');
-                document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#1c1d1b');
+                if (metaThemeColor) metaThemeColor.setAttribute('content', '#1c1d1b');
             } else {
                 document.body.classList.add('theme-light');
                 document.body.classList.remove('theme-dark');
-                document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f6f4ee');
+                if (metaThemeColor) metaThemeColor.setAttribute('content', '#f6f4ee');
             }
-            
-            setTimeout(() => document.body.classList.add('theme-ready'), 50);
         }
 
         function setTheme(themeMode) {
+            if (appData.theme === themeMode) return; // Do nothing if it's the same theme
+            
             appData.theme = themeMode;
-            saveData(true);
+            // 儲存狀態，包含標記我們正在進行主題切換的重載
+            localStorage.setItem('wealth_app_data_v30_final', JSON.stringify(appData));
+            localStorage.setItem('wealth_app_theme_reload', 'settings');
+            
+            // 顯示重載前的過渡畫面
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.transition = 'opacity 0.2s';
+                splash.classList.remove('hidden');
+                void splash.offsetWidth;
+                splash.style.opacity = '1';
+            }
+            
+            // 強制重整以徹底套用 PWA 狀態列與渲染
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
         }
 
         function setLanguage(lang) {
@@ -1736,23 +1755,27 @@
         }
 
         window.onload = function() {
+            // Check if we are recovering from a theme-change reload
+            const reloadTarget = localStorage.getItem('wealth_app_theme_reload');
+            if (reloadTarget) {
+                localStorage.removeItem('wealth_app_theme_reload');
+                // Ensure the theme is parsed and applied immediately to prevent flash
+                appData = loadAppData();
+                if (appData && appData.theme) applyTheme();
+            }
+
+            // Immediately set body ready class for smooth background transition setup
+            document.body.classList.add('theme-ready');
+
             applyTheme();
             lucide.createIcons();
             initPWA();
             initRealtimeSwipe();
 
-            appData = loadAppData();
-            if (!appData) {
-                appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
-                openModal('welcome-setup-modal');
-            }
-
-            sortTransactions();
-            
             const todayStr = getLocalDateStr();
             const inputDateElem = document.getElementById('input-date');
-            const inputDateDisplay = document.getElementById('input-date-display');
             if (inputDateElem) inputDateElem.value = todayStr;
+            const inputDateDisplay = document.getElementById('input-date-display');
             if (inputDateDisplay) inputDateDisplay.innerText = todayStr;
 
             const recDateVal = document.getElementById('rec-date-val');
@@ -1765,39 +1788,27 @@
             if (instDateVal) instDateVal.value = todayStr;
             if (instDateBtnTxt) instDateBtnTxt.innerText = todayStr;
 
-            let latestDate = todayStr;
-            if (appData.transactions && appData.transactions.length > 0) {
-                latestDate = appData.transactions[0].date || latestDate;
+            appData = loadAppData();
+            if (!appData) {
+                appData = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                openModal('welcome-setup-modal');
             }
-            filterCustomDate = latestDate;
-            filterStartDate = latestDate;
-            filterEndDate = latestDate;
-            filterMonthDate = latestDate.substring(0, 7);
 
+            sortTransactions();
             updateHeaderDate();
             applyTranslations();
             checkRecurringTransactions();
-            renderAllPanels();
+            
+            // Render specific panel if returning from reload, otherwise default
+            if (reloadTarget === 'settings') {
+                switchTab('settings', false);
+                isBasicParamsOpen = true; // Open the params accordion where theme settings are
+                renderAllPanels();
+            } else {
+                renderAllPanels();
+            }
+            
             updateExchangeRateAuto();
-
-            // iOS PWA Render Glitch Hack: Force a micro-repaint to fix blurry text
-            setTimeout(() => {
-                const header = document.getElementById('app-header');
-                if (header) {
-                    header.style.opacity = '0.99';
-                    header.style.transform = 'translateZ(0)'; // Force GPU render
-                    setTimeout(() => {
-                        header.style.opacity = '1';
-                        header.style.transform = 'none';
-                    }, 50);
-                }
-                
-                // Simulate opening and closing a modal to force a complete iOS Safari layout repaint
-                document.body.classList.add('modal-open');
-                setTimeout(() => {
-                    document.body.classList.remove('modal-open');
-                }, 20);
-            }, 150);
 
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -1805,7 +1816,19 @@
                     splash.style.opacity = '0';
                     setTimeout(() => splash.classList.add('hidden'), 700);
                 }
-            }, 1800);
+            }, reloadTarget ? 500 : 1800); // Faster splash dismissal if it's a theme reload
+            
+            // Force a hidden layout recalculation to fix iOS PWA blurriness glithes
+            setTimeout(() => {
+                const dummy = document.createElement('div');
+                dummy.style.position = 'absolute';
+                dummy.style.top = '-9999px';
+                dummy.style.width = '1px';
+                dummy.style.height = '1px';
+                document.body.appendChild(dummy);
+                dummy.offsetHeight; // trigger reflow
+                document.body.removeChild(dummy);
+            }, 100);
         };
 
         function completeWelcomeSetup() {
