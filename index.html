@@ -12,7 +12,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="智慧帳本">
     <link rel="apple-touch-icon" href="./icon.png">
-    <link rel="manifest" id="manifest-link">
+    <!-- 強制寫死 PWA Manifest，確保 iOS 100% 判定為獨立全螢幕 App (移除舊的動態 id="manifest-link") -->
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiV2VhbHRoIExlZGdlciIsInNob3J0X25hbWUiOiJXZWFsdGgiLCJkZXNjcmlwdGlvbiI6IlBlcnNvbmFsIE5ldCBXb3J0aCAmIEludmVzdG1lbnQgTGVkZ2VyIEFwcCIsInN0YXJ0X3VybCI6Ii4vIiwic2NvcGUiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmNmY0ZWUiLCJ0aGVtZV9jb2xvciI6IiNjODliM2MifQ==">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -1617,7 +1618,6 @@
                 updateHeaderDate();
                 applyTranslations();
                 renderAllPanels();
-                initPWAManifest();
                 if (splash) {
                     splash.style.opacity = '0';
                     setTimeout(() => splash.classList.add('hidden'), 700);
@@ -1761,7 +1761,6 @@
         }
 
         function initPWA() {
-            initPWAManifest();
             registerInlineServiceWorker();
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
@@ -1788,32 +1787,6 @@
             } else {
                 showToast("Install Prompt", "On iOS tap Safari 'Share' -> 'Add to Home Screen'. On Android/Desktop select 'Install App' in browser menu.");
             }
-        }
-
-        function initPWAManifest() {
-            const title = (appData && appData.appTitle) ? appData.appTitle : 'Wealth Ledger';
-            const themeMode = (appData && appData.theme) ? appData.theme : 'light';
-            const manifestObj = {
-                name: title,
-                short_name: "Wealth Ledger",
-                description: "Personal Net Worth & Investment Ledger App",
-                start_url: "./",
-                scope: "./",
-                display: "standalone",
-                background_color: themeMode === 'dark' ? "#1c1d1b" : "#f6f4ee",
-                theme_color: "#c89b3c",
-                orientation: "portrait",
-                icons: [{ src: "./icon.png", sizes: "192x192 512x512", type: "image/png", purpose: "any maskable" }]
-            };
-            const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-            let link = document.getElementById('manifest-link');
-            if (!link) {
-                link = document.createElement('link');
-                link.id = 'manifest-link';
-                link.rel = 'manifest';
-                document.head.appendChild(link);
-            }
-            link.href = URL.createObjectURL(blob);
         }
 
         function registerInlineServiceWorker() {
